@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUOセレクト学習 (91-100)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="container mx-auto p-4">
+        <h1 class="text-4xl font-bold mb-4">DUOセレクト学習 (91-100)</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <button id="start-quiz-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                クイズを始める
+            </button>
+            <button id="toc-btn" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                目次に戻る
+            </button>
+        </div>
+
+        <div id="toc-screen" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">目次</h2>
+            <ul>
+                <li><a href="#sentence-91">91. Please make yourself at home. Help yourself to anything you like.</a></li>
+                <li><a href="#sentence-92">92. I'm sorry, but I don't have any money.</a></li>
+                <li><a href="#sentence-93">93. I'm sorry, but I don't have any money.</a></li>
+                <li><a href="#sentence-94">94. I'm sorry, but I don't have any money.</a></li>
+                <li><a href="#sentence-95">95. I'm sorry, but I don't have any money.</a></li>
+                <li><a href="#sentence-96">96. I'm sorry, but I don't have any money.</a></li>
+                <li><a href="#sentence-97">97. I'm sorry, but I don't have any money.</a></li>
+                <li><a href="#sentence-98">98. I'm sorry, but I don't have any money.</a></li>
+                <li><a href="#sentence-99">99. I'm sorry, but I don't have any money.</a></li>
+                <li><a href="#sentence-100">100. I'm sorry, but I don't have any money.</a></li>
+            </ul>
+        </div>
+
+        <div id="main-quiz-area" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">問題</h2>
+                <div class="flex items-center">
+                    <button id="prev-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l">前へ</button>
+                    <button id="next-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r">次へ</button>
+                </div>
+            </div>
+
+            <div id="quiz-content" class="mb-4">
+                <p id="sentence-text" class="text-lg font-medium mb-4"></p>
+                <div id="sentence-details" class="text-sm text-gray-700 mb-4">
+                    <p><strong>ID:</strong> <span id="sentence-id"></span></p>
+                    <p><strong>原文:</strong> <span id="original-sentence"></span></p>
+                    <p><strong>翻訳:</strong> <span id="translation"></span></p>
+                </div>
+                <div id="sentence-meaning" class="text-sm text-gray-700 mb-4">
+                    <p><strong>意味:</strong> <span id="sentence-meaning-text"></span></p>
+                </div>
+                <div id="sentence-application" class="text-sm text-gray-700 mb-4">
+                    <p><strong>応用:</strong> <span id="sentence-application-text"></span></p>
+                </div>
+                <div id="sentence-vocabulary" class="text-sm text-gray-700 mb-4">
+                    <p><strong>単語:</strong> <span id="sentence-vocabulary-text"></span></p>
+                </div>
+            </div>
+
+            <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+                <button id="speak-btn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    音声で読み上げる
+                </button>
+                <button id="next-sentence-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    次の問題へ
+                </button>
+            </div>
+
+            <div id="result-screen" class="hidden">
+                <h2 class="text-2xl font-bold mb-4">結果</h2>
+                <p>クイズが終了しました。</p>
+                <button id="back-to-toc-btn" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    目次に戻る
+                </button>
+                <button id="back-to-toc-from-final-btn" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    目次に戻る (再読み込み)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sentences = [
+            {
+                "id": 91,
+                "originalSentence": "Please make yourself at home. Help yourself to anything you like.",
+                "translation": "どうぞくつろいでください。好きなものを何でも自由に取って食べてね。",
+                "meaning": "くつろぐ"
+            },
+            {
+                "id": 92,
+                "originalSentence": "I'm sorry, but I don't have any money.",
+                "translation": "申し訳ありませんが、お金がありません。",
+                "meaning": "お金がない"
+            },
+            {
+                "id": 93,
+                "originalSentence": "I'm sorry, but I don't have any money.",
+                "translation": "申し訳ありませんが、お金がありません。",
+                "meaning": "お金がない"
+            },
+            {
+                "id": 94,
+                "originalSentence": "I'm sorry, but I don't have any money.",
+                "translation": "申し訳ありませんが、お金がありません。",
+                "meaning": "お金がない"
+            },
+            {
+                "id": 95,
+                "originalSentence": "I'm sorry, but I don't have any money.",
+                "translation": "申し訳ありませんが、お金がありません。",
+                "meaning": "お金がない"
+            },
+            {
+                "id": 96,
+                "originalSentence": "I'm sorry, but I don't have any money.",
+                "translation": "申し訳ありませんが、お金がありません。",
+                "meaning": "お金がない"
+            },
+            {
+                "id": 97,
+                "originalSentence": "I'm sorry, but I don't have any money.",
+                "translation": "申し訳ありませんが、お金がありません。",
+                "meaning": "お金がない"
+            },
+            {
+                "id": 98,
+                "originalSentence": "I'm sorry, but I don't have any money.",
+                "translation": "申し訳ありませんが、お金がありません。",
+                "meaning": "お金がない"
+            },
+            {
+                "id": 99,
+                "originalSentence": "I'm sorry, but I don't have any money.",
+                "translation": "申し訳ありませんが、お金がありません。",
+                "meaning": "お金がない"
+            },
+            {
+                "id": 100,
+                "originalSentence": "I'm sorry, but I don't have any money.",
+                "translation": "申し訳ありませんが、お金がありません。",
+                "meaning": "お金がない"
+            }
+        ];
+
+        // --- STATE ---
+        let currentSentenceIndex = 0;
+        let isSequentialMode = false;
+        let speechSynthesis = window.speechSynthesis;
+        let maleVoices = [];
+        let femaleVoices = [];
+        let voiceToggle = 0;
+        let quizQueue = [];
+
+        // --- DOM ELEMENTS ---
+        const tocScreen = document.getElementById('toc-screen');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const tocBtn = document.getElementById('toc-btn');
+        const mainQuizArea = document.getElementById('main-quiz-area');
+        const resultScreen = document.getElementById('result-screen');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const speakBtn = document.getElementById('speak-btn');
+        const nextSentenceBtn = document.getElementById('next-sentence-btn');
+        const backToTocBtn = document.getElementById('back-to-toc-btn');
+        const backToTocFromFinalBtn = document.getElementById('back-to-toc-from-final-btn');
+
+        // Event Listeners
+        startQuizBtn.addEventListener('click', startQuiz);
+        tocBtn.addEventListener('click', showToc);
+        prevBtn.addEventListener('click', showPreviousSentence);
+        nextBtn.addEventListener('click', showNextSentence);
+        speakBtn.addEventListener('click', speakCurrentSentence);
+        nextSentenceBtn.addEventListener('click', showNextSentence);
+
+        backToTocBtn.addEventListener('click', showMainMenu);
+        backToTocFromFinalBtn.addEventListener('click', showMainMenu);
+
+        // --- Voice Initialization Logic (Alternating Male/Female) ---
+        const MALE_VOICE_KEYWORDS = ["Alex", "Daniel", "Fred", "Tom", "Google US English", "Microsoft David", "Male"];
+        const FEMALE_VOICE_KEYWORDS = ["Samantha", "Allison", "Ava", "Martha", "Susan", "Aria", "Google UK English Female", "Microsoft Zira", "Female"];
+
+        async function voicesReady(timeoutMs = 2500) {
+            return new Promise((resolve) => {
+                const start = performance.now();
+                const pump = () => {
+                    const v = speechSynthesis.getVoices();
+                    if (v && v.length) return resolve(v);
+                    if (performance.now() - start > timeoutMs) return resolve(v);
+                    if (!speechSynthesis.speaking) {
+                        const u = new SpeechSynthesisUtterance(" ");
+                        u.volume = 0;
+                        speechSynthesis.speak(u);
+                    }
+                    requestAnimationFrame(pump);
+                };
+                pump();
+            });
+        }
+
+        async function initVoice() {
+            let voices = await voicesReady();
+            if (!voices || !voices.length) voices = speechSynthesis.getVoices();
+
+            const englishVoices = voices.filter(v => /^en(-|_)/i.test(v.lang));
+
+            let tempFemaleVoices = englishVoices.filter(v => FEMALE_VOICE_KEYWORDS.some(keyword => v.name.includes(keyword)));
+            const femaleNames = new Set(tempFemaleVoices.map(v => v.name));
+
+            let tempMaleVoices = englishVoices.filter(v => MALE_VOICE_KEYWORDS.some(keyword => v.name.includes(keyword)) && !femaleNames.has(v.name));
+            const maleNames = new Set(tempMaleVoices.map(v => v.name));
+
+            const remainingVoices = englishVoices.filter(v => !femaleNames.has(v.name) && !maleNames.has(v.name));
+
+            femaleVoices = tempFemaleVoices;
+            maleVoices = tempMaleVoices;
+
+            if (femaleVoices.length > 0 && maleVoices.length === 0 && remainingVoices.length > 0) maleVoices = remainingVoices;
+            if (maleVoices.length > 0 && femaleVoices.length === 0 && remainingVoices.length > 0) femaleVoices = remainingVoices;
+
+            if (maleVoices.length === 0 && femaleVoices.length > 0) maleVoices = femaleVoices;
+            if (femaleVoices.length === 0 && maleVoices.length > 0) femaleVoices = maleVoices;
+
+            if (maleVoices.length === 0 && femaleVoices.length === 0 && englishVoices.length > 0) {
+                 console.warn("Could not classify voices into male/female. Using any available English voices for both.");
+                 maleVoices = englishVoices;
+                 femaleVoices = englishVoices;
+            }
+
+            console.log("--- Voice Diagnosis ---");
+            console.log("All available English voices:", englishVoices.map(v => v.name));
+            console.log("Assigned Male voices:", maleVoices.map(v => v.name));
+            console.log("Assigned Female voices:", femaleVoices.map(v => v.name));
+            console.log("-----------------------");
+        }
+
+        speechSynthesis.onvoiceschanged = () => { initVoice(); };
+        initVoice();
+
+        // --- FUNCTIONS ---
+
+        function speak(text, lang = 'en-US') {
+            try {
+                if (speechSynthesis.speaking) speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = lang || 'en-US';
+
+                let selectedVoice = null;
+                const turnIndex = Math.floor(voiceToggle / 2);
+
+                if (voiceToggle % 2 === 0 && maleVoices.length > 0) {
+                    selectedVoice = maleVoices[turnIndex % maleVoices.length];
+                } else if (femaleVoices.length > 0) {
+                    selectedVoice = femaleVoices[turnIndex % femaleVoices.length];
+                } else if (maleVoices.length > 0) {
+                    selectedVoice = maleVoices[turnIndex % maleVoices.length];
+                }
+
+                if (selectedVoice) {
+                    u.voice = selectedVoice;
+                    console.log(`Speaking with voice: ${selectedVoice.name}`);
+                } else {
+                    console.warn("A specific voice could not be selected. Using browser default.");
+                }
+
+                voiceToggle++;
+
+                u.rate = 0.9;
+                u.pitch = 1.0;
+                speechSynthesis.speak(u);
+            } catch (e) {
+                console.error('TTS error:', e);
+            }
+        }
+
+        function showMainMenu() {
+            resultScreen.classList.add('hidden');
+            mainQuizArea.classList.add('hidden');
+            tocScreen.classList.remove('hidden');
+            currentSentenceIndex = 0; // Reset index when returning to main menu
+            updateQuizUI();
+        }
+
+        function startQuiz() {
+            tocScreen.classList.add('hidden');
+            mainQuizArea.classList.remove('hidden');
+            currentSentenceIndex = 0;
+            updateQuizUI();
+        }
+
+        function showToc() {
+            tocScreen.classList.remove('hidden');
+            mainQuizArea.classList.add('hidden');
+            currentSentenceIndex = 0; // Reset index when returning to toc
+            updateQuizUI();
+        }
+
+        function showNextSentence() {
+            if (currentSentenceIndex < sentences.length - 1) {
+                currentSentenceIndex++;
+                updateQuizUI();
+            } else {
+                showResultScreen();
+            }
+        }
+
+        function showPreviousSentence() {
+            if (currentSentenceIndex > 0) {
+                currentSentenceIndex--;
+                updateQuizUI();
+            }
+        }
+
+        function speakCurrentSentence() {
+            const currentSentence = sentences[currentSentenceIndex];
+            speak(currentSentence.originalSentence, 'ja-JP');
+        }
+
+        function updateQuizUI() {
+            const currentSentence = sentences[currentSentenceIndex];
+            document.getElementById('sentence-text').textContent = currentSentence.originalSentence;
+            document.getElementById('sentence-id').textContent = currentSentence.id;
+            document.getElementById('original-sentence').textContent = currentSentence.originalSentence;
+            document.getElementById('translation').textContent = currentSentence.translation;
+            document.getElementById('sentence-meaning-text').textContent = currentSentence.meaning;
+            document.getElementById('sentence-application-text').textContent = currentSentence.application ? currentSentence.application.sentence : 'なし';
+            document.getElementById('sentence-vocabulary-text').textContent = currentSentence.vocabulary ? currentSentence.vocabulary.join(', ') : 'なし';
+        }
+
+        function showResultScreen() {
+            resultScreen.classList.remove('hidden');
+            mainQuizArea.classList.add('hidden');
+            tocScreen.classList.add('hidden');
+            currentSentenceIndex = 0; // Reset index for result screen
+            updateQuizUI(); // Keep UI updated for final display
+        }
+
+        // Initial call to update UI on page load
+        updateQuizUI();
+    </script>
+</body>
+</html>

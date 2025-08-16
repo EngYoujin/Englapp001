@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUOセレクト英単語クイズ (例文 31-40)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', 'Inter', sans-serif; }
+        .quiz-container { max-width: 800px; width: 95%; }
+        .step-indicator.active { background-color: #3b82f6; color: white; font-weight: bold; }
+        .btn-option:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .flashcard { perspective: 1000px; cursor: pointer; }
+        .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem; border-radius: 0.75rem; border: 1px solid #d1d5db; }
+        .flashcard-front { background-color: white; }
+        .flashcard-back { background-color: #f0f9ff; transform: rotateY(180deg); }
+        .speaker-btn { position: absolute; top: 10px; right: 10px; color: #6b7280; }
+        .speaker-btn:hover { color: #3b82f6; }
+        .tooltip-trigger { border-bottom: 2px dotted #3b82f6; cursor: pointer; position: relative; }
+        .tooltip-content { visibility: hidden; width: max-content; max-width: 250px; background-color: #1f2937; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .tooltip-trigger:hover .tooltip-content { visibility: visible; opacity: 1; }
+        .review-mark {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+            background-color: #ef4444;
+            border-radius: 9999px;
+            width: 1.1rem;
+            height: 1.1rem;
+            line-height: 1.1rem;
+            text-align: center;
+            margin-left: 0.25rem;
+        }
+        .toc-item-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="app-container" class="quiz-container mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+        
+        <!-- Table of Contents Screen (Main Menu) -->
+        <div id="toc-screen">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-4">DUOセレクト学習 (31-40)</h1>
+            <p class="text-gray-600 text-center mb-8">学習したい例文を選ぶか、最初から全ての問題に挑戦しましょう。</p>
+            
+            <div class="border-b pb-8 mb-8">
+                <h2 class="text-lg font-bold text-gray-700 text-center mb-4">メイン学習</h2>
+                <button id="start-sequential-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105">
+                    最初から順番に全ての問題をやる
+                </button>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-bold text-gray-700 text-center mb-4">個別学習・復習</h2>
+                <div id="toc-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+            </div>
+            
+            <div class="border-t pt-8 mt-8">
+                 <h2 class="text-lg font-bold text-gray-700 text-center mb-4">腕試し</h2>
+                 <button id="final-check-btn" class="w-full bg-white hover:bg-gray-100 text-gray-700 font-semibold py-2 px-6 border border-gray-300 rounded-full">
+                    まとめて最終チェック (日→英)
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Quiz Area -->
+        <div id="main-quiz-area" class="hidden">
+            <!-- Progress and Title -->
+            <div class="flex justify-between items-center mb-2">
+                 <button id="back-to-toc-btn" class="text-blue-500 hover:text-blue-700 font-semibold"><i class="fas fa-arrow-left mr-2"></i>目次に戻る</button>
+                <p id="question-counter" class="text-gray-500 font-medium"></p>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                <div id="progress-bar" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%; transition: width 0.3s ease-in-out;"></div>
+            </div>
+            <!-- Step Indicators -->
+            <div class="flex justify-center space-x-1 md:space-x-2 mb-6 text-xs md:text-sm">
+                <div id="step-indicator-1" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">1:クイズ</div>
+                <div id="step-indicator-2" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">2:応用</div>
+                <div id="step-indicator-3" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">3:復習</div>
+            </div>
+
+            <!-- Step Views -->
+            <div id="step-views">
+                <div id="step1-quiz" class="step-view"></div>
+                <div id="step2-application" class="step-view hidden"></div>
+                <div id="step3-flashcards" class="step-view hidden"></div>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="text-center mt-6">
+                <button id="next-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-full transition-colors hidden">次へ</button>
+            </div>
+        </div>
+        
+        <!-- Final Check Area -->
+        <div id="final-check-area" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                 <button id="back-to-toc-from-final-btn" class="text-blue-500 hover:text-blue-700 font-semibold"><i class="fas fa-arrow-left mr-2"></i>目次に戻る</button>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-4">まとめて最終チェック</h2>
+            <p class="text-sm text-gray-500 text-center mb-6">日本語を見て、対応する英単語を思い出してみましょう。カードをタップすると答えが表示されます。</p>
+            <div id="final-check-flashcards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">全問終了！お疲れ様でした！</h2>
+            <p class="text-lg text-gray-700 mb-6">学習結果を確認しましょう。</p>
+            <div id="self-assessment-summary"></div>
+            <div class="mt-8">
+                <button id="review-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105 mr-4">目次で復習する</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// --- DATA ---
+const quizData = [
+    {
+        id: 31,
+        originalSentence: "Many people believed the myth that the financial institution was too big to go bankrupt.",
+        translation: "多くの人々が、その金融機関は大きすぎて倒産しないという神話を信じていた。",
+        quiz: { target: "bankrupt", choices: ["bankrupt", "intense", "solid", "vague"], meaning: "破産した" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>人気だったタピオカ屋さんが、気づいたら閉店していた。",
+            sentence: "That <span class='tooltip-trigger'>bubble tea<span class='tooltip-content'>bubble tea = タピオカティー</span></span> shop that was so popular went <span class='tooltip-trigger'>bankrupt<span class='tooltip-content'>破産した</span></span>. The <span class='tooltip-trigger'>trend<span class='tooltip-content'>trend = 流行</span></span> didn't last long.",
+            translation: "あんなに人気だったタピオカ屋さんが潰れちゃった。ブームは長く続かなかったね。"
+        },
+        flashcards: [
+            { en: "go bankrupt", ja: "倒産する", kana: "ゴー・**バ**ンクラプト", phonetic: "/ɡoʊ ˈbæŋkrʌpt/", hint: "g" },
+            { en: "myth", ja: "神話", kana: "**ミ**ス", phonetic: "/mɪθ/", hint: "m" },
+            { en: "financial", ja: "金融の", kana: "ファイ**ナ**ンシャル", phonetic: "/faɪˈnænʃl/", hint: "f" },
+            { en: "institution", ja: "機関", kana: "インスティ**テュー**ション", phonetic: "/ˌɪnstɪˈtuːʃn/", hint: "i" }
+        ]
+    },
+    {
+        id: 32,
+        originalSentence: "The reality of the situation is somewhat different from what he described.",
+        translation: "その状況の現実は、彼が説明したものとは多少異なっている。",
+        quiz: { target: "reality", choices: ["reality", "myth", "trial", "structure"], meaning: "現実" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>SNSで見るキラキラしたインフルエンサーの生活。でも実際は…？",
+            sentence: "His life on <span class='tooltip-trigger'>social media<span class='tooltip-content'>SNSのこと。ただしSNSは和製英語で、ネイティブには通じません。</span></span> looks perfect, but the <span class='tooltip-trigger'>reality<span class='tooltip-content'>現実</span></span> is probably somewhat different.",
+            translation: "SNSでの彼の生活は完璧に見えるけど、現実はたぶん多少違うんだろうな。"
+        },
+        flashcards: [
+            { en: "reality", ja: "現実", kana: "リ**ア**リティ", phonetic: "/riˈæləti/", hint: "r" },
+            { en: "somewhat", ja: "多少", kana: "**サ**ムワット", phonetic: "/ˈsʌmwʌt/", hint: "s" },
+            { en: "be different from", ja: "～と異なる", kana: "ビー・**ディ**ファレント・フロム", phonetic: "/bi ˈdɪfrənt frəm/", hint: "b" },
+            { en: "media", ja: "マスメディア", kana: "**ミー**ディア", phonetic: "/ˈmiːdiə/", hint: "m" },
+            { en: "describe", ja: "～を描写する", kana: "ディス**ク**ライブ", phonetic: "/dɪˈskraɪb/", hint: "d" }
+        ]
+    },
+    {
+        id: 33,
+        originalSentence: "In a friendship, what truly counts is not always visible to others.",
+        translation: "友情において、本当に重要なことは、必ずしも他人に見えるわけではない。",
+        quiz: { target: "counts", choices: ["counts", "describes", "fails", "grows"], meaning: "重要である" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>プレゼント選び。値段の高さよりも、相手を思う気持ちが大切。",
+            sentence: "It's not the price of the gift that <span class='tooltip-trigger'>counts<span class='tooltip-content'>重要である</span></span>, it's the <span class='tooltip-trigger'>thought<span class='tooltip-content'>thought = 思い、考え</span></span> behind it.",
+            translation: "重要なのはプレゼントの値段じゃなくて、その裏にある思いやりだよ。"
+        },
+        flashcards: [
+            { en: "count", ja: "重要である", kana: "**カ**ウント", phonetic: "/kaʊnt/", hint: "c" },
+            { en: "not always", ja: "いつも～とは限らない", kana: "ノット・**オー**ルウェイズ", phonetic: "/nɑːt ˈɔːlweɪz/", hint: "n" },
+            { en: "visible", ja: "目に見える", kana: "**ヴィ**ジブル", phonetic: "/ˈvɪzəbl/", hint: "v" }
+        ]
+    },
+    {
+        id: 34,
+        originalSentence: "I can't make up my mind what to do with all this old stuff.",
+        translation: "この古いガラクタをどうしたらよいか、決心がつかない。",
+        quiz: { target: "make up my mind", choices: ["make up my mind", "take my time", "lose my temper", "change my mind"], meaning: "決心する" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>大学の専攻を決めるのに、なかなか決められない友達に。",
+            sentence: "The <span class='tooltip-trigger'>application<span class='tooltip-content'>application = 出願、申込</span></span> deadline is next week. Have you <span class='tooltip-trigger'>made up your mind<span class='tooltip-content'>決心した</span></span> about which university to <span class='tooltip-trigger'>apply to<span class='tooltip-content'>apply to = ～に出願する</span></span>?",
+            translation: "出願の締め切りは来週だよ。どの大学に出願するかもう決めた？"
+        },
+        flashcards: [
+            { en: "make up one's mind", ja: "決心する", kana: "メイク・アップ・ワンズ・**マ**インド", phonetic: "/meɪk ʌp wʌnz maɪnd/", hint: "m" },
+            { en: "what to do", ja: "何をすべきか", kana: "ワット・トゥ・**ドゥ**", phonetic: "/wʌt tu du/", hint: "w" },
+            { en: "the rest of", ja: "～の残り", kana: "ザ・**レ**スト・オブ", phonetic: "/ðə rest əv/", hint: "t" },
+            { en: "stuff", ja: "物（漠然と）", kana: "ス**タ**ッフ", phonetic: "/stʌf/", hint: "s" }
+        ]
+    },
+    {
+        id: 35,
+        originalSentence: "He picked a card at random from the deck.",
+        translation: "彼はデッキから無作為にカードを1枚選んだ。",
+        quiz: { target: "at random", choices: ["at random", "on foot", "in advance", "by accident"], meaning: "無作為に" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>音楽のプレイリストを作る時、とりあえず好きな曲をどんどん追加していく感じ。",
+            sentence: "I just added <span class='tooltip-trigger'>a bunch of<span class='tooltip-content'>a bunch of = たくさんの～</span></span> songs to the playlist <span class='tooltip-trigger'>at random<span class='tooltip-content'>無作為に</span></span>. We can <span class='tooltip-trigger'>organize<span class='tooltip-content'>organize = 整理する</span></span> it later.",
+            translation: "とりあえず無作為にたくさんの曲をプレイリストに追加したんだ。整理は後でできるからね。"
+        },
+        flashcards: [
+            { en: "at random", ja: "無作為に", kana: "アット・**ラ**ンダム", phonetic: "/æt ˈrændəm/", hint: "a" },
+            { en: "pick", ja: "～を選ぶ", kana: "**ピ**ック", phonetic: "/pɪk/", hint: "p" },
+            { en: "in order", ja: "順番に", kana: "イン・**オー**ダー", phonetic: "/ɪn ˈɔːrdər/", hint: "i" },
+            { en: "correct", ja: "正しい", kana: "コ**レ**クト", phonetic: "/kəˈrekt/", hint: "c" }
+        ]
+    },
+    {
+        id: 36,
+        originalSentence: "The movie studio will release his biography next year.",
+        translation: "その映画スタジオは来年、彼の伝記を公開する予定だ。",
+        quiz: { target: "release", choices: ["release", "describe", "deceive", "predict"], meaning: "～を発売する" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>大好きなゲームシリーズの最新作が発売される日。",
+            sentence: "The new game will be <span class='tooltip-trigger'>released<span class='tooltip-content'>発売される</span></span> at <span class='tooltip-trigger'>midnight<span class='tooltip-content'>midnight = 深夜0時</span></span>. I'm going to <span class='tooltip-trigger'>stay up all night<span class='tooltip-content'>stay up all night = 徹夜する</span></span> playing it!",
+            translation: "新しいゲームは深夜0時に発売だ。徹夜でプレイするぞ！"
+        },
+        flashcards: [
+            { en: "release", ja: "～を発売する", kana: "リ**リー**ス", phonetic: "/rɪˈliːs/", hint: "r" },
+            { en: "biography", ja: "伝記", kana: "バイ**オ**グラフィ", phonetic: "/baɪˈɑːɡrəfi/", hint: "b" },
+            { en: "stand in line", ja: "一列に並ぶ", kana: "ス**タ**ンド・イン・**ラ**イン", phonetic: "/stænd ɪn laɪn/", hint: "s" },
+            { en: "get", ja: "～を手に入れる", kana: "**ゲ**ット", phonetic: "/ɡet/", hint: "g" }
+        ]
+    },
+    {
+        id: 37,
+        originalSentence: "I'm anxious about the exam results and I miss my family.",
+        translation: "試験の結果が心配で、家族に会えなくて寂しい。",
+        quiz: { target: "anxious", choices: ["anxious", "solid", "vague", "rare"], meaning: "心配して" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>好きな人にLINEを送ったけど、既読のまま…。返信が待ち遠しい！",
+            sentence: "I'm so anxious to <span class='tooltip-trigger'>hear from<span class='tooltip-content'>hear from... = ～から連絡をもらう<br>hear of... (～のことを耳にする) との違いに注意！</span></span> them. I keep checking my phone every five minutes!",
+            translation: "彼/彼女から連絡が来るのを心待ちにしているよ。5分おきにスマホをチェックしちゃう！"
+        },
+        flashcards: [
+            { en: "anxious", ja: "心配して", kana: "**ア**ンクシャス", phonetic: "/ˈæŋkʃəs/", hint: "a" },
+            { en: "hear from", ja: "～から連絡をもらう", kana: "**ヒー**・フロム", phonetic: "/hɪr frəm/", hint: "h" },
+            { en: "miss", ja: "～がいなくて寂しく思う", kana: "**ミ**ス", phonetic: "/mɪs/", hint: "m" }
+        ]
+    },
+    {
+        id: 38,
+        originalSentence: "By the way, my father used to run a small grocery store.",
+        translation: "ところで、私の父は以前、小さな食料品店を経営していました。",
+        quiz: { target: "By the way", choices: ["By the way", "On the way", "In a way", "For a change"], meaning: "ところで" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>初めて会った人と話していて、少し話題を変えたい時。",
+            sentence: "That's interesting. <span class='tooltip-trigger'>By the way<span class='tooltip-content'>ところで</span></span>, are you <span class='tooltip-trigger'>from around here<span class='tooltip-content'>from around here = この辺りの出身</span></span>?",
+            translation: "面白いですね。ところで、この辺りのご出身ですか？"
+        },
+        flashcards: [
+            { en: "By the way", ja: "ところで", kana: "バイ・ザ・**ウェ**イ", phonetic: "/baɪ ðə weɪ/", hint: "B" },
+            { en: "What do you do?", ja: "お仕事は何ですか？", kana: "ワット・ドゥ・ユー・**ドゥ**？", phonetic: "/wʌt du ju du/", hint: "W" },
+            { en: "run", ja: "～を経営する", kana: "**ラ**ン", phonetic: "/rʌn/", hint: "r" },
+            { en: "grocery store", ja: "食料品店", kana: "グ**ロ**サリー・ストア", phonetic: "/ˈɡroʊsəri stɔːr/", hint: "g" }
+        ]
+    },
+    {
+        id: 39,
+        originalSentence: "He leaned close to whisper a secret in her ear.",
+        translation: "彼は彼女の耳に秘密をささやくために、ぐっと身を寄せた。",
+        quiz: { target: "whisper", choices: ["whisper", "nod", "argue", "shout"], meaning: "ささやく" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>授業中、先生に聞こえないように隣の席の友達に何かを伝える。",
+            sentence: "She <span class='tooltip-trigger'>leaned over<span class='tooltip-content'>lean over = 身を乗り出す</span></span> and <span class='tooltip-trigger'>whispered<span class='tooltip-content'>ささやいた</span></span> something to me.",
+            translation: "彼女は身を乗り出して、私に何かをささやいた。"
+        },
+        flashcards: [
+            { en: "whisper", ja: "ささやく", kana: "**ウィ**スパー", phonetic: "/ˈwɪspər/", hint: "w" },
+            { en: "lean", ja: "傾く、寄りかかる", kana: "**リー**ン", phonetic: "/liːn/", hint: "l" },
+            { en: "come with", ja: "～と一緒に行く", kana: "**カ**ム・ウィズ", phonetic: "/kʌm wɪð/", hint: "c" }
+        ]
+    },
+    {
+        id: 40,
+        originalSentence: "I can't stand his selfish attitude anymore.",
+        translation: "彼のわがままな態度にはもう我慢できない。",
+        quiz: { target: "stand", choices: ["stand", "run", "sit", "lie"], meaning: "～を我慢する" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>ルームメイトが部屋を全く片付けない。ついに堪忍袋の緒が切れた！",
+            sentence: "I can't <span class='tooltip-trigger'>stand<span class='tooltip-content'>我慢する</span></span> your <span class='tooltip-trigger'>clutter<span class='tooltip-content'>clutter = 散らかったもの</span></span> anymore! You need to clean your side of the room.",
+            translation: "あなたの散らかしっぷりにはもう我慢できない！部屋の自分の側を掃除してよ。"
+        },
+        flashcards: [
+            { en: "stand", ja: "～を我慢する", kana: "ス**タ**ンド", phonetic: "/stænd/", hint: "s" },
+            { en: "mess", ja: "めちゃくちゃな状態", kana: "**メ**ス", phonetic: "/mes/", hint: "m" },
+            { en: "not ... anymore", ja: "もはや～ない", kana: "ノット・エニー**モー**", phonetic: "/nɑːt ˌeniˈmɔːr/", hint: "n" }
+        ]
+    }
+];
+
+// --- STATE ---
+let currentSentenceIndex = 0;
+let currentStep = 1;
+let selfAssessments = new Array(quizData.length).fill(null);
+let quizResults = new Array(quizData.length).fill(null);
+let isSequentialMode = false; 
+let speechSynthesis = window.speechSynthesis;
+let maleVoices = [];
+let femaleVoices = [];
+let voiceToggle = 0;
+let quizQueue = [];
+
+// --- DOM ELEMENTS ---
+const tocScreen = document.getElementById('toc-screen');
+const mainQuizArea = document.getElementById('main-quiz-area');
+const finalCheckArea = document.getElementById('final-check-area');
+const resultScreen = document.getElementById('result-screen');
+const startSequentialBtn = document.getElementById('start-sequential-btn');
+const finalCheckBtn = document.getElementById('final-check-btn');
+const nextBtn = document.getElementById('next-btn');
+const reviewBtn = document.getElementById('review-btn');
+const backToTocBtn = document.getElementById('back-to-toc-btn');
+const backToTocFromFinalBtn = document.getElementById('back-to-toc-from-final-btn');
+
+const stepViews = {
+    1: document.getElementById('step1-quiz'),
+    2: document.getElementById('step2-application'),
+    3: document.getElementById('step3-flashcards'),
+};
+const stepIndicators = {
+    1: document.getElementById('step-indicator-1'),
+    2: document.getElementById('step-indicator-2'),
+    3: document.getElementById('step-indicator-3'),
+};
+
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', showMainMenu);
+
+// --- EVENT LISTENERS ---
+startSequentialBtn.addEventListener('click', () => {
+    isSequentialMode = true;
+    quizResults = new Array(quizData.length).fill(null);
+    selfAssessments = new Array(quizData.length).fill(null);
+    startQuizSession(Array.from(Array(quizData.length).keys()));
+});
+
+finalCheckBtn.addEventListener('click', () => {
+    isSequentialMode = false;
+    renderFinalCheck();
+});
+
+nextBtn.addEventListener('click', handleNext);
+reviewBtn.addEventListener('click', showMainMenu);
+backToTocBtn.addEventListener('click', showMainMenu);
+backToTocFromFinalBtn.addEventListener('click', showMainMenu);
+
+// --- Voice Initialization Logic (Alternating Male/Female) ---
+const MALE_VOICE_KEYWORDS = ["Alex", "Daniel", "Fred", "Tom", "Google US English", "Microsoft David", "Male"];
+const FEMALE_VOICE_KEYWORDS = ["Samantha", "Allison", "Ava", "Martha", "Susan", "Aria", "Google UK English Female", "Microsoft Zira", "Female"];
+
+async function voicesReady(timeoutMs = 2500) {
+  return new Promise((resolve) => {
+    const start = performance.now();
+    const pump = () => {
+      const v = speechSynthesis.getVoices();
+      if (v && v.length) return resolve(v);
+      if (performance.now() - start > timeoutMs) return resolve(v);
+      if (!speechSynthesis.speaking) {
+        const u = new SpeechSynthesisUtterance(" ");
+        u.volume = 0;
+        speechSynthesis.speak(u);
+      }
+      requestAnimationFrame(pump);
+    };
+    pump();
+  });
+}
+
+async function initVoice() {
+    let voices = await voicesReady();
+    if (!voices || !voices.length) voices = speechSynthesis.getVoices();
+
+    const englishVoices = voices.filter(v => /^en(-|_)/i.test(v.lang));
+    
+    let tempFemaleVoices = englishVoices.filter(v => FEMALE_VOICE_KEYWORDS.some(keyword => v.name.includes(keyword)));
+    const femaleNames = new Set(tempFemaleVoices.map(v => v.name));
+
+    let tempMaleVoices = englishVoices.filter(v => MALE_VOICE_KEYWORDS.some(keyword => v.name.includes(keyword)) && !femaleNames.has(v.name));
+    const maleNames = new Set(tempMaleVoices.map(v => v.name));
+    
+    const remainingVoices = englishVoices.filter(v => !femaleNames.has(v.name) && !maleNames.has(v.name));
+    
+    femaleVoices = tempFemaleVoices;
+    maleVoices = tempMaleVoices;
+
+    if (femaleVoices.length > 0 && maleVoices.length === 0 && remainingVoices.length > 0) maleVoices = remainingVoices;
+    if (maleVoices.length > 0 && femaleVoices.length === 0 && remainingVoices.length > 0) femaleVoices = remainingVoices;
+    
+    if (maleVoices.length === 0 && femaleVoices.length > 0) maleVoices = femaleVoices;
+    if (femaleVoices.length === 0 && maleVoices.length > 0) femaleVoices = maleVoices;
+
+    if (maleVoices.length === 0 && femaleVoices.length === 0 && englishVoices.length > 0) {
+         console.warn("Could not classify voices into male/female. Using any available English voices for both.");
+         maleVoices = englishVoices;
+         femaleVoices = englishVoices;
+    }
+    
+    console.log("--- Voice Diagnosis ---");
+    console.log("All available English voices:", englishVoices.map(v => v.name));
+    console.log("Assigned Male voices:", maleVoices.map(v => v.name));
+    console.log("Assigned Female voices:", femaleVoices.map(v => v.name));
+    console.log("-----------------------");
+}
+
+speechSynthesis.onvoiceschanged = () => { initVoice(); };
+initVoice();
+
+// --- FUNCTIONS ---
+
+function speak(text, lang = 'en-US') {
+    try {
+        if (speechSynthesis.speaking) speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang || 'en-US';
+
+        let selectedVoice = null;
+        const turnIndex = Math.floor(voiceToggle / 2);
+
+        if (voiceToggle % 2 === 0 && maleVoices.length > 0) {
+            selectedVoice = maleVoices[turnIndex % maleVoices.length];
+        } else if (femaleVoices.length > 0) {
+            selectedVoice = femaleVoices[turnIndex % femaleVoices.length];
+        } else if (maleVoices.length > 0) {
+            selectedVoice = maleVoices[turnIndex % maleVoices.length];
+        }
+
+        if (selectedVoice) {
+            u.voice = selectedVoice;
+            console.log(`Speaking with voice: ${selectedVoice.name}`);
+        } else {
+            console.warn("A specific voice could not be selected. Using browser default.");
+        }
+        
+        voiceToggle++;
+
+        u.rate = 0.9;
+        u.pitch = 1.0;
+        speechSynthesis.speak(u);
+    } catch (e) {
+        console.error('TTS error:', e);
+    }
+}
+
+function showMainMenu() {
+    resultScreen.classList.add('hidden');
+    mainQuizArea.classList.add('hidden');
+    finalCheckArea.classList.add('hidden');
+    tocScreen.classList.remove('hidden');
+    
+    const tocList = document.getElementById('toc-list');
+    tocList.innerHTML = '';
+    quizData.forEach((data, index) => {
+        const quizNeedsReview = quizResults[index] === false;
+        const appNeedsReview = selfAssessments[index] === false;
+
+        const item = document.createElement('button');
+        item.className = 'toc-item p-3 border rounded-lg text-center hover:bg-gray-100 transition-colors flex flex-col justify-center items-center h-full';
+        if (quizNeedsReview || appNeedsReview) item.classList.add('needs-review', 'border-red-400', 'bg-red-50');
+        
+        let reviewMarksHTML = '<div class="flex items-center mt-1">';
+        if (quizNeedsReview) {
+            reviewMarksHTML += '<span class="review-mark" title="クイズを復習">Q</span>';
+        }
+        if (appNeedsReview) {
+            reviewMarksHTML += '<span class="review-mark" title="応用を復習">A</span>';
+        }
+        reviewMarksHTML += '</div>';
+
+        item.innerHTML = `
+            <div class="toc-item-content">
+                <span class="font-semibold">例文 ${data.id}</span>
+                ${(quizNeedsReview || appNeedsReview) ? reviewMarksHTML : ''}
+            </div>
+        `;
+        item.onclick = () => {
+            isSequentialMode = false;
+            startQuizSession([index]);
+        };
+        tocList.appendChild(item);
+    });
+}
+
+
+function startQuizSession(indices) {
+    quizQueue = indices.map(i => ({ index: i, originalIndex: i })); 
+    if (quizQueue.length === 0) {
+        showMainMenu();
+        return;
+    }
+    const session = quizQueue.shift();
+    currentSentenceIndex = session.originalIndex;
+    
+    currentStep = 1;
+    tocScreen.classList.add('hidden');
+    resultScreen.classList.add('hidden');
+    mainQuizArea.classList.remove('hidden');
+    nextBtn.classList.add('hidden');
+    renderCurrentStep();
+}
+
+function handleNext() {
+    currentStep++;
+
+    if (currentStep > 3) { // After flashcards
+        if (quizQueue.length > 0) { // More questions in queue
+            const session = quizQueue.shift();
+            currentSentenceIndex = session.originalIndex;
+            currentStep = 1;
+            renderCurrentStep();
+        } else { // No more questions
+            if (isSequentialMode) {
+                 showResult();
+            } else {
+                showMainMenu();
+            }
+        }
+    } else {
+        renderCurrentStep();
+    }
+}
+
+
+function updateProgress() {
+    const currentData = quizData[currentSentenceIndex];
+    if (!currentData) return; 
+
+    document.getElementById('question-counter').textContent = `例文 ${currentData.id}`;
+    
+    if (isSequentialMode) {
+        const totalQuestions = quizData.length;
+        const completedQuestions = totalQuestions - quizQueue.length - 1;
+        const progress = (completedQuestions / totalQuestions) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+        document.getElementById('progress-bar').classList.remove('hidden');
+
+    } else {
+        document.getElementById('progress-bar').classList.add('hidden');
+    }
+
+
+    Object.values(stepIndicators).forEach(el => el.classList.remove('active'));
+    if (stepIndicators[currentStep]) {
+        stepIndicators[currentStep].classList.add('active');
+    }
+}
+
+function renderCurrentStep() {
+    updateProgress();
+    Object.values(stepViews).forEach(view => view.classList.add('hidden'));
+    stepViews[currentStep].classList.remove('hidden');
+    nextBtn.classList.add('hidden');
+
+    const data = quizData[currentSentenceIndex];
+    switch (currentStep) {
+        case 1: renderStep1(data); break;
+        case 2: renderStep2(data); break;
+        case 3: renderStep3(data); break;
+    }
+}
+
+// --- RENDER FUNCTIONS FOR EACH STEP ---
+
+function renderStep1(data) {
+    const { quiz, originalSentence } = data;
+    const questionText = originalSentence.replace(new RegExp(quiz.target.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'i'), '______');
+    const shuffledChoices = [...quiz.choices].sort(() => Math.random() - 0.5);
+    
+    let optionsHTML = shuffledChoices.map(choice => 
+        `<button class="btn-option w-full p-4 bg-white border border-gray-300 rounded-lg text-left text-gray-700 font-medium transition-all duration-200">${choice}</button>`
+    ).join('');
+
+    stepViews[1].innerHTML = `
+        <p class="text-sm text-gray-500 text-center mb-4">あてはまる選択肢を選びましょう。</p>
+        <div class="mb-6 relative">
+            <p class="text-xl md:text-2xl text-gray-800 text-center p-4 bg-gray-50 rounded-lg">${questionText}</p>
+            <button class="speaker-btn text-xl" onclick="speak('${originalSentence.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button>
+        </div>
+        <div id="step1-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">${optionsHTML}</div>
+        <div id="step1-feedback" class="p-4 rounded-lg text-center font-medium hidden my-4"></div>
+    `;
+
+    document.getElementById('step1-options').addEventListener('click', e => {
+        if (e.target.tagName === 'BUTTON') {
+            handleQuizAnswer(e.target, quiz, data.translation);
+        }
+    });
+}
+
+function handleQuizAnswer(selectedButton, quizInfo, translation) {
+    const isCorrect = selectedButton.innerText.toLowerCase() === quizInfo.target.toLowerCase();
+    
+    quizResults[currentSentenceIndex] = isCorrect;
+    
+    const feedbackEl = document.getElementById('step1-feedback');
+    
+    if (isCorrect) {
+        feedbackEl.innerHTML = `正解！ <span class="font-bold">${quizInfo.target}</span> は「${quizInfo.meaning}」という意味です。`;
+        feedbackEl.className = 'p-4 rounded-lg text-center font-medium my-4 bg-green-100 border border-green-300 text-green-800';
+    } else {
+        feedbackEl.innerHTML = `不正解。正解は <span class="font-bold">${quizInfo.target}</span> です。<br>「${quizInfo.meaning}」という意味になります。`;
+        feedbackEl.className = 'p-4 rounded-lg text-center font-medium my-4 bg-red-100 border border-red-300 text-red-800';
+    }
+    feedbackEl.classList.remove('hidden');
+    
+    const translationEl = document.createElement('p');
+    translationEl.className = 'text-center text-gray-600 mt-2';
+    translationEl.textContent = `文全体の訳：${translation}`;
+    feedbackEl.appendChild(translationEl);
+
+    Array.from(document.getElementById('step1-options').children).forEach(button => {
+        button.disabled = true;
+        if (button.innerText.toLowerCase() === quizInfo.target.toLowerCase()) button.classList.add('bg-green-200', 'border-green-500');
+        else if (button === selectedButton) button.classList.add('bg-red-200', 'border-red-500');
+    });
+
+    nextBtn.textContent = '応用例文へ →';
+    nextBtn.classList.remove('hidden');
+}
+
+function renderStep2(data) {
+    const { application } = data;
+    stepViews[2].innerHTML = `
+        <p class="text-sm text-gray-500 text-center mb-4">応用例文で使い方を確認しましょう。</p>
+        <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-lg mb-4">
+            <p class="font-semibold text-sky-800 mb-2">${application.situation}</p>
+        </div>
+        <div class="mb-4 relative p-4 bg-gray-50 rounded-lg">
+            <p class="text-lg md:text-xl text-gray-800">${application.sentence}</p>
+            <button class="speaker-btn text-xl" onclick="speak(this.previousElementSibling.innerText.replace(/'/g, &quot;\\'&quot;))"><i class="fas fa-volume-up"></i></button>
+        </div>
+        <div class="text-center mb-6">
+            <button id="show-translation-btn" class="text-blue-600 hover:underline">日本語訳を見る</button>
+        </div>
+        <p id="translation-text" class="text-center text-gray-600 hidden mb-6">${application.translation}</p>
+        <div id="self-assessment-buttons" class="flex justify-center space-x-4">
+            <button data-cleared="false" class="self-assess-btn border border-gray-400 text-gray-700 font-bold py-2 px-6 rounded-full hover:bg-gray-100">もう一度</button>
+            <button data-cleared="true" class="self-assess-btn bg-green-500 text-white font-bold py-2 px-6 rounded-full hover:bg-green-600">理解できた！</button>
+        </div>
+    `;
+
+    document.getElementById('show-translation-btn').addEventListener('click', e => {
+        document.getElementById('translation-text').classList.toggle('hidden');
+        e.target.textContent = document.getElementById('translation-text').classList.contains('hidden') ? '日本語訳を見る' : '日本語訳を隠す';
+    });
+
+    document.getElementById('self-assessment-buttons').addEventListener('click', e => {
+        if (e.target.classList.contains('self-assess-btn')) {
+            const cleared = e.target.dataset.cleared === 'true';
+            selfAssessments[currentSentenceIndex] = cleared;
+            
+            nextBtn.textContent = '単語の復習へ →';
+            nextBtn.classList.remove('hidden');
+            document.querySelectorAll('.self-assess-btn').forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('opacity-50');
+            });
+            e.target.classList.remove('opacity-50');
+        }
+    });
+}
+
+function renderFlashcards(container, cards, defaultMode) {
+    container.innerHTML = '';
+    cards.forEach(card => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'flashcard h-48';
+        
+        const frontContent = (defaultMode === 'en-ja') 
+            ? `<h3 class="text-2xl font-bold">${card.en}</h3>`
+            : `<h3 class="text-xl font-bold">${card.ja}</h3><p class="text-gray-500 mt-2">ヒント: ${card.hint}</p>`;
+        
+        const backContent = (defaultMode === 'en-ja')
+            ? `<h3 class="text-xl font-bold">${card.ja}</h3>`
+            : `<h3 class="text-2xl font-bold">${card.en}</h3>`;
+
+        cardEl.innerHTML = `
+            <div class="flashcard-inner">
+                <div class="flashcard-front">${frontContent}<button class="speaker-btn" onclick="event.stopPropagation(); speak('${card.en.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button></div>
+                <div class="flashcard-back">
+                    ${backContent}
+                    <div class="text-center mt-2">
+                        <p class="text-gray-500">${card.kana.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')}</p>
+                        <p class="text-gray-400 text-sm">${card.phonetic}</p>
+                    </div>
+                    <button class="speaker-btn" onclick="event.stopPropagation(); speak('${card.en.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button>
+                </div>
+            </div>
+        `;
+        cardEl.addEventListener('click', () => cardEl.classList.toggle('flipped'));
+        container.appendChild(cardEl);
+    });
+}
+
+function renderStep3(data) {
+    const { flashcards } = data;
+    stepViews[3].innerHTML = `
+        <p class="text-sm text-gray-500 text-center mb-4">カードをタップして関連単語も覚えましょう。</p>
+        <div class="flex justify-center mb-4">
+            <div class="inline-flex rounded-md shadow-sm" role="group">
+                <button type="button" id="mode-en-ja-step3" class="mode-btn bg-blue-500 text-white px-4 py-2 text-sm font-medium border border-gray-200 rounded-l-lg">認識 (英→日)</button>
+                <button type="button" id="mode-ja-en-step3" class="mode-btn bg-white text-gray-900 px-4 py-2 text-sm font-medium border border-gray-200 rounded-r-lg hover:bg-gray-100">想起 (日→英)</button>
+            </div>
+        </div>
+        <div id="flashcard-container-step3" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    `;
+
+    const container = document.getElementById('flashcard-container-step3');
+    renderFlashcards(container, flashcards, 'en-ja');
+
+    const modeBtnEnJa = document.getElementById('mode-en-ja-step3');
+    const modeBtnJaEn = document.getElementById('mode-ja-en-step3');
+    
+    modeBtnEnJa.addEventListener('click', () => {
+        modeBtnEnJa.classList.add('bg-blue-500', 'text-white');
+        modeBtnJaEn.classList.remove('bg-blue-500', 'text-white');
+        renderFlashcards(container, flashcards, 'en-ja');
+    });
+    
+    modeBtnJaEn.addEventListener('click', () => {
+        modeBtnJaEn.classList.add('bg-blue-500', 'text-white');
+        modeBtnEnJa.classList.remove('bg-blue-500', 'text-white');
+        renderFlashcards(container, flashcards, 'ja-en');
+    });
+
+    const nextText = quizQueue.length === 0 ? 
+        (isSequentialMode ? '結果を見る' : '目次に戻る') : 
+        '次の問題へ →';
+    nextBtn.textContent = nextText;
+    nextBtn.classList.remove('hidden');
+}
+
+function renderFinalCheck() {
+    tocScreen.classList.add('hidden');
+    mainQuizArea.classList.add('hidden');
+    resultScreen.classList.add('hidden');
+    finalCheckArea.classList.remove('hidden');
+
+    let allHeadwords = quizData.flatMap(d => d.flashcards);
+    allHeadwords.sort(() => Math.random() - 0.5);
+    const container = document.getElementById('final-check-flashcards');
+    renderFlashcards(container, allHeadwords, 'ja-en');
+}
+
+function showResult() {
+    mainQuizArea.classList.add('hidden');
+    resultScreen.classList.remove('hidden');
+    
+    const clearedCount = selfAssessments.filter(sa => sa === true).length;
+    const totalAssessed = selfAssessments.filter(sa => sa !== null).length;
+    
+    const summaryEl = document.getElementById('self-assessment-summary');
+    summaryEl.innerHTML = `
+        <p class="text-xl">応用例文の理解度: <span class="font-bold text-green-600">${clearedCount}</span> / ${totalAssessed}</p>
+        <p class="text-gray-600 mt-2">「もう一度」を選んだ問題やクイズで間違えた問題は、復習リストに追加されています。</p>
+    `;
+}
+
+</script>
+</body>
+</html>
