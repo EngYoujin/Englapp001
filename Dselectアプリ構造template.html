@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>単語帳学習アプリ 91-100</title>
+    <title>DUOセレクト学習 (テンプレート)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -49,7 +49,7 @@
         
         <!-- Table of Contents Screen (Main Menu) -->
         <div id="toc-screen">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-4">DUOセレクト学習 (91-100)</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-4">DUOセレクト学習 (テンプレート)</h1>
             <p class="text-gray-600 text-center mb-8">学習したい例文を選ぶか、最初から全ての問題に挑戦しましょう。</p>
             
             <div class="border-b pb-8 mb-8">
@@ -124,215 +124,50 @@
     </div>
 
 <script>
-// --- LEARNING APP LOGIC ---
+// --- DATA ---
+// ここにクイズデータを追加します。以下のフォーマットに従ってください。
 const quizData = [
+  /*
     {
-        "id": 91,
-        "originalSentence": "A small bomb suddenly exploded, but fortunately, no one was injured.",
-        "translation": "小さな爆弾が突然爆発したが、幸いにも誰も怪我をしなかった。",
+        "id": 1, // 問題番号 (必須)
+        "originalSentence": "ここに元の英文を入力します。", // 英文 (必須)
+        "translation": "ここに日本語訳を入力します。", // 日本語訳 (必須)
         "quiz": {
-            "target": "exploded",
-            "choices": ["exploded", "was found", "was hidden", "was thrown"],
-            "meaning": "爆発する"
+            "target": "対象単語", // クイズにする単語 (必須)
+            "choices": ["対象単語", "選択肢2", "選択肢3", "選択肢4"], // 選択肢 (必須)
+            "meaning": "単語の意味" // 単語の意味 (必須)
         },
         "application": {
-            "situation": "サプライズの誕生日パーティーでの出来事を話すとき。",
-            "sentence": "When he opened the door, <span class='tooltip-trigger'>confetti<span class='tooltip-content'>紙吹雪のこと。</span></span> bombs exploded everywhere! He was so surprised.",
-            "translation": "彼がドアを開けた途端、クラッカーが一斉に爆発したんだ！すごく驚いてたよ。"
+            "situation": "💡 こんな場面で使える！<br>ここに状況説明を入力します。", // 応用場面 (必須)
+            "sentence": "ここに<span class='tooltip-trigger'>応用例文<span class='tooltip-content'>ツールチップ</span></span>を入力します。", // 応用例文 (必須)
+            "translation": "ここに日本語訳を入力します。" // 応用例文の日本語訳 (必須)
         },
         "flashcards": [
-            { "en": "bomb", "ja": "爆弾", "kana": "バム", "phonetic": "/bɑːm/", "hint": "b" },
-            { "en": "explode", "ja": "爆発する", "kana": "イクス**プロ**ウド", "phonetic": "/ɪkˈsploʊd/", "hint": "e" },
-            { "en": "fortunately", "ja": "幸運にも", "kana": "**フォ**ーチュネトゥリィ", "phonetic": "/ˈfɔːrtʃənətli/", "hint": "f" },
-            { "en": "be injured", "ja": "けがをする", "kana": "ビー **イ**ンジャード", "phonetic": "/bi ˈɪndʒərd/", "hint": "b" }
+            { "en": "word1", "ja": "単語1", "kana": "カナ", "phonetic": "/phonetic/", "hint": "h" },
+            { "en": "word2", "ja": "単語2", "kana": "カナ", "phonetic": "/phonetic/", "hint": "h" }
+            // ... フラッシュカードは必要なだけ追加 ...
         ]
     },
     {
-        "id": 92,
-        "originalSentence": "The empty bottle sank to the bottom of the ocean.",
-        "translation": "その空のボトルは海の底へと沈んでいった。",
+        "id": 2, // 問題番号 (必須)
+        "originalSentence": "This is the second sentence.", // 英文 (必須)
+        "translation": "これは二番目の文章です。", // 日本語訳 (必須)
         "quiz": {
-            "target": "sank",
-            "choices": ["sank", "floated", "shattered", "disappeared"],
-            "meaning": "沈む"
+            "target": "second", // クイズにする単語 (必須)
+            "choices": ["second", "first", "third", "fourth"], // 選択肢 (必須)
+            "meaning": "二番目" // 単語の意味 (必須)
         },
         "application": {
-            "situation": "料理の失敗談を話しているとき。",
-            "sentence": "I left the popcorn in the <span class='tooltip-trigger'>microwave<span class='tooltip-content'>電子レンジのこと。</span></span> too long, and it nearly blew up!",
-            "translation": "ポップコーンをレンジに長くかけすぎて、爆発しそうになっちゃった！"
+            "situation": "💡 こんな場面で使える！<br>順番を説明するとき。", // 応用場面 (必須)
+            "sentence": "This is a sample application sentence.", // 応用例文 (必須)
+            "translation": "これは応用例文のサンプルです。" // 応用例文の日本語訳 (必須)
         },
         "flashcards": [
-            { "en": "blow up", "ja": "爆発する", "kana": "ブロウ **ア**ップ", "phonetic": "/bloʊ ʌp/", "hint": "b" },
-            { "en": "sink", "ja": "沈む", "kana": "スィンク", "phonetic": "/sɪŋk/", "hint": "s" },
-            { "en": "bottom", "ja": "底", "kana": "**バ**トム", "phonetic": "/ˈbɑːtəm/", "hint": "b" },
-            { "en": "ocean", "ja": "海", "kana": "**オ**ウシャン", "phonetic": "/ˈoʊʃn/", "hint": "o" }
-        ]
-    },
-    {
-        "id": 93,
-        "originalSentence": "The unstable pile of books might well collapse at any moment.",
-        "translation": "その不安定な本の山は、今にも崩れ落ちそうだ。",
-        "quiz": {
-            "target": "collapse",
-            "choices": ["collapse", "stand", "disappear", "grow"],
-            "meaning": "崩壊する、崩れる"
-        },
-        "application": {
-            "situation": "ジェンガで遊んでいる、ハラハラする場面。",
-            "sentence": "Be careful! The tower is not stable and it's going to collapse!",
-            "translation": "気をつけて！タワーが不安定で、崩れそうだよ！"
-        },
-        "flashcards": [
-            { "en": "stable", "ja": "安定した", "kana": "**ス**テイブル", "phonetic": "/ˈsteɪbl/", "hint": "s" },
-            { "en": "might well", "ja": "～するのももっともだ", "kana": "マイト **ウェ**ル", "phonetic": "/maɪt wel/", "hint": "m" },
-            { "en": "collapse", "ja": "崩壊する", "kana": "コ**ラ**プス", "phonetic": "/kəˈlæps/", "hint": "c" },
-            { "en": "at any moment", "ja": "今にも", "kana": "アット エニー **モ**ーメント", "phonetic": "/æt ˈɛni ˈmoʊmənt/", "hint": "a" }
-        ]
-    },
-    {
-        "id": 94,
-        "originalSentence": "All of a sudden, the old chair I was sitting on gave way.",
-        "translation": "突然、私が座っていた古い椅子が壊れた。",
-        "quiz": {
-            "target": "gave way",
-            "choices": ["gave way", "stood firm", "was comfortable", "looked nice"],
-            "meaning": "崩れる、壊れる"
-        },
-        "application": {
-            "situation": "友達と議論していて、相手の意見に納得したとき。",
-            "sentence": "I didn't want to give way, but his argument <span class='tooltip-trigger'>made sense<span class='tooltip-content'>「理にかなう」「もっともだ」という意味。</span></span>.",
-            "translation": "僕は折れたくなかったけど、彼の主張は理にかなっていたんだ。"
-        },
-        "flashcards": [
-            { "en": "all of a sudden", "ja": "突然", "kana": "オール オヴ ア **サ**ドゥン", "phonetic": "/ɔl ʌv ə ˈsʌdn/", "hint": "a" },
-            { "en": "ceiling", "ja": "天井", "kana": "**スィ**ーリング", "phonetic": "/ˈsiːlɪŋ/", "hint": "c" },
-            { "en": "give way", "ja": "崩れる、屈する", "kana": "ギヴ **ウェ**イ", "phonetic": "/ɡɪv weɪ/", "hint": "g" }
-        ]
-    },
-    {
-        "id": 95,
-        "originalSentence": "He intends to hand in his resignation paper sooner or later.",
-        "translation": "彼は遅かれ早かれ辞表を提出するつもりだ。",
-        "quiz": {
-            "target": "hand in",
-            "choices": ["hand in", "take back", "throw away", "write"],
-            "meaning": "～を提出する"
-        },
-        "application": {
-            "situation": "宿題をやり終えた達成感を友達に話すとき。",
-            "sentence": "I <span class='tooltip-trigger'>finally<span class='tooltip-content'>「ついに」「ようやく」という意味。達成感を表すのによく使われる。</span></span> finished my essay. I'm going to hand it in tomorrow morning.",
-            "translation": "やっとエッセイが終わった。明日の朝、提出するつもりだよ。"
-        },
-        "flashcards": [
-            { "en": "intend to", "ja": "～するつもりだ", "kana": "イン**テ**ンド トゥ", "phonetic": "/ɪnˈtɛnd tu/", "hint": "i" },
-            { "en": "hand in", "ja": "～を提出する", "kana": "ハンド **イ**ン", "phonetic": "/hænd ɪn/", "hint": "h" },
-            { "en": "resignation", "ja": "辞職", "kana": "レズィグ**ネ**イション", "phonetic": "/ˌrɛzɪɡˈneɪʃn/", "hint": "r" },
-            { "en": "sooner or later", "ja": "遅かれ早かれ", "kana": "**ス**ーナー オア **レ**イター", "phonetic": "/ˈsunər ɔr ˈleɪtər/", "hint": "s" }
-        ]
-    },
-    {
-        "id": 96,
-        "originalSentence": "You should go over your assignment carefully before you turn it in.",
-        "translation": "提出する前に、課題を注意深く見直しなさい。",
-        "quiz": {
-            "target": "go over",
-            "choices": ["go over", "forget", "start", "submit"],
-            "meaning": "～をよく調べる"
-        },
-        "application": {
-            "situation": "プレゼンの前に最終確認をするとき。",
-            "sentence": "Let's go over the slides one more time to <span class='tooltip-trigger'>make sure<span class='tooltip-content'>「～であることを確かめる」という意味。確認作業で頻出。</span></span> everything is perfect.",
-            "translation": "すべてが完璧か確認するために、スライドをもう一度見直そう。"
-        },
-        "flashcards": [
-            { "en": "turn in", "ja": "～を提出する", "kana": "ターン **イ**ン", "phonetic": "/tɜrn ɪn/", "hint": "t" },
-            { "en": "assignment", "ja": "課題", "kana": "ア**サ**インメント", "phonetic": "/əˈsaɪnmənt/", "hint": "a" },
-            { "en": "go over", "ja": "～をよく調べる", "kana": "ゴウ **オ**ーヴァー", "phonetic": "/ɡoʊ ˈoʊvər/", "hint": "g" }
-        ]
-    },
-    {
-        "id": 97,
-        "originalSentence": "This difficult situation calls for everyone's immediate cooperation.",
-        "translation": "この困難な状況は、皆の早急な協力を必要としている。",
-        "quiz": {
-            "target": "calls for",
-            "choices": ["calls for", "prevents", "ignores", "creates"],
-            "meaning": "～を必要とする"
-        },
-        "application": {
-            "situation": "サプライズパーティーの計画を立てるとき。",
-            "sentence": "This plan is <span class='tooltip-trigger'>complicated<span class='tooltip-content'>「複雑な」という意味。簡単ではないことを示す。</span></span>, so it calls for perfect teamwork.",
-            "translation": "この計画は複雑だから、完璧なチームワークが必要だよ。"
-        },
-        "flashcards": [
-            { "en": "protect", "ja": "～を保護する", "kana": "プロ**テ**クト", "phonetic": "/prəˈtɛkt/", "hint": "p" },
-            { "en": "call for", "ja": "～を必要とする", "kana": "コール **フォ**ー", "phonetic": "/kɔl fɔr/", "hint": "c" },
-            { "en": "international", "ja": "国際的な", "kana": "インター**ナ**ショナル", "phonetic": "/ˌɪntərˈnæʃnəl/", "hint": "i" },
-            { "en": "cooperation", "ja": "協力", "kana": "コウオペ**レ**イション", "phonetic": "/koʊˌɑpəˈreɪʃn/", "hint": "c" }
-        ]
-    },
-    {
-        "id": 98,
-        "originalSentence": "This delicate task requires a great deal of skill and caution.",
-        "translation": "この繊細な任務は、多くの技術と注意を要する。",
-        "quiz": {
-            "target": "requires",
-            "choices": ["requires", "lacks", "avoids", "suggests"],
-            "meaning": "～を要する"
-        },
-        "application": {
-            "situation": "プラモデルを作っているとき。",
-            "sentence": "Building this requires a lot of <span class='tooltip-trigger'>patience<span class='tooltip-content'>「忍耐力」という意味。</span></span>. The parts are so small.",
-            "translation": "これを作るのはすごく忍耐力が必要だ。パーツがとても小さいんだ。"
-        },
-        "flashcards": [
-            { "en": "task", "ja": "任務", "kana": "タスク", "phonetic": "/tæsk/", "hint": "t" },
-            { "en": "require", "ja": "～を要する", "kana": "リ**ク**ワイア", "phonetic": "/rɪˈkwaɪər/", "hint": "r" },
-            { "en": "a great deal of", "ja": "たくさんの", "kana": "ア グレイト **ディ**ール オヴ", "phonetic": "/ə ɡreɪt dil ʌv/", "hint": "a" },
-            { "en": "caution", "ja": "注意", "kana": "**コ**ーション", "phonetic": "/ˈkɔʃn/", "hint": "c" }
-        ]
-    },
-    {
-        "id": 99,
-        "originalSentence": "It's cloudy, but chances are it won't rain today.",
-        "translation": "曇っているけど、たぶん今日は雨は降らないよ。",
-        "quiz": {
-            "target": "Chances are",
-            "choices": ["Chances are", "No way", "I doubt", "It's impossible"],
-            "meaning": "たぶん～だろう"
-        },
-        "application": {
-            "situation": "ピクニックの天気を心配している友達に。",
-            "sentence": "Don't worry. Chances are it will be sunny tomorrow.",
-            "translation": "心配しないで。たぶん明日は晴れるよ。"
-        },
-        "flashcards": [
-            { "en": "relax", "ja": "くつろぐ", "kana": "リ**ラ**ックス", "phonetic": "/rɪˈlæks/", "hint": "r" },
-            { "en": "chances are", "ja": "たぶん～だろう", "kana": "**チャ**ンスィズ アー", "phonetic": "/ˈtʃænsɪz ɑr/", "hint": "c" },
-            { "en": "select", "ja": "～を選ぶ", "kana": "セ**レ**クト", "phonetic": "/səˈlɛkt/", "hint": "s" },
-            { "en": "interview", "ja": "面接", "kana": "**イ**ンタヴュー", "phonetic": "/ˈɪntərvju/", "hint": "i" }
-        ]
-    },
-    {
-        "id": 100,
-        "originalSentence": "Please make yourself at home. Help yourself to anything you like.",
-        "translation": "どうぞくつろいでください。好きなものを何でも自由に取って食べてね。",
-        "quiz": {
-            "target": "make yourself at home",
-            "choices": ["make yourself at home", "be quiet", "go home", "stand up"],
-            "meaning": "くつろぐ"
-        },
-        "application": {
-            "situation": "友達を家に招き入れたとき。",
-            "sentence": "<span class='tooltip-trigger'>Come on in<span class='tooltip-content'>「さあ、入って」というフレンドリーな表現。</span></span>! Make yourself at home while I get us some drinks.",
-            "translation": "入って入って！飲み物持ってくるから、楽にしてて。"
-        },
-        "flashcards": [
-            { "en": "make yourself at home", "ja": "くつろぐ", "kana": "メイク ユアセルフ アット **ホ**ーム", "phonetic": "/meɪk jʊərˈsɛlf æt hoʊm/", "hint": "m" },
-            { "en": "help yourself to", "ja": "～を自由に取る", "kana": "ヘルプ ユアセルフ **トゥ**", "phonetic": "/hɛlp jʊərˈsɛlf tu/", "hint": "h" },
-            { "en": "snack", "ja": "軽食", "kana": "スナック", "phonetic": "/snæk/", "hint": "s" }
+            { "en": "sample", "ja": "サンプル", "kana": "サンプル", "phonetic": "/ˈsæmpəl/", "hint": "s" }
         ]
     }
+    // ... 次の問題 ...
+  */
 ];
 
 // --- STATE ---
@@ -430,20 +265,23 @@ async function initVoice() {
     femaleVoices = tempFemaleVoices;
     maleVoices = tempMaleVoices;
 
-    if (femaleVoices.length > 0 && maleVoices.length === 0 && remainingVoices.length > 0) {
-        maleVoices = remainingVoices;
-    }
-    if (maleVoices.length > 0 && femaleVoices.length === 0 && remainingVoices.length > 0) {
-        femaleVoices = remainingVoices;
-    }
+    if (femaleVoices.length > 0 && maleVoices.length === 0 && remainingVoices.length > 0) maleVoices = remainingVoices;
+    if (maleVoices.length > 0 && femaleVoices.length === 0 && remainingVoices.length > 0) femaleVoices = remainingVoices;
     
     if (maleVoices.length === 0 && femaleVoices.length > 0) maleVoices = femaleVoices;
     if (femaleVoices.length === 0 && maleVoices.length > 0) femaleVoices = maleVoices;
 
     if (maleVoices.length === 0 && femaleVoices.length === 0 && englishVoices.length > 0) {
+         console.warn("Could not classify voices into male/female. Using any available English voices for both.");
          maleVoices = englishVoices;
          femaleVoices = englishVoices;
     }
+    
+    console.log("--- Voice Diagnosis ---");
+    console.log("All available English voices:", englishVoices.map(v => v.name));
+    console.log("Assigned Male voices:", maleVoices.map(v => v.name));
+    console.log("Assigned Female voices:", femaleVoices.map(v => v.name));
+    console.log("-----------------------");
 }
 
 speechSynthesis.onvoiceschanged = () => { initVoice(); };
@@ -470,6 +308,9 @@ function speak(text, lang = 'en-US') {
 
         if (selectedVoice) {
             u.voice = selectedVoice;
+            console.log(`Speaking with voice: ${selectedVoice.name}`);
+        } else {
+            console.warn("A specific voice could not be selected. Using browser default.");
         }
         
         voiceToggle++;
@@ -663,8 +504,7 @@ function renderStep2(data) {
     stepViews[2].innerHTML = `
         <p class="text-sm text-gray-500 text-center mb-4">応用例文で使い方を確認しましょう。</p>
         <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-lg mb-4">
-            <p class="font-semibold text-sky-800 mb-2">💡 こんな場面で使える！</p>
-            <p class="text-gray-700">${application.situation}</p>
+            <p class="font-semibold text-sky-800 mb-2">${application.situation}</p>
         </div>
         <div class="mb-4 relative p-4 bg-gray-50 rounded-lg">
             <p class="text-lg md:text-xl text-gray-800">${application.sentence}</p>
