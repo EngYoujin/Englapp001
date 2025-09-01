@@ -1,30 +1,68 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>Englapp001 Index</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; }
-  h1 { color: #333; }
-  ul { list-style-type: none; padding: 0; }
-  li { margin: 8px 0; }
-  a { text-decoration: none; color: #0066cc; }
-  a:hover { text-decoration: underline; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Englapp001 - 学習メニュー</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    }
+  </style>
+  <script>
+    // Optional: Basic dark mode persistence
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  </script>
 </head>
-<body>
-<h1>Englapp001 - 練習ファイル一覧</h1>
-<ul>
-  <li><a href="Dselect1~10fm.html">Dselect1~10</a></li>
-  <li><a href="Dselect11~20fm.html">Dselect11~20</a></li>
-  <li><a href="Dselect21~30fm.html">Dselect21~30</a></li>
-  <li><a href="Dselect31~40fm.html">Dselect31~40</a></li>
-  <li><a href="Dselect41-50fm.html">Dselect41-50</a></li>
-  <li><a href="Dselect51~60fm.html">Dselect51~60</a></li>
-  <li><a href="Dselect61~70fm.html">Dselect61~70</a></li>
-  <li><a href="Dselect71~80fm.html">Dselect71~80</a></li>
-  <li><a href="Dselect81-90fm.html">Dselect81-90</a></li>
-  <li><a href="Dselect91-100fm.html">Dselect91-100</a></li>
-</ul>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+
+  <header class="bg-white dark:bg-gray-800 shadow-md mb-8">
+    <div class="container mx-auto px-6 py-4">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white text-center">Englapp001 - 学習メニュー</h1>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+    <ul class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+      
+      <!-- 01-50 -->
+      <li><a href="DSelect01-10.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📖</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 01–10</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect11-20.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📖</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 11–20</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect21-30.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📖</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 21–30</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect31-40.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📖</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 31–40</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect41-50.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📖</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 41–50</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+
+      <!-- 51-100 -->
+      <li><a href="DSelect51-60.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📑</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 51–60</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect61-70.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📑</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 61–70</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect71-80.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📑</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 71–80</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect81-90.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📑</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 81–90</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect91-100.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📑</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 91–100</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+
+      <!-- 101-150 -->
+      <li><a href="DSelect101-110.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📝</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 101–110</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect111-120.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📝</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 111–120</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect121-130.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📝</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 121–130</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect131-140.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📝</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 131–140</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect141-150.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">📝</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 141–150</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      
+      <!-- 151-200 -->
+      <li><a href="DSelect151-160.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">💡</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 151–160</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect161-170.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">💡</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 161–170</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect171-180.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">💡</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 171–180</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect181-190.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">💡</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 181–190</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+      <li><a href="DSelect191-200.html" class="group block rounded-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all duration-200"><div class="text-3xl mb-2">💡</div><div class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">クイズ & カード学習 191–200</div><div class="text-sm text-gray-500 dark:text-gray-400 mt-1">四択 → 応用 → フラッシュカード</div></a></li>
+
+    </ul>
+  </main>
+
 </body>
 </html>

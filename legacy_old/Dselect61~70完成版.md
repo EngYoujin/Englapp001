@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>単語帳学習アプリ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', 'Inter', sans-serif; }
+        .quiz-container { max-width: 800px; width: 95%; }
+        .step-indicator.active { background-color: #3b82f6; color: white; font-weight: bold; }
+        .btn-option:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .flashcard { perspective: 1000px; cursor: pointer; }
+        .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem; border-radius: 0.75rem; border: 1px solid #d1d5db; }
+        .flashcard-front { background-color: white; }
+        .flashcard-back { background-color: #f0f9ff; transform: rotateY(180deg); }
+        .speaker-btn { position: absolute; top: 10px; right: 10px; color: #6b7280; }
+        .speaker-btn:hover { color: #3b82f6; }
+        .tooltip-trigger { border-bottom: 2px dotted #3b82f6; cursor: pointer; position: relative; }
+        .tooltip-content { visibility: hidden; width: max-content; max-width: 250px; background-color: #1f2937; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .tooltip-trigger:hover .tooltip-content { visibility: visible; opacity: 1; }
+        .review-mark {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+            background-color: #ef4444;
+            border-radius: 9999px;
+            width: 1.1rem;
+            height: 1.1rem;
+            line-height: 1.1rem;
+            text-align: center;
+            margin-left: 0.25rem;
+        }
+        .toc-item-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="app-container" class="quiz-container mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+        
+        <!-- Table of Contents Screen (Main Menu) -->
+        <div id="toc-screen">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-4">DUOセレクト学習</h1>
+            <p class="text-gray-600 text-center mb-8">学習したい例文を選ぶか、最初から全ての問題に挑戦しましょう。</p>
+            
+            <div class="border-b pb-8 mb-8">
+                <h2 class="text-lg font-bold text-gray-700 text-center mb-4">メイン学習</h2>
+                <button id="start-sequential-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105">
+                    最初から順番に全ての問題をやる
+                </button>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-bold text-gray-700 text-center mb-4">個別学習・復習</h2>
+                <div id="toc-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+            </div>
+            
+            <div class="border-t pt-8 mt-8">
+                 <h2 class="text-lg font-bold text-gray-700 text-center mb-4">腕試し</h2>
+                 <button id="final-check-btn" class="w-full bg-white hover:bg-gray-100 text-gray-700 font-semibold py-2 px-6 border border-gray-300 rounded-full">
+                    まとめて最終チェック (日→英)
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Quiz Area -->
+        <div id="main-quiz-area" class="hidden">
+            <!-- Progress and Title -->
+            <div class="flex justify-between items-center mb-2">
+                 <button id="back-to-toc-btn" class="text-blue-500 hover:text-blue-700 font-semibold"><i class="fas fa-arrow-left mr-2"></i>目次に戻る</button>
+                <p id="question-counter" class="text-gray-500 font-medium"></p>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                <div id="progress-bar" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%; transition: width 0.3s ease-in-out;"></div>
+            </div>
+            <!-- Step Indicators -->
+            <div class="flex justify-center space-x-1 md:space-x-2 mb-6 text-xs md:text-sm">
+                <div id="step-indicator-1" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">1:クイズ</div>
+                <div id="step-indicator-2" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">2:応用</div>
+                <div id="step-indicator-3" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">3:復習</div>
+            </div>
+
+            <!-- Step Views -->
+            <div id="step-views">
+                <div id="step1-quiz" class="step-view"></div>
+                <div id="step2-application" class="step-view hidden"></div>
+                <div id="step3-flashcards" class="step-view hidden"></div>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="text-center mt-6">
+                <button id="next-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-full transition-colors hidden">次へ</button>
+            </div>
+        </div>
+        
+        <!-- Final Check Area -->
+        <div id="final-check-area" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                 <button id="back-to-toc-from-final-btn" class="text-blue-500 hover:text-blue-700 font-semibold"><i class="fas fa-arrow-left mr-2"></i>目次に戻る</button>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-4">まとめて最終チェック</h2>
+            <p class="text-sm text-gray-500 text-center mb-6">日本語を見て、対応する英単語を思い出してみましょう。カードをタップすると答えが表示されます。</p>
+            <div id="final-check-flashcards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">全問終了！お疲れ様でした！</h2>
+            <p class="text-lg text-gray-700 mb-6">学習結果を確認しましょう。</p>
+            <div id="self-assessment-summary"></div>
+            <div class="mt-8">
+                <button id="review-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105 mr-4">目次で復習する</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// --- LEARNING APP LOGIC ---
+const quizData = [
+    {
+        "id": 61,
+        "originalSentence": "He claims that this valuable property belongs to him.",
+        "translation": "彼はこの価値ある財産が自分のものであると主張している。",
+        "quiz": {
+            "target": "claims",
+            "choices": ["claims", "requests", "admits", "suggests"],
+            "meaning": "…だと主張する"
+        },
+        "application": {
+            "situation": "友達がUFOを見たなど、ちょっと信じがたい話をしていて、自分はその話を疑っているとき。",
+            "sentence": "My brother claims he saw a UFO last night, but I'm <span class='tooltip-trigger'>not so sure<span class='tooltip-content'>「どうかな」「確信はないな」という、少し疑っている気持ちを表す表現。</span></span>.",
+            "translation": "弟は昨日の夜UFOを見たって主張してるけど、僕はどうも信じられないな。"
+        },
+        "flashcards": [
+            { "en": "claim", "ja": "…だと主張する", "kana": "ク**レ**イム", "phonetic": "/kleɪm/", "hint": "c" },
+            { "en": "two-thirds", "ja": "3分の2", "kana": "トゥー **サ**ーズ", "phonetic": "/tuː θɜːrdz/", "hint": "t" },
+            { "en": "property", "ja": "財産、不動産", "kana": "プ**ラ**パティ", "phonetic": "/ˈprɑːpərti/", "hint": "p" },
+            { "en": "belong to", "ja": "…の所有物である", "kana": "ビ**ロ**ング トゥ", "phonetic": "/bɪˈlɔːŋ tuː/", "hint": "b" }
+        ]
+    },
+    {
+        "id": 62,
+        "originalSentence": "Be careful, the river is not shallow but very deep.",
+        "translation": "気をつけて、その川は浅くなく、とても深いです。",
+        "quiz": {
+            "target": "shallow",
+            "choices": ["shallow", "deep", "narrow", "wide"],
+            "meaning": "浅い"
+        },
+        "application": {
+            "situation": "映画の感想を話していて、登場人物のキャラクターについて意見を言うとき。",
+            "sentence": "I found the main character to be a bit shallow; his <span class='tooltip-trigger'>motivations<span class='tooltip-content'>「動機」のこと。なぜその行動を取ったのかという理由。</span></span> weren't very believable.",
+            "translation": "主人公がちょっと浅はかだと感じたな。彼の動機にはあまり説得力がなかったよ。"
+        },
+        "flashcards": [
+            { "en": "stream", "ja": "小川", "kana": "スト**リ**ーム", "phonetic": "/striːm/", "hint": "s" },
+            { "en": "shallow", "ja": "浅い", "kana": "**シャ**ロウ", "phonetic": "/ˈʃæloʊ/", "hint": "s" },
+            { "en": "foot", "ja": "フィート（長さの単位）", "kana": "フット", "phonetic": "/fʊt/", "hint": "f" },
+            { "en": "deep", "ja": "深い", "kana": "**ディ**ープ", "phonetic": "/diːp/", "hint": "d" }
+        ]
+    },
+    {
+        "id": 63,
+        "originalSentence": "Please weigh this package before you send it.",
+        "translation": "送る前にこの小包の重さを量ってください。",
+        "quiz": {
+            "target": "weigh",
+            "choices": ["weigh", "cost", "deliver", "contain"],
+            "meaning": "…の重さを量る"
+        },
+        "application": {
+            "situation": "旅行の準備で、スーツケースの重さが気になるとき。",
+            "sentence": "I need to weigh my suitcase to make sure it's not <span class='tooltip-trigger'>overweight<span class='tooltip-content'>「重量超過」のこと。空港のチェックインカウンターでよく聞く言葉。</span></span> for the flight.",
+            "translation": "飛行機の重量制限を超えていないか確認するために、スーツケースの重さを量らなきゃ。"
+        },
+        "flashcards": [
+            { "en": "package", "ja": "小包、包み", "kana": "**パ**ケジ", "phonetic": "/ˈpækɪdʒ/", "hint": "p" },
+            { "en": "weigh", "ja": "…の重さがある", "kana": "ウェイ", "phonetic": "/weɪ/", "hint": "w" },
+            { "en": "pound", "ja": "ポンド（重量・貨幣単位）", "kana": "**パ**ウンド", "phonetic": "/paʊnd/", "hint": "p" },
+            { "en": "more or less", "ja": "だいたい", "kana": "モア オア **レ**ス", "phonetic": "/mɔːr ɔːr les/", "hint": "m" }
+        ]
+    },
+    {
+        "id": 64,
+        "originalSentence": "This room is approximately twice as large as mine.",
+        "translation": "この部屋は私の部屋のほぼ2倍の大きさです。",
+        "quiz": {
+            "target": "approximately",
+            "choices": ["approximately", "totally", "suddenly", "over"],
+            "meaning": "ほぼ、およそ"
+        },
+        "application": {
+            "situation": "待ち合わせの時間にどれくらいで着くか伝えるとき。",
+            "sentence": "I'm on the train now. I should be there in approximately 15 minutes.",
+            "translation": "今、電車に乗ったところ。15分くらいでそっちに着くはずだよ。"
+        },
+        "flashcards": [
+            { "en": "approximately", "ja": "ほぼ、およそ", "kana": "アプ**ロ**クスミトゥリィ", "phonetic": "/əˈprɑːksɪmətli/", "hint": "a" },
+            { "en": "twice as large as", "ja": "…の2倍の大きさの", "kana": "トゥワイス アズ **ラ**ージ アズ", "phonetic": "/twaɪs æz lɑːrdʒ æz/", "hint": "t" },
+            { "en": "Mars", "ja": "火星", "kana": "**マ**ーズ", "phonetic": "/mɑːrz/", "hint": "M" }
+        ]
+    },
+    {
+        "id": 65,
+        "originalSentence": "I came across an interesting article about space travel.",
+        "translation": "宇宙旅行に関する面白い記事を偶然見つけた。",
+        "quiz": {
+            "target": "came across",
+            "choices": ["came across", "searched for", "wrote", "picked up"],
+            "meaning": "偶然…を見つける"
+        },
+        "application": {
+            "situation": "部屋の片付けをしていたら、昔の写真や手紙が出てきたとき。",
+            "sentence": "While cleaning my room, I came across my old photo albums. It was a real <span class='tooltip-trigger'>blast from the past<span class='tooltip-content'>「懐かしい思い出」という意味のイディオム。「blast」は元々「爆発」だが、スラングで「とても楽しい時間」も意味する。</span></span>!",
+            "translation": "部屋を掃除していたら、古いアルバムを偶然見つけたんだ。すごく懐かしい気持ちになったよ！"
+        },
+        "flashcards": [
+            { "en": "come across", "ja": "偶然…を見つける", "kana": "カム ア**ク**ロス", "phonetic": "/kʌm əˈkrɔːs/", "hint": "c" },
+            { "en": "article", "ja": "記事", "kana": "**ア**ーティクル", "phonetic": "/ˈɑːrtɪkl/", "hint": "a" },
+            { "en": "favorite", "ja": "お気に入りの", "kana": "**フェ**イヴァリット", "phonetic": "/ˈfeɪvərɪt/", "hint": "f" },
+            { "en": "novel", "ja": "（長編）小説", "kana": "**ノ**ヴォウ", "phonetic": "/ˈnɑːvəl/", "hint": "n" },
+            { "en": "tear out", "ja": "…を（破り）取る", "kana": "**テ**ア **ア**ウト", "phonetic": "/ter aʊt/", "hint": "t" }
+        ]
+    },
+    {
+        "id": 66,
+        "originalSentence": "Can you pick out a tie to go with this shirt?",
+        "translation": "このシャツに合うネクタイを選んでくれますか？",
+        "quiz": {
+            "target": "go with",
+            "choices": ["go with", "put on", "take off", "try on"],
+            "meaning": "…に合う、調和する"
+        },
+        "application": {
+            "situation": "新しい家具を買うときに、部屋の雰囲気に合うかどうか相談するとき。",
+            "sentence": "I like this blue sofa, but do you think it will go with the curtains and the <span class='tooltip-trigger'>rug<span class='tooltip-content'>床に敷く「敷物」のこと。カーペットよりも小さいものを指すことが多い。</span></span>?",
+            "translation": "この青いソファは好きだけど、カーテンやラグに合うと思う？"
+        },
+        "flashcards": [
+            { "en": "pick out", "ja": "…を選び出す", "kana": "ピック **ア**ウト", "phonetic": "/pɪk aʊt/", "hint": "p" },
+            { "en": "item", "ja": "品目、もの", "kana": "**ア**イテム", "phonetic": "/ˈaɪtəm/", "hint": "i" },
+            { "en": "go with", "ja": "…に合う", "kana": "ゴウ ウィズ", "phonetic": "/ɡoʊ wɪð/", "hint": "g" },
+            { "en": "pants", "ja": "ズボン", "kana": "パンツ", "phonetic": "/pænts/", "hint": "p" }
+        ]
+    },
+    {
+        "id": 67,
+        "originalSentence": "The room was so smoky I could barely breathe.",
+        "translation": "部屋はとても煙たくて、私はかろうじて息をすることができた。",
+        "quiz": {
+            "target": "barely",
+            "choices": ["barely", "deeply", "loudly", "calmly"],
+            "meaning": "かろうじて、やっと"
+        },
+        "application": {
+            "situation": "満員電車で、やっとの思いで電車に乗ったとき。",
+            "sentence": "The train was so crowded this morning, I barely managed to <span class='tooltip-trigger'>squeeze in<span class='tooltip-content'>「（狭い場所に）割り込む、押し入る」という意味。満員電車などで使われる表現。</span></span> before the doors closed.",
+            "translation": "今朝の電車はすごく混んでて、ドアが閉まる前にかろうじて乗り込めたよ。"
+        },
+        "flashcards": [
+            { "en": "faint", "ja": "気を失う", "kana": "**フェ**イント", "phonetic": "/feɪnt/", "hint": "f" },
+            { "en": "barely", "ja": "かろうじて…（する）", "kana": "**ベ**アリィ", "phonetic": "/ˈberli/", "hint": "b" },
+            { "en": "breathe", "ja": "呼吸する", "kana": "ブ**リ**ーズ", "phonetic": "/briːð/", "hint": "b" }
+        ]
+    },
+    {
+        "id": 68,
+        "originalSentence": "I advise you to stay here for the time being.",
+        "translation": "当分の間は、ここにいることをお勧めします。",
+        "quiz": {
+            "target": "for the time being",
+            "choices": ["for the time being", "in the future", "in advance", "at that time"],
+            "meaning": "当分の間は"
+        },
+        "application": {
+            "situation": "引越し先はまだ決まっていないが、とりあえず今の場所に住み続けることを話すとき。",
+            "sentence": "I'm still looking for a new apartment, but I'll <span class='tooltip-trigger'>stay at<span class='tooltip-content'>「～に滞在する」という意味。ホテルや友人宅などに泊まる場合に使われる。</span></span> my <span class='tooltip-trigger'>current<span class='tooltip-content'>「現在の」という意味。'current situation'（現状）など。</span></span> place for the time being.",
+            "translation": "まだ新しいアパートを探しているけど、当分の間は今の場所に住むつもりだよ。"
+        },
+        "flashcards": [
+            { "en": "advise", "ja": "…に助言する", "kana": "アド**ヴァ**イズ", "phonetic": "/ədˈvaɪz/", "hint": "a" },
+            { "en": "comment", "ja": "コメント、見解", "kana": "**カ**メント", "phonetic": "/ˈkɑːment/", "hint": "c" },
+            { "en": "the press", "ja": "報道陣", "kana": "ザ プ**レ**ス", "phonetic": "/ðə pres/", "hint": "p" },
+            { "en": "for the time being", "ja": "当分の間は", "kana": "フォー ザ タイム **ビ**ーイング", "phonetic": "/fɔːr ðə taɪm ˈbiːɪŋ/", "hint": "f" }
+        ]
+    },
+    {
+        "id": 69,
+        "originalSentence": "We don't have sufficient evidence to solve the case.",
+        "translation": "我々にはその事件を解決するための十分な証拠がない。",
+        "quiz": {
+            "target": "sufficient",
+            "choices": ["sufficient", "initial", "potential", "personal"],
+            "meaning": "十分な"
+        },
+        "application": {
+            "situation": "旅行の計画を立てているが、まだ情報が足りないと感じるとき。",
+            "sentence": "Before we book anything, we need to <span class='tooltip-trigger'>gather<span class='tooltip-content'>「～を集める」という意味。情報や人々など、様々なものを集める際に使われる。</span></span> sufficient information about the local transportation.",
+            "translation": "何か予約する前に、現地の交通機関について十分な情報を集める必要があるね。"
+        },
+        "flashcards": [
+            { "en": "at present", "ja": "現時点で", "kana": "アット プ**レ**ゼント", "phonetic": "/æt ˈpreznt/", "hint": "a" },
+            { "en": "sufficient", "ja": "十分な", "kana": "サ**フィ**シェント", "phonetic": "/səˈfɪʃənt/", "hint": "s" },
+            { "en": "evidence", "ja": "証拠", "kana": "**エ**ヴィデンス", "phonetic": "/ˈevɪdəns/", "hint": "e" },
+            { "en": "prove", "ja": "…を証明する", "kana": "プルーヴ", "phonetic": "/pruːv/", "hint": "p" },
+            { "en": "guilty", "ja": "有罪の", "kana": "**ギ**ルティ", "phonetic": "/ˈɡɪlti/", "hint": "g" }
+        ]
+    },
+    {
+        "id": 70,
+        "originalSentence": "This year's exports will probably exceed last year's total.",
+        "translation": "今年の輸出総額は、おそらく去年の合計を超えるだろう。",
+        "quiz": {
+            "target": "exceed",
+            "choices": ["exceed", "equal", "decrease", "affect"],
+            "meaning": "…を超える"
+        },
+        "application": {
+            "situation": "期待していた以上に映画やコンサートが素晴らしかったと感想を言うとき。",
+            "sentence": "The concert was amazing! It totally exceeded all my <span class='tooltip-trigger'>expectations<span class='tooltip-content'>「期待」「予想」という意味。'expectation'の複数形で使われることが多い。</span></span>.",
+            "translation": "あのコンサートは最高だった！完全に僕の期待を超えてたよ。"
+        },
+        "flashcards": [
+            { "en": "export", "ja": "輸出", "kana": "**エ**クスポート", "phonetic": "/ˈekspɔːrt/", "hint": "e" },
+            { "en": "exceed", "ja": "…を超える", "kana": "イク**スィ**ード", "phonetic": "/ɪkˈsiːd/", "hint": "e" },
+            { "en": "import", "ja": "輸入", "kana": "**イ**ンポート", "phonetic": "/ˈɪmpɔːrt/", "hint": "i" },
+            { "en": "trade balance", "ja": "貿易収支", "kana": "**トゥ**レイド **バ**ランス", "phonetic": "/treɪd ˈbæləns/", "hint": "t" },
+            { "en": "surplus", "ja": "黒字", "kana": "**サ**ァプラス", "phonetic": "/ˈsɜːrplʌs/", "hint": "s" }
+        ]
+    }
+];
+
+// --- STATE ---
+let currentSentenceIndex = 0;
+let currentStep = 1;
+let selfAssessments = new Array(quizData.length).fill(null);
+let quizResults = new Array(quizData.length).fill(null);
+let isSequentialMode = false; 
+let speechSynthesis = window.speechSynthesis;
+let englishVoice = null;
+let quizQueue = [];
+
+// --- DOM ELEMENTS ---
+const tocScreen = document.getElementById('toc-screen');
+const mainQuizArea = document.getElementById('main-quiz-area');
+const finalCheckArea = document.getElementById('final-check-area');
+const resultScreen = document.getElementById('result-screen');
+const startSequentialBtn = document.getElementById('start-sequential-btn');
+const finalCheckBtn = document.getElementById('final-check-btn');
+const nextBtn = document.getElementById('next-btn');
+const reviewBtn = document.getElementById('review-btn');
+const backToTocBtn = document.getElementById('back-to-toc-btn');
+const backToTocFromFinalBtn = document.getElementById('back-to-toc-from-final-btn');
+
+const stepViews = {
+    1: document.getElementById('step1-quiz'),
+    2: document.getElementById('step2-application'),
+    3: document.getElementById('step3-flashcards'),
+};
+const stepIndicators = {
+    1: document.getElementById('step-indicator-1'),
+    2: document.getElementById('step-indicator-2'),
+    3: document.getElementById('step-indicator-3'),
+};
+
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', showMainMenu);
+
+// --- EVENT LISTENERS ---
+startSequentialBtn.addEventListener('click', () => {
+    isSequentialMode = true;
+    quizResults = new Array(quizData.length).fill(null);
+    selfAssessments = new Array(quizData.length).fill(null);
+    startQuizSession(Array.from(Array(quizData.length).keys()));
+});
+
+finalCheckBtn.addEventListener('click', () => {
+    isSequentialMode = false;
+    renderFinalCheck();
+});
+
+nextBtn.addEventListener('click', handleNext);
+reviewBtn.addEventListener('click', showMainMenu);
+backToTocBtn.addEventListener('click', showMainMenu);
+backToTocFromFinalBtn.addEventListener('click', showMainMenu);
+
+// --- Voice Initialization Logic ---
+function loadVoices() {
+    const voices = speechSynthesis.getVoices();
+    englishVoice = voices.find(voice => voice.lang.startsWith('en-US')) || voices.find(voice => voice.lang.startsWith('en-'));
+}
+speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+
+// --- FUNCTIONS ---
+
+function speak(text, lang = 'en-US') {
+    if (speechSynthesis.speaking) speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (englishVoice) utterance.voice = englishVoice;
+    utterance.lang = lang;
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
+}
+
+function showMainMenu() {
+    resultScreen.classList.add('hidden');
+    mainQuizArea.classList.add('hidden');
+    finalCheckArea.classList.add('hidden');
+    tocScreen.classList.remove('hidden');
+    
+    const tocList = document.getElementById('toc-list');
+    tocList.innerHTML = '';
+    quizData.forEach((data, index) => {
+        const quizNeedsReview = quizResults[index] === false;
+        const appNeedsReview = selfAssessments[index] === false;
+
+        const item = document.createElement('button');
+        item.className = 'toc-item p-3 border rounded-lg text-center hover:bg-gray-100 transition-colors flex flex-col justify-center items-center h-full';
+        if (quizNeedsReview || appNeedsReview) item.classList.add('needs-review', 'border-red-400', 'bg-red-50');
+        
+        let reviewMarksHTML = '<div class="flex items-center mt-1">';
+        if (quizNeedsReview) {
+            reviewMarksHTML += '<span class="review-mark" title="クイズを復習">Q</span>';
+        }
+        if (appNeedsReview) {
+            reviewMarksHTML += '<span class="review-mark" title="応用を復習">A</span>';
+        }
+        reviewMarksHTML += '</div>';
+
+        item.innerHTML = `
+            <div class="toc-item-content">
+                <span class="font-semibold">例文 ${data.id}</span>
+                ${(quizNeedsReview || appNeedsReview) ? reviewMarksHTML : ''}
+            </div>
+        `;
+        item.onclick = () => {
+            isSequentialMode = false;
+            startQuizSession([index]);
+        };
+        tocList.appendChild(item);
+    });
+}
+
+
+function startQuizSession(indices) {
+    quizQueue = indices.map(i => ({ index: i, originalIndex: i })); 
+    if (quizQueue.length === 0) {
+        showMainMenu();
+        return;
+    }
+    const session = quizQueue.shift();
+    currentSentenceIndex = session.originalIndex;
+    
+    currentStep = 1;
+    tocScreen.classList.add('hidden');
+    resultScreen.classList.add('hidden');
+    mainQuizArea.classList.remove('hidden');
+    nextBtn.classList.add('hidden');
+    renderCurrentStep();
+}
+
+function handleNext() {
+    currentStep++;
+
+    if (currentStep > 3) { // After flashcards
+        if (quizQueue.length > 0) { // More questions in queue
+            const session = quizQueue.shift();
+            currentSentenceIndex = session.originalIndex;
+            currentStep = 1;
+            renderCurrentStep();
+        } else { // No more questions
+            if (isSequentialMode) {
+                 showResult();
+            } else {
+                showMainMenu();
+            }
+        }
+    } else {
+        renderCurrentStep();
+    }
+}
+
+
+function updateProgress() {
+    const currentData = quizData[currentSentenceIndex];
+    if (!currentData) return; 
+
+    document.getElementById('question-counter').textContent = `例文 ${currentData.id}`;
+    
+    if (isSequentialMode) {
+        const totalQuestions = quizData.length;
+        const completedQuestions = totalQuestions - quizQueue.length - 1;
+        const progress = (completedQuestions / totalQuestions) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+        document.getElementById('progress-bar').classList.remove('hidden');
+
+    } else {
+        document.getElementById('progress-bar').classList.add('hidden');
+    }
+
+
+    Object.values(stepIndicators).forEach(el => el.classList.remove('active'));
+    if (stepIndicators[currentStep]) {
+        stepIndicators[currentStep].classList.add('active');
+    }
+}
+
+function renderCurrentStep() {
+    updateProgress();
+    Object.values(stepViews).forEach(view => view.classList.add('hidden'));
+    stepViews[currentStep].classList.remove('hidden');
+    nextBtn.classList.add('hidden');
+
+    const data = quizData[currentSentenceIndex];
+    switch (currentStep) {
+        case 1: renderStep1(data); break;
+        case 2: renderStep2(data); break;
+        case 3: renderStep3(data); break;
+    }
+}
+
+// --- RENDER FUNCTIONS FOR EACH STEP ---
+
+function renderStep1(data) {
+    const { quiz, originalSentence } = data;
+    const questionText = originalSentence.replace(new RegExp(quiz.target.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'i'), '______');
+    const shuffledChoices = [...quiz.choices].sort(() => Math.random() - 0.5);
+    
+    let optionsHTML = shuffledChoices.map(choice => 
+        `<button class="btn-option w-full p-4 bg-white border border-gray-300 rounded-lg text-left text-gray-700 font-medium transition-all duration-200">${choice}</button>`
+    ).join('');
+
+    stepViews[1].innerHTML = `
+        <p class="text-sm text-gray-500 text-center mb-4">あてはまる選択肢を選びましょう。</p>
+        <div class="mb-6 relative">
+            <p class="text-xl md:text-2xl text-gray-800 text-center p-4 bg-gray-50 rounded-lg">${questionText}</p>
+            <button class="speaker-btn text-xl" onclick="speak('${originalSentence.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button>
+        </div>
+        <div id="step1-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">${optionsHTML}</div>
+        <div id="step1-feedback" class="p-4 rounded-lg text-center font-medium hidden my-4"></div>
+    `;
+
+    document.getElementById('step1-options').addEventListener('click', e => {
+        if (e.target.tagName === 'BUTTON') {
+            handleQuizAnswer(e.target, quiz, data.translation);
+        }
+    });
+}
+
+function handleQuizAnswer(selectedButton, quizInfo, translation) {
+    const isCorrect = selectedButton.innerText.toLowerCase() === quizInfo.target.toLowerCase();
+    
+    quizResults[currentSentenceIndex] = isCorrect;
+    
+    const feedbackEl = document.getElementById('step1-feedback');
+    
+    if (isCorrect) {
+        feedbackEl.innerHTML = `正解！ <span class="font-bold">${quizInfo.target}</span> は「${quizInfo.meaning}」という意味です。`;
+        feedbackEl.className = 'p-4 rounded-lg text-center font-medium my-4 bg-green-100 border border-green-300 text-green-800';
+    } else {
+        feedbackEl.innerHTML = `不正解。正解は <span class="font-bold">${quizInfo.target}</span> です。<br>「${quizInfo.meaning}」という意味になります。`;
+        feedbackEl.className = 'p-4 rounded-lg text-center font-medium my-4 bg-red-100 border border-red-300 text-red-800';
+    }
+    feedbackEl.classList.remove('hidden');
+    
+    const translationEl = document.createElement('p');
+    translationEl.className = 'text-center text-gray-600 mt-2';
+    translationEl.textContent = `文全体の訳：${translation}`;
+    feedbackEl.appendChild(translationEl);
+
+    Array.from(document.getElementById('step1-options').children).forEach(button => {
+        button.disabled = true;
+        if (button.innerText.toLowerCase() === quizInfo.target.toLowerCase()) button.classList.add('bg-green-200', 'border-green-500');
+        else if (button === selectedButton) button.classList.add('bg-red-200', 'border-red-500');
+    });
+
+    nextBtn.textContent = '応用例文へ →';
+    nextBtn.classList.remove('hidden');
+}
+
+function renderStep2(data) {
+    const { application } = data;
+    stepViews[2].innerHTML = `
+        <p class="text-sm text-gray-500 text-center mb-4">応用例文で使い方を確認しましょう。</p>
+        <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-lg mb-4">
+            <p class="font-semibold text-sky-800 mb-2">💡 こんな場面で使える！</p>
+            <p class="text-gray-700">${application.situation}</p>
+        </div>
+        <div class="mb-4 relative p-4 bg-gray-50 rounded-lg">
+            <p class="text-lg md:text-xl text-gray-800">${application.sentence}</p>
+            <button class="speaker-btn text-xl" onclick="speak(this.previousElementSibling.innerText.replace(/'/g, &quot;\\'&quot;))"><i class="fas fa-volume-up"></i></button>
+        </div>
+        <div class="text-center mb-6">
+            <button id="show-translation-btn" class="text-blue-600 hover:underline">日本語訳を見る</button>
+        </div>
+        <p id="translation-text" class="text-center text-gray-600 hidden mb-6">${application.translation}</p>
+        <div id="self-assessment-buttons" class="flex justify-center space-x-4">
+            <button data-cleared="false" class="self-assess-btn border border-gray-400 text-gray-700 font-bold py-2 px-6 rounded-full hover:bg-gray-100">もう一度</button>
+            <button data-cleared="true" class="self-assess-btn bg-green-500 text-white font-bold py-2 px-6 rounded-full hover:bg-green-600">理解できた！</button>
+        </div>
+    `;
+
+    document.getElementById('show-translation-btn').addEventListener('click', e => {
+        document.getElementById('translation-text').classList.toggle('hidden');
+        e.target.textContent = document.getElementById('translation-text').classList.contains('hidden') ? '日本語訳を見る' : '日本語訳を隠す';
+    });
+
+    document.getElementById('self-assessment-buttons').addEventListener('click', e => {
+        if (e.target.classList.contains('self-assess-btn')) {
+            const cleared = e.target.dataset.cleared === 'true';
+            selfAssessments[currentSentenceIndex] = cleared;
+            
+            nextBtn.textContent = '単語の復習へ →';
+            nextBtn.classList.remove('hidden');
+            document.querySelectorAll('.self-assess-btn').forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('opacity-50');
+            });
+            e.target.classList.remove('opacity-50');
+        }
+    });
+}
+
+function renderFlashcards(container, cards, defaultMode) {
+    container.innerHTML = '';
+    cards.forEach(card => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'flashcard h-48';
+        
+        const frontContent = (defaultMode === 'en-ja') 
+            ? `<h3 class="text-2xl font-bold">${card.en}</h3>`
+            : `<h3 class="text-xl font-bold">${card.ja}</h3><p class="text-gray-500 mt-2">ヒント: ${card.hint}</p>`;
+        
+        const backContent = (defaultMode === 'en-ja')
+            ? `<h3 class="text-xl font-bold">${card.ja}</h3>`
+            : `<h3 class="text-2xl font-bold">${card.en}</h3>`;
+
+        cardEl.innerHTML = `
+            <div class="flashcard-inner">
+                <div class="flashcard-front">${frontContent}<button class="speaker-btn" onclick="event.stopPropagation(); speak('${card.en.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button></div>
+                <div class="flashcard-back">
+                    ${backContent}
+                    <div class="text-center mt-2">
+                        <p class="text-gray-500">${card.kana.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')}</p>
+                        <p class="text-gray-400 text-sm">${card.phonetic}</p>
+                    </div>
+                    <button class="speaker-btn" onclick="event.stopPropagation(); speak('${card.en.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button>
+                </div>
+            </div>
+        `;
+        cardEl.addEventListener('click', () => cardEl.classList.toggle('flipped'));
+        container.appendChild(cardEl);
+    });
+}
+
+function renderStep3(data) {
+    const { flashcards } = data;
+    stepViews[3].innerHTML = `
+        <p class="text-sm text-gray-500 text-center mb-4">カードをタップして関連単語も覚えましょう。</p>
+        <div class="flex justify-center mb-4">
+            <div class="inline-flex rounded-md shadow-sm" role="group">
+                <button type="button" id="mode-en-ja-step3" class="mode-btn bg-blue-500 text-white px-4 py-2 text-sm font-medium border border-gray-200 rounded-l-lg">認識 (英→日)</button>
+                <button type="button" id="mode-ja-en-step3" class="mode-btn bg-white text-gray-900 px-4 py-2 text-sm font-medium border border-gray-200 rounded-r-lg hover:bg-gray-100">想起 (日→英)</button>
+            </div>
+        </div>
+        <div id="flashcard-container-step3" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    `;
+
+    const container = document.getElementById('flashcard-container-step3');
+    renderFlashcards(container, flashcards, 'en-ja');
+
+    const modeBtnEnJa = document.getElementById('mode-en-ja-step3');
+    const modeBtnJaEn = document.getElementById('mode-ja-en-step3');
+    
+    modeBtnEnJa.addEventListener('click', () => {
+        modeBtnEnJa.classList.add('bg-blue-500', 'text-white');
+        modeBtnJaEn.classList.remove('bg-blue-500', 'text-white');
+        renderFlashcards(container, flashcards, 'en-ja');
+    });
+    
+    modeBtnJaEn.addEventListener('click', () => {
+        modeBtnJaEn.classList.add('bg-blue-500', 'text-white');
+        modeBtnEnJa.classList.remove('bg-blue-500', 'text-white');
+        renderFlashcards(container, flashcards, 'ja-en');
+    });
+
+    const nextText = quizQueue.length === 0 ? 
+        (isSequentialMode ? '結果を見る' : '目次に戻る') : 
+        '次の問題へ →';
+    nextBtn.textContent = nextText;
+    nextBtn.classList.remove('hidden');
+}
+
+function renderFinalCheck() {
+    tocScreen.classList.add('hidden');
+    mainQuizArea.classList.add('hidden');
+    resultScreen.classList.add('hidden');
+    finalCheckArea.classList.remove('hidden');
+
+    let allHeadwords = quizData.flatMap(d => d.flashcards);
+    allHeadwords.sort(() => Math.random() - 0.5);
+    const container = document.getElementById('final-check-flashcards');
+    renderFlashcards(container, allHeadwords, 'ja-en');
+}
+
+function showResult() {
+    mainQuizArea.classList.add('hidden');
+    resultScreen.classList.remove('hidden');
+    
+    const clearedCount = selfAssessments.filter(sa => sa === true).length;
+    const totalAssessed = selfAssessments.filter(sa => sa !== null).length;
+    
+    const summaryEl = document.getElementById('self-assessment-summary');
+    summaryEl.innerHTML = `
+        <p class="text-xl">応用例文の理解度: <span class="font-bold text-green-600">${clearedCount}</span> / ${totalAssessed}</p>
+        <p class="text-gray-600 mt-2">「もう一度」を選んだ問題やクイズで間違えた問題は、復習リストに追加されています。</p>
+    `;
+}
+
+</script>
+</body>
+</html>

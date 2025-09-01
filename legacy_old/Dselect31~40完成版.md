@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>単語帳学習アプリ 91-100</title>
+    <title>DUOセレクト英単語クイズ (例文 31-40)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -49,7 +49,7 @@
         
         <!-- Table of Contents Screen (Main Menu) -->
         <div id="toc-screen">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-4">DUOセレクト学習 (91-100)</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-4">DUOセレクト学習 (31-40)</h1>
             <p class="text-gray-600 text-center mb-8">学習したい例文を選ぶか、最初から全ての問題に挑戦しましょう。</p>
             
             <div class="border-b pb-8 mb-8">
@@ -124,213 +124,173 @@
     </div>
 
 <script>
-// --- LEARNING APP LOGIC ---
+// --- DATA ---
 const quizData = [
     {
-        "id": 91,
-        "originalSentence": "A small bomb suddenly exploded, but fortunately, no one was injured.",
-        "translation": "小さな爆弾が突然爆発したが、幸いにも誰も怪我をしなかった。",
-        "quiz": {
-            "target": "exploded",
-            "choices": ["exploded", "was found", "was hidden", "was thrown"],
-            "meaning": "爆発する"
+        id: 31,
+        originalSentence: "Many people believed the myth that the financial institution was too big to go bankrupt.",
+        translation: "多くの人々が、その金融機関は大きすぎて倒産しないという神話を信じていた。",
+        quiz: { target: "bankrupt", choices: ["bankrupt", "intense", "solid", "vague"], meaning: "破産した" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>人気だったタピオカ屋さんが、気づいたら閉店していた。",
+            sentence: "That <span class='tooltip-trigger'>bubble tea<span class='tooltip-content'>bubble tea = タピオカティー</span></span> shop that was so popular went <span class='tooltip-trigger'>bankrupt<span class='tooltip-content'>破産した</span></span>. The <span class='tooltip-trigger'>trend<span class='tooltip-content'>trend = 流行</span></span> didn't last long.",
+            translation: "あんなに人気だったタピオカ屋さんが潰れちゃった。ブームは長く続かなかったね。"
         },
-        "application": {
-            "situation": "サプライズの誕生日パーティーでの出来事を話すとき。",
-            "sentence": "When he opened the door, <span class='tooltip-trigger'>confetti<span class='tooltip-content'>紙吹雪のこと。</span></span> bombs exploded everywhere! He was so surprised.",
-            "translation": "彼がドアを開けた途端、クラッカーが一斉に爆発したんだ！すごく驚いてたよ。"
-        },
-        "flashcards": [
-            { "en": "bomb", "ja": "爆弾", "kana": "バム", "phonetic": "/bɑːm/", "hint": "b" },
-            { "en": "explode", "ja": "爆発する", "kana": "イクス**プロ**ウド", "phonetic": "/ɪkˈsploʊd/", "hint": "e" },
-            { "en": "fortunately", "ja": "幸運にも", "kana": "**フォ**ーチュネトゥリィ", "phonetic": "/ˈfɔːrtʃənətli/", "hint": "f" },
-            { "en": "be injured", "ja": "けがをする", "kana": "ビー **イ**ンジャード", "phonetic": "/bi ˈɪndʒərd/", "hint": "b" }
+        flashcards: [
+            { en: "go bankrupt", ja: "倒産する", kana: "ゴー・**バ**ンクラプト", phonetic: "/ɡoʊ ˈbæŋkrʌpt/", hint: "g" },
+            { en: "myth", ja: "神話", kana: "**ミ**ス", phonetic: "/mɪθ/", hint: "m" },
+            { en: "financial", ja: "金融の", kana: "ファイ**ナ**ンシャル", phonetic: "/faɪˈnænʃl/", hint: "f" },
+            { en: "institution", ja: "機関", kana: "インスティ**テュー**ション", phonetic: "/ˌɪnstɪˈtuːʃn/", hint: "i" }
         ]
     },
     {
-        "id": 92,
-        "originalSentence": "The empty bottle sank to the bottom of the ocean.",
-        "translation": "その空のボトルは海の底へと沈んでいった。",
-        "quiz": {
-            "target": "sank",
-            "choices": ["sank", "floated", "shattered", "disappeared"],
-            "meaning": "沈む"
+        id: 32,
+        originalSentence: "The reality of the situation is somewhat different from what he described.",
+        translation: "その状況の現実は、彼が説明したものとは多少異なっている。",
+        quiz: { target: "reality", choices: ["reality", "myth", "trial", "structure"], meaning: "現実" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>SNSで見るキラキラしたインフルエンサーの生活。でも実際は…？",
+            sentence: "His life on <span class='tooltip-trigger'>social media<span class='tooltip-content'>SNSのこと。ただしSNSは和製英語で、ネイティブには通じません。</span></span> looks perfect, but the <span class='tooltip-trigger'>reality<span class='tooltip-content'>現実</span></span> is probably somewhat different.",
+            translation: "SNSでの彼の生活は完璧に見えるけど、現実はたぶん多少違うんだろうな。"
         },
-        "application": {
-            "situation": "料理の失敗談を話しているとき。",
-            "sentence": "I left the popcorn in the <span class='tooltip-trigger'>microwave<span class='tooltip-content'>電子レンジのこと。</span></span> too long, and it nearly blew up!",
-            "translation": "ポップコーンをレンジに長くかけすぎて、爆発しそうになっちゃった！"
-        },
-        "flashcards": [
-            { "en": "blow up", "ja": "爆発する", "kana": "ブロウ **ア**ップ", "phonetic": "/bloʊ ʌp/", "hint": "b" },
-            { "en": "sink", "ja": "沈む", "kana": "スィンク", "phonetic": "/sɪŋk/", "hint": "s" },
-            { "en": "bottom", "ja": "底", "kana": "**バ**トム", "phonetic": "/ˈbɑːtəm/", "hint": "b" },
-            { "en": "ocean", "ja": "海", "kana": "**オ**ウシャン", "phonetic": "/ˈoʊʃn/", "hint": "o" }
+        flashcards: [
+            { en: "reality", ja: "現実", kana: "リ**ア**リティ", phonetic: "/riˈæləti/", hint: "r" },
+            { en: "somewhat", ja: "多少", kana: "**サ**ムワット", phonetic: "/ˈsʌmwʌt/", hint: "s" },
+            { en: "be different from", ja: "～と異なる", kana: "ビー・**ディ**ファレント・フロム", phonetic: "/bi ˈdɪfrənt frəm/", hint: "b" },
+            { en: "media", ja: "マスメディア", kana: "**ミー**ディア", phonetic: "/ˈmiːdiə/", hint: "m" },
+            { en: "describe", ja: "～を描写する", kana: "ディス**ク**ライブ", phonetic: "/dɪˈskraɪb/", hint: "d" }
         ]
     },
     {
-        "id": 93,
-        "originalSentence": "The unstable pile of books might well collapse at any moment.",
-        "translation": "その不安定な本の山は、今にも崩れ落ちそうだ。",
-        "quiz": {
-            "target": "collapse",
-            "choices": ["collapse", "stand", "disappear", "grow"],
-            "meaning": "崩壊する、崩れる"
+        id: 33,
+        originalSentence: "In a friendship, what truly counts is not always visible to others.",
+        translation: "友情において、本当に重要なことは、必ずしも他人に見えるわけではない。",
+        quiz: { target: "counts", choices: ["counts", "describes", "fails", "grows"], meaning: "重要である" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>プレゼント選び。値段の高さよりも、相手を思う気持ちが大切。",
+            sentence: "It's not the price of the gift that <span class='tooltip-trigger'>counts<span class='tooltip-content'>重要である</span></span>, it's the <span class='tooltip-trigger'>thought<span class='tooltip-content'>thought = 思い、考え</span></span> behind it.",
+            translation: "重要なのはプレゼントの値段じゃなくて、その裏にある思いやりだよ。"
         },
-        "application": {
-            "situation": "ジェンガで遊んでいる、ハラハラする場面。",
-            "sentence": "Be careful! The tower is not stable and it's going to collapse!",
-            "translation": "気をつけて！タワーが不安定で、崩れそうだよ！"
-        },
-        "flashcards": [
-            { "en": "stable", "ja": "安定した", "kana": "**ス**テイブル", "phonetic": "/ˈsteɪbl/", "hint": "s" },
-            { "en": "might well", "ja": "～するのももっともだ", "kana": "マイト **ウェ**ル", "phonetic": "/maɪt wel/", "hint": "m" },
-            { "en": "collapse", "ja": "崩壊する", "kana": "コ**ラ**プス", "phonetic": "/kəˈlæps/", "hint": "c" },
-            { "en": "at any moment", "ja": "今にも", "kana": "アット エニー **モ**ーメント", "phonetic": "/æt ˈɛni ˈmoʊmənt/", "hint": "a" }
+        flashcards: [
+            { en: "count", ja: "重要である", kana: "**カ**ウント", phonetic: "/kaʊnt/", hint: "c" },
+            { en: "not always", ja: "いつも～とは限らない", kana: "ノット・**オー**ルウェイズ", phonetic: "/nɑːt ˈɔːlweɪz/", hint: "n" },
+            { en: "visible", ja: "目に見える", kana: "**ヴィ**ジブル", phonetic: "/ˈvɪzəbl/", hint: "v" }
         ]
     },
     {
-        "id": 94,
-        "originalSentence": "All of a sudden, the old chair I was sitting on gave way.",
-        "translation": "突然、私が座っていた古い椅子が壊れた。",
-        "quiz": {
-            "target": "gave way",
-            "choices": ["gave way", "stood firm", "was comfortable", "looked nice"],
-            "meaning": "崩れる、壊れる"
+        id: 34,
+        originalSentence: "I can't make up my mind what to do with all this old stuff.",
+        translation: "この古いガラクタをどうしたらよいか、決心がつかない。",
+        quiz: { target: "make up my mind", choices: ["make up my mind", "take my time", "lose my temper", "change my mind"], meaning: "決心する" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>大学の専攻を決めるのに、なかなか決められない友達に。",
+            sentence: "The <span class='tooltip-trigger'>application<span class='tooltip-content'>application = 出願、申込</span></span> deadline is next week. Have you <span class='tooltip-trigger'>made up your mind<span class='tooltip-content'>決心した</span></span> about which university to <span class='tooltip-trigger'>apply to<span class='tooltip-content'>apply to = ～に出願する</span></span>?",
+            translation: "出願の締め切りは来週だよ。どの大学に出願するかもう決めた？"
         },
-        "application": {
-            "situation": "友達と議論していて、相手の意見に納得したとき。",
-            "sentence": "I didn't want to give way, but his argument <span class='tooltip-trigger'>made sense<span class='tooltip-content'>「理にかなう」「もっともだ」という意味。</span></span>.",
-            "translation": "僕は折れたくなかったけど、彼の主張は理にかなっていたんだ。"
-        },
-        "flashcards": [
-            { "en": "all of a sudden", "ja": "突然", "kana": "オール オヴ ア **サ**ドゥン", "phonetic": "/ɔl ʌv ə ˈsʌdn/", "hint": "a" },
-            { "en": "ceiling", "ja": "天井", "kana": "**スィ**ーリング", "phonetic": "/ˈsiːlɪŋ/", "hint": "c" },
-            { "en": "give way", "ja": "崩れる、屈する", "kana": "ギヴ **ウェ**イ", "phonetic": "/ɡɪv weɪ/", "hint": "g" }
+        flashcards: [
+            { en: "make up one's mind", ja: "決心する", kana: "メイク・アップ・ワンズ・**マ**インド", phonetic: "/meɪk ʌp wʌnz maɪnd/", hint: "m" },
+            { en: "what to do", ja: "何をすべきか", kana: "ワット・トゥ・**ドゥ**", phonetic: "/wʌt tu du/", hint: "w" },
+            { en: "the rest of", ja: "～の残り", kana: "ザ・**レ**スト・オブ", phonetic: "/ðə rest əv/", hint: "t" },
+            { en: "stuff", ja: "物（漠然と）", kana: "ス**タ**ッフ", phonetic: "/stʌf/", hint: "s" }
         ]
     },
     {
-        "id": 95,
-        "originalSentence": "He intends to hand in his resignation paper sooner or later.",
-        "translation": "彼は遅かれ早かれ辞表を提出するつもりだ。",
-        "quiz": {
-            "target": "hand in",
-            "choices": ["hand in", "take back", "throw away", "write"],
-            "meaning": "～を提出する"
+        id: 35,
+        originalSentence: "He picked a card at random from the deck.",
+        translation: "彼はデッキから無作為にカードを1枚選んだ。",
+        quiz: { target: "at random", choices: ["at random", "on foot", "in advance", "by accident"], meaning: "無作為に" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>音楽のプレイリストを作る時、とりあえず好きな曲をどんどん追加していく感じ。",
+            sentence: "I just added <span class='tooltip-trigger'>a bunch of<span class='tooltip-content'>a bunch of = たくさんの～</span></span> songs to the playlist <span class='tooltip-trigger'>at random<span class='tooltip-content'>無作為に</span></span>. We can <span class='tooltip-trigger'>organize<span class='tooltip-content'>organize = 整理する</span></span> it later.",
+            translation: "とりあえず無作為にたくさんの曲をプレイリストに追加したんだ。整理は後でできるからね。"
         },
-        "application": {
-            "situation": "宿題をやり終えた達成感を友達に話すとき。",
-            "sentence": "I <span class='tooltip-trigger'>finally<span class='tooltip-content'>「ついに」「ようやく」という意味。達成感を表すのによく使われる。</span></span> finished my essay. I'm going to hand it in tomorrow morning.",
-            "translation": "やっとエッセイが終わった。明日の朝、提出するつもりだよ。"
-        },
-        "flashcards": [
-            { "en": "intend to", "ja": "～するつもりだ", "kana": "イン**テ**ンド トゥ", "phonetic": "/ɪnˈtɛnd tu/", "hint": "i" },
-            { "en": "hand in", "ja": "～を提出する", "kana": "ハンド **イ**ン", "phonetic": "/hænd ɪn/", "hint": "h" },
-            { "en": "resignation", "ja": "辞職", "kana": "レズィグ**ネ**イション", "phonetic": "/ˌrɛzɪɡˈneɪʃn/", "hint": "r" },
-            { "en": "sooner or later", "ja": "遅かれ早かれ", "kana": "**ス**ーナー オア **レ**イター", "phonetic": "/ˈsunər ɔr ˈleɪtər/", "hint": "s" }
+        flashcards: [
+            { en: "at random", ja: "無作為に", kana: "アット・**ラ**ンダム", phonetic: "/æt ˈrændəm/", hint: "a" },
+            { en: "pick", ja: "～を選ぶ", kana: "**ピ**ック", phonetic: "/pɪk/", hint: "p" },
+            { en: "in order", ja: "順番に", kana: "イン・**オー**ダー", phonetic: "/ɪn ˈɔːrdər/", hint: "i" },
+            { en: "correct", ja: "正しい", kana: "コ**レ**クト", phonetic: "/kəˈrekt/", hint: "c" }
         ]
     },
     {
-        "id": 96,
-        "originalSentence": "You should go over your assignment carefully before you turn it in.",
-        "translation": "提出する前に、課題を注意深く見直しなさい。",
-        "quiz": {
-            "target": "go over",
-            "choices": ["go over", "forget", "start", "submit"],
-            "meaning": "～をよく調べる"
+        id: 36,
+        originalSentence: "The movie studio will release his biography next year.",
+        translation: "その映画スタジオは来年、彼の伝記を公開する予定だ。",
+        quiz: { target: "release", choices: ["release", "describe", "deceive", "predict"], meaning: "～を発売する" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>大好きなゲームシリーズの最新作が発売される日。",
+            sentence: "The new game will be <span class='tooltip-trigger'>released<span class='tooltip-content'>発売される</span></span> at <span class='tooltip-trigger'>midnight<span class='tooltip-content'>midnight = 深夜0時</span></span>. I'm going to <span class='tooltip-trigger'>stay up all night<span class='tooltip-content'>stay up all night = 徹夜する</span></span> playing it!",
+            translation: "新しいゲームは深夜0時に発売だ。徹夜でプレイするぞ！"
         },
-        "application": {
-            "situation": "プレゼンの前に最終確認をするとき。",
-            "sentence": "Let's go over the slides one more time to <span class='tooltip-trigger'>make sure<span class='tooltip-content'>「～であることを確かめる」という意味。確認作業で頻出。</span></span> everything is perfect.",
-            "translation": "すべてが完璧か確認するために、スライドをもう一度見直そう。"
-        },
-        "flashcards": [
-            { "en": "turn in", "ja": "～を提出する", "kana": "ターン **イ**ン", "phonetic": "/tɜrn ɪn/", "hint": "t" },
-            { "en": "assignment", "ja": "課題", "kana": "ア**サ**インメント", "phonetic": "/əˈsaɪnmənt/", "hint": "a" },
-            { "en": "go over", "ja": "～をよく調べる", "kana": "ゴウ **オ**ーヴァー", "phonetic": "/ɡoʊ ˈoʊvər/", "hint": "g" }
+        flashcards: [
+            { en: "release", ja: "～を発売する", kana: "リ**リー**ス", phonetic: "/rɪˈliːs/", hint: "r" },
+            { en: "biography", ja: "伝記", kana: "バイ**オ**グラフィ", phonetic: "/baɪˈɑːɡrəfi/", hint: "b" },
+            { en: "stand in line", ja: "一列に並ぶ", kana: "ス**タ**ンド・イン・**ラ**イン", phonetic: "/stænd ɪn laɪn/", hint: "s" },
+            { en: "get", ja: "～を手に入れる", kana: "**ゲ**ット", phonetic: "/ɡet/", hint: "g" }
         ]
     },
     {
-        "id": 97,
-        "originalSentence": "This difficult situation calls for everyone's immediate cooperation.",
-        "translation": "この困難な状況は、皆の早急な協力を必要としている。",
-        "quiz": {
-            "target": "calls for",
-            "choices": ["calls for", "prevents", "ignores", "creates"],
-            "meaning": "～を必要とする"
+        id: 37,
+        originalSentence: "I'm anxious about the exam results and I miss my family.",
+        translation: "試験の結果が心配で、家族に会えなくて寂しい。",
+        quiz: { target: "anxious", choices: ["anxious", "solid", "vague", "rare"], meaning: "心配して" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>好きな人にLINEを送ったけど、既読のまま…。返信が待ち遠しい！",
+            sentence: "I'm so anxious to <span class='tooltip-trigger'>hear from<span class='tooltip-content'>hear from... = ～から連絡をもらう<br>hear of... (～のことを耳にする) との違いに注意！</span></span> them. I keep checking my phone every five minutes!",
+            translation: "彼/彼女から連絡が来るのを心待ちにしているよ。5分おきにスマホをチェックしちゃう！"
         },
-        "application": {
-            "situation": "サプライズパーティーの計画を立てるとき。",
-            "sentence": "This plan is <span class='tooltip-trigger'>complicated<span class='tooltip-content'>「複雑な」という意味。簡単ではないことを示す。</span></span>, so it calls for perfect teamwork.",
-            "translation": "この計画は複雑だから、完璧なチームワークが必要だよ。"
-        },
-        "flashcards": [
-            { "en": "protect", "ja": "～を保護する", "kana": "プロ**テ**クト", "phonetic": "/prəˈtɛkt/", "hint": "p" },
-            { "en": "call for", "ja": "～を必要とする", "kana": "コール **フォ**ー", "phonetic": "/kɔl fɔr/", "hint": "c" },
-            { "en": "international", "ja": "国際的な", "kana": "インター**ナ**ショナル", "phonetic": "/ˌɪntərˈnæʃnəl/", "hint": "i" },
-            { "en": "cooperation", "ja": "協力", "kana": "コウオペ**レ**イション", "phonetic": "/koʊˌɑpəˈreɪʃn/", "hint": "c" }
+        flashcards: [
+            { en: "anxious", ja: "心配して", kana: "**ア**ンクシャス", phonetic: "/ˈæŋkʃəs/", hint: "a" },
+            { en: "hear from", ja: "～から連絡をもらう", kana: "**ヒー**・フロム", phonetic: "/hɪr frəm/", hint: "h" },
+            { en: "miss", ja: "～がいなくて寂しく思う", kana: "**ミ**ス", phonetic: "/mɪs/", hint: "m" }
         ]
     },
     {
-        "id": 98,
-        "originalSentence": "This delicate task requires a great deal of skill and caution.",
-        "translation": "この繊細な任務は、多くの技術と注意を要する。",
-        "quiz": {
-            "target": "requires",
-            "choices": ["requires", "lacks", "avoids", "suggests"],
-            "meaning": "～を要する"
+        id: 38,
+        originalSentence: "By the way, my father used to run a small grocery store.",
+        translation: "ところで、私の父は以前、小さな食料品店を経営していました。",
+        quiz: { target: "By the way", choices: ["By the way", "On the way", "In a way", "For a change"], meaning: "ところで" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>初めて会った人と話していて、少し話題を変えたい時。",
+            sentence: "That's interesting. <span class='tooltip-trigger'>By the way<span class='tooltip-content'>ところで</span></span>, are you <span class='tooltip-trigger'>from around here<span class='tooltip-content'>from around here = この辺りの出身</span></span>?",
+            translation: "面白いですね。ところで、この辺りのご出身ですか？"
         },
-        "application": {
-            "situation": "プラモデルを作っているとき。",
-            "sentence": "Building this requires a lot of <span class='tooltip-trigger'>patience<span class='tooltip-content'>「忍耐力」という意味。</span></span>. The parts are so small.",
-            "translation": "これを作るのはすごく忍耐力が必要だ。パーツがとても小さいんだ。"
-        },
-        "flashcards": [
-            { "en": "task", "ja": "任務", "kana": "タスク", "phonetic": "/tæsk/", "hint": "t" },
-            { "en": "require", "ja": "～を要する", "kana": "リ**ク**ワイア", "phonetic": "/rɪˈkwaɪər/", "hint": "r" },
-            { "en": "a great deal of", "ja": "たくさんの", "kana": "ア グレイト **ディ**ール オヴ", "phonetic": "/ə ɡreɪt dil ʌv/", "hint": "a" },
-            { "en": "caution", "ja": "注意", "kana": "**コ**ーション", "phonetic": "/ˈkɔʃn/", "hint": "c" }
+        flashcards: [
+            { en: "By the way", ja: "ところで", kana: "バイ・ザ・**ウェ**イ", phonetic: "/baɪ ðə weɪ/", hint: "B" },
+            { en: "What do you do?", ja: "お仕事は何ですか？", kana: "ワット・ドゥ・ユー・**ドゥ**？", phonetic: "/wʌt du ju du/", hint: "W" },
+            { en: "run", ja: "～を経営する", kana: "**ラ**ン", phonetic: "/rʌn/", hint: "r" },
+            { en: "grocery store", ja: "食料品店", kana: "グ**ロ**サリー・ストア", phonetic: "/ˈɡroʊsəri stɔːr/", hint: "g" }
         ]
     },
     {
-        "id": 99,
-        "originalSentence": "It's cloudy, but chances are it won't rain today.",
-        "translation": "曇っているけど、たぶん今日は雨は降らないよ。",
-        "quiz": {
-            "target": "Chances are",
-            "choices": ["Chances are", "No way", "I doubt", "It's impossible"],
-            "meaning": "たぶん～だろう"
+        id: 39,
+        originalSentence: "He leaned close to whisper a secret in her ear.",
+        translation: "彼は彼女の耳に秘密をささやくために、ぐっと身を寄せた。",
+        quiz: { target: "whisper", choices: ["whisper", "nod", "argue", "shout"], meaning: "ささやく" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>授業中、先生に聞こえないように隣の席の友達に何かを伝える。",
+            sentence: "She <span class='tooltip-trigger'>leaned over<span class='tooltip-content'>lean over = 身を乗り出す</span></span> and <span class='tooltip-trigger'>whispered<span class='tooltip-content'>ささやいた</span></span> something to me.",
+            translation: "彼女は身を乗り出して、私に何かをささやいた。"
         },
-        "application": {
-            "situation": "ピクニックの天気を心配している友達に。",
-            "sentence": "Don't worry. Chances are it will be sunny tomorrow.",
-            "translation": "心配しないで。たぶん明日は晴れるよ。"
-        },
-        "flashcards": [
-            { "en": "relax", "ja": "くつろぐ", "kana": "リ**ラ**ックス", "phonetic": "/rɪˈlæks/", "hint": "r" },
-            { "en": "chances are", "ja": "たぶん～だろう", "kana": "**チャ**ンスィズ アー", "phonetic": "/ˈtʃænsɪz ɑr/", "hint": "c" },
-            { "en": "select", "ja": "～を選ぶ", "kana": "セ**レ**クト", "phonetic": "/səˈlɛkt/", "hint": "s" },
-            { "en": "interview", "ja": "面接", "kana": "**イ**ンタヴュー", "phonetic": "/ˈɪntərvju/", "hint": "i" }
+        flashcards: [
+            { en: "whisper", ja: "ささやく", kana: "**ウィ**スパー", phonetic: "/ˈwɪspər/", hint: "w" },
+            { en: "lean", ja: "傾く、寄りかかる", kana: "**リー**ン", phonetic: "/liːn/", hint: "l" },
+            { en: "come with", ja: "～と一緒に行く", kana: "**カ**ム・ウィズ", phonetic: "/kʌm wɪð/", hint: "c" }
         ]
     },
     {
-        "id": 100,
-        "originalSentence": "Please make yourself at home. Help yourself to anything you like.",
-        "translation": "どうぞくつろいでください。好きなものを何でも自由に取って食べてね。",
-        "quiz": {
-            "target": "make yourself at home",
-            "choices": ["make yourself at home", "be quiet", "go home", "stand up"],
-            "meaning": "くつろぐ"
+        id: 40,
+        originalSentence: "I can't stand his selfish attitude anymore.",
+        translation: "彼のわがままな態度にはもう我慢できない。",
+        quiz: { target: "stand", choices: ["stand", "run", "sit", "lie"], meaning: "～を我慢する" },
+        application: {
+            situation: "💡 こんな場面で使える！<br>ルームメイトが部屋を全く片付けない。ついに堪忍袋の緒が切れた！",
+            sentence: "I can't <span class='tooltip-trigger'>stand<span class='tooltip-content'>我慢する</span></span> your <span class='tooltip-trigger'>clutter<span class='tooltip-content'>clutter = 散らかったもの</span></span> anymore! You need to clean your side of the room.",
+            translation: "あなたの散らかしっぷりにはもう我慢できない！部屋の自分の側を掃除してよ。"
         },
-        "application": {
-            "situation": "友達を家に招き入れたとき。",
-            "sentence": "<span class='tooltip-trigger'>Come on in<span class='tooltip-content'>「さあ、入って」というフレンドリーな表現。</span></span>! Make yourself at home while I get us some drinks.",
-            "translation": "入って入って！飲み物持ってくるから、楽にしてて。"
-        },
-        "flashcards": [
-            { "en": "make yourself at home", "ja": "くつろぐ", "kana": "メイク ユアセルフ アット **ホ**ーム", "phonetic": "/meɪk jʊərˈsɛlf æt hoʊm/", "hint": "m" },
-            { "en": "help yourself to", "ja": "～を自由に取る", "kana": "ヘルプ ユアセルフ **トゥ**", "phonetic": "/hɛlp jʊərˈsɛlf tu/", "hint": "h" },
-            { "en": "snack", "ja": "軽食", "kana": "スナック", "phonetic": "/snæk/", "hint": "s" }
+        flashcards: [
+            { en: "stand", ja: "～を我慢する", kana: "ス**タ**ンド", phonetic: "/stænd/", hint: "s" },
+            { en: "mess", ja: "めちゃくちゃな状態", kana: "**メ**ス", phonetic: "/mes/", hint: "m" },
+            { en: "not ... anymore", ja: "もはや～ない", kana: "ノット・エニー**モー**", phonetic: "/nɑːt ˌeniˈmɔːr/", hint: "n" }
         ]
     }
 ];
@@ -342,9 +302,7 @@ let selfAssessments = new Array(quizData.length).fill(null);
 let quizResults = new Array(quizData.length).fill(null);
 let isSequentialMode = false; 
 let speechSynthesis = window.speechSynthesis;
-let maleVoices = [];
-let femaleVoices = [];
-let voiceToggle = 0;
+let englishVoice = null;
 let quizQueue = [];
 
 // --- DOM ELEMENTS ---
@@ -391,95 +349,23 @@ reviewBtn.addEventListener('click', showMainMenu);
 backToTocBtn.addEventListener('click', showMainMenu);
 backToTocFromFinalBtn.addEventListener('click', showMainMenu);
 
-// --- Voice Initialization Logic (Alternating Male/Female) ---
-const MALE_VOICE_KEYWORDS = ["Alex", "Daniel", "Fred", "Tom", "Google US English", "Microsoft David", "Male"];
-const FEMALE_VOICE_KEYWORDS = ["Samantha", "Allison", "Ava", "Martha", "Susan", "Aria", "Google UK English Female", "Microsoft Zira", "Female"];
-
-async function voicesReady(timeoutMs = 2500) {
-  return new Promise((resolve) => {
-    const start = performance.now();
-    const pump = () => {
-      const v = speechSynthesis.getVoices();
-      if (v && v.length) return resolve(v);
-      if (performance.now() - start > timeoutMs) return resolve(v);
-      if (!speechSynthesis.speaking) {
-        const u = new SpeechSynthesisUtterance(" ");
-        u.volume = 0;
-        speechSynthesis.speak(u);
-      }
-      requestAnimationFrame(pump);
-    };
-    pump();
-  });
+// --- Voice Initialization Logic ---
+function loadVoices() {
+    const voices = speechSynthesis.getVoices();
+    englishVoice = voices.find(voice => voice.lang.startsWith('en-US')) || voices.find(voice => voice.lang.startsWith('en-'));
 }
-
-async function initVoice() {
-    let voices = await voicesReady();
-    if (!voices || !voices.length) voices = speechSynthesis.getVoices();
-
-    const englishVoices = voices.filter(v => /^en(-|_)/i.test(v.lang));
-    
-    let tempFemaleVoices = englishVoices.filter(v => FEMALE_VOICE_KEYWORDS.some(keyword => v.name.includes(keyword)));
-    const femaleNames = new Set(tempFemaleVoices.map(v => v.name));
-
-    let tempMaleVoices = englishVoices.filter(v => MALE_VOICE_KEYWORDS.some(keyword => v.name.includes(keyword)) && !femaleNames.has(v.name));
-    const maleNames = new Set(tempMaleVoices.map(v => v.name));
-    
-    const remainingVoices = englishVoices.filter(v => !femaleNames.has(v.name) && !maleNames.has(v.name));
-    
-    femaleVoices = tempFemaleVoices;
-    maleVoices = tempMaleVoices;
-
-    if (femaleVoices.length > 0 && maleVoices.length === 0 && remainingVoices.length > 0) {
-        maleVoices = remainingVoices;
-    }
-    if (maleVoices.length > 0 && femaleVoices.length === 0 && remainingVoices.length > 0) {
-        femaleVoices = remainingVoices;
-    }
-    
-    if (maleVoices.length === 0 && femaleVoices.length > 0) maleVoices = femaleVoices;
-    if (femaleVoices.length === 0 && maleVoices.length > 0) femaleVoices = maleVoices;
-
-    if (maleVoices.length === 0 && femaleVoices.length === 0 && englishVoices.length > 0) {
-         maleVoices = englishVoices;
-         femaleVoices = englishVoices;
-    }
-}
-
-speechSynthesis.onvoiceschanged = () => { initVoice(); };
-initVoice();
+speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
 
 // --- FUNCTIONS ---
 
 function speak(text, lang = 'en-US') {
-    try {
-        if (speechSynthesis.speaking) speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = lang || 'en-US';
-
-        let selectedVoice = null;
-        const turnIndex = Math.floor(voiceToggle / 2);
-
-        if (voiceToggle % 2 === 0 && maleVoices.length > 0) {
-            selectedVoice = maleVoices[turnIndex % maleVoices.length];
-        } else if (femaleVoices.length > 0) {
-            selectedVoice = femaleVoices[turnIndex % femaleVoices.length];
-        } else if (maleVoices.length > 0) {
-            selectedVoice = maleVoices[turnIndex % maleVoices.length];
-        }
-
-        if (selectedVoice) {
-            u.voice = selectedVoice;
-        }
-        
-        voiceToggle++;
-
-        u.rate = 0.9;
-        u.pitch = 1.0;
-        speechSynthesis.speak(u);
-    } catch (e) {
-        console.error('TTS error:', e);
-    }
+    if (speechSynthesis.speaking) speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (englishVoice) utterance.voice = englishVoice;
+    utterance.lang = lang;
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
 }
 
 function showMainMenu() {
@@ -663,8 +549,7 @@ function renderStep2(data) {
     stepViews[2].innerHTML = `
         <p class="text-sm text-gray-500 text-center mb-4">応用例文で使い方を確認しましょう。</p>
         <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-lg mb-4">
-            <p class="font-semibold text-sky-800 mb-2">💡 こんな場面で使える！</p>
-            <p class="text-gray-700">${application.situation}</p>
+            <p class="font-semibold text-sky-800 mb-2">${application.situation}</p>
         </div>
         <div class="mb-4 relative p-4 bg-gray-50 rounded-lg">
             <p class="text-lg md:text-xl text-gray-800">${application.sentence}</p>
