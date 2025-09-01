@@ -536,47 +536,29 @@ function pickVoices() {
     try {
         const vs = speechSynthesis.getVoices();
         if (!vs.length) return;
-
-        // 1. Filter for English voices, prioritizing standard dialects
-        let en = vs.filter(v => v.lang.startsWith('en-'));
-
-        // 2. Assign a quality score to each voice
-        const qualityVoices = en.map(v => {
-            let score = 0;
-            if (v.lang === 'en-US' || v.lang === 'en-GB') score += 5; // Strongly prefer standard accents
-            if (!v.localService) score += 3; // Prefer remote (often higher quality) voices
-            if (/google/i.test(v.name)) score += 2;
-            if (/microsoft/i.test(v.name)) score += 2;
-            // Penalize voices that are often low-quality or novelty
-            if (/(novelty|robot|funny|laugh|comic|silly|filter)/i.test(v.name)) score -= 20;
-            // Deprioritize generic names that mobile OSes sometimes use for lower quality voices
-            if (/english/i.test(v.name) && !/google|microsoft/i.test(v.name)) score -= 2;
-
-            return { voice: v, score };
-        }).filter(v => v.score >= 0); // Remove heavily penalized voices
-
-        // 3. Sort by quality score
-        qualityVoices.sort((a, b) => b.score - a.score);
-        const sortedVoices = qualityVoices.map(v => v.voice);
-
-        // 4. Populate caches with the best available voices
-        voiceCache.female = sortedVoices.find(v => /female|jenny|ariel|emma|olivia|zira|samantha|alloy|nova/i.test(v.name)) || null;
-        voiceCache.male = sortedVoices.find(v => /male|david|guy|ryan|brian|matthew|daniel|andrew|roger/i.test(v.name)) || null;
-
-        // For "auto" mode, use a pool of the highest-quality voices
-        voiceCache.auto = sortedVoices.slice(0, 15); // Take top 15 high-quality voices
+        const en = vs.filter(v => /^en([-_]|$)/i.test(v.lang) || /english/i.test(v.name));
         
-        // If the auto pool is too small, broaden the criteria slightly
-        if (voiceCache.auto.length < 5) {
-             voiceCache.auto = vs.filter(v => v.lang.startsWith('en-')).slice(0, 10);
-        }
-        
-        // Ensure male/female voices have fallbacks from the high-quality pool
-        if (!voiceCache.male) voiceCache.male = voiceCache.auto.find(v => !/female/i.test(v.name)) || voiceCache.auto[0] || sortedVoices[0] || vs[0];
-        if (!voiceCache.female) voiceCache.female = voiceCache.auto.find(v => /female/i.test(v.name)) || voiceCache.auto[1] || voiceCache.auto[0] || sortedVoices[0] || vs[0];
+        // Find specific male and female voices
+        voiceCache.female = en.find(v => /female|jenny|ariel|emma|olivia|zira|samantha|alloy|nova/i.test(v.name)) || null;
+        voiceCache.male = en.find(v => /male|david|guy|ryan|brian|matthew|daniel|andrew|roger/i.test(v.name)) || null;
 
-        // Shuffle the auto pool for variety
-        voiceCache.auto.sort(() => 0.5 - Math.random());
+        // Create a diverse list for "auto" mode
+        const autoVoiceSet = new Set();
+        if (voiceCache.male) autoVoiceSet.add(voiceCache.male);
+        if (voiceCache.female) autoVoiceSet.add(voiceCache.female);
+        
+        const usUkVoices = en.filter(v => v.lang.startsWith('en-US') || v.lang.startsWith('en-GB'));
+        usUkVoices.forEach(v => autoVoiceSet.add(v));
+        
+        const otherVoices = en.filter(v => !v.lang.startsWith('en-US') && !v.lang.startsWith('en-GB'));
+        // Add all other english voices to the list for more variety
+        otherVoices.forEach(v => autoVoiceSet.add(v));
+        
+        voiceCache.auto = Array.from(autoVoiceSet).sort(() => 0.5 - Math.random());
+        
+        // Fallback for male/female if not found
+        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || en[0] || vs[0];
+        if (!voiceCache.female) voiceCache.female = voiceCache.auto[1] || voiceCache.auto[0] || en[0] || vs[0];
 
     } catch (e) { console.error('Error picking voices', e); }
 }
