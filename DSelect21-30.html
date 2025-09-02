@@ -449,12 +449,8 @@ function getItemId(sentenceId, type, identifier = '') {
 let currentSentenceIndex = 0;
 let currentStep = 1;
 let isSequentialMode = false; 
-
-// --- [REPLACED] Voice/Audio related state
 let speechSynthesis = window.speechSynthesis;
-// This cache will be populated by the new pickVoices function.
 let voiceCache = { male: null, female: null, auto: [], toggle: 0 };
-
 let quizQueue = [];
 let stepUnlocked = 1;
 let finalCheckCards = [];
@@ -550,162 +546,36 @@ stepIndicatorsContainer.addEventListener('click', (e) => {
 });
 
 
-// --- [NEW] Perfected Voice Logic ---
-
-// Asynchronously gets the list of available voices, waiting if necessary.
-function listVoices() {
-    return new Promise(resolve => {
-        let voices = speechSynthesis.getVoices();
-        if (voices.length) {
-            return resolve(voices);
-        }
-        speechSynthesis.onvoiceschanged = () => {
-            voices = speechSynthesis.getVoices();
-            resolve(voices);
-        };
-    });
-}
-
-// Whitelist of known high-quality English voice names.
-const SAFE_EN_VOICE_NAMES = [
-    "Alex", "Allison", "Ava", "Daniel", "David", "Fiona", "Fred", "Google US English", "Google UK English Female", "Google UK English Male", "Joelle", "Karen", "Kate", "Lee", "Martha", "Microsoft Aria", "Microsoft David", "Microsoft Guy", "Microsoft Mark", "Microsoft Zira", "Moira", "Nathan", "Oliver", "Rishi", "Samantha", "Susan", "Tessa", "Tom", "Veena", "Victoria"
-];
-
-// Blacklist of keywords found in low-quality or novelty voices.
-const BLOCKLIST_KEYWORDS = [
-    "novelty", "funny", "robot", "morse", "pipe", "organ", "whisper", "laugh", "jiggle", "giggle", "sneeze", "mumble", "zarvox", "good", "news", "bad", "news", "bubbles", "cellos", "deranged", "reflection", "trinoids"
-];
-
-// Checks if a voice is on the blocklist.
-function isBlockedVoice(v) {
-    const name = v.name.toLowerCase();
-    const uri = (v.voiceURI || "").toLowerCase();
-    return BLOCKLIST_KEYWORDS.some(keyword => name.includes(keyword) || uri.includes(keyword));
-}
-
-// Checks if a voice is an approved, high-quality English voice.
-function isSafeEnglishVoice(v) {
-    if (!v.lang.startsWith("en-") || isBlockedVoice(v)) return false;
-    return SAFE_EN_VOICE_NAMES.some(safeName => v.name.includes(safeName));
-}
-
-// Gets a filtered list of only safe voices.
-async function getSafeEnglishVoices() {
+// --- Voice Initialization Logic ---
+function pickVoices() {
     try {
-        const allVoices = await listVoices();
-        return allVoices.filter(isSafeEnglishVoice);
-    } catch (e) {
-        console.error("Error getting safe voices:", e);
-        return [];
-    }
-}
-
-// Detects if the user is on a mobile device.
-function isMobile() {
-    const ua = navigator.userAgent;
-    return /android|iphone|ipad|ipod/i.test(ua);
-}
-
-// Populates the voiceCache using a hybrid strategy for mobile and desktop.
-async function pickVoices() {
-    try {
-        const safeVoices = await getSafeEnglishVoices();
-        if (safeVoices.length === 0) {
-            console.warn("No safe English voices found. Using system defaults as fallback.");
-            const allVoices = await listVoices();
-            const anyEnVoice = allVoices.filter(v => v.lang.startsWith('en-'));
-            voiceCache.auto = anyEnVoice.length ? anyEnVoice : allVoices;
-            voiceCache.male = anyEnVoice.find(v => /male/i.test(v.name)) || voiceCache.auto[0];
-            voiceCache.female = anyEnVoice.find(v => /female/i.test(v.name)) || voiceCache.auto[0];
-            return;
-        }
-
-        const isMaleName = (name = "", uri = "") => /(Daniel|Mark|David|Alex(?!a)|George|Tom|Microsoft Mark|Microsoft David|Google UK English Male|male)/i.test(name) || /male/i.test(uri);
-        const isFemaleName = (name = "", uri = "") => /(Samantha|Allison|Ava|Victoria|Martha|Aria|Zira|Jenny|Microsoft Aria|Microsoft Zira|Google US English|Google UK English Female|female)/i.test(name) || /female/i.test(uri);
-
-        if (isMobile()) {
-            // Mobile: Prioritize stability with specific, reliable voices.
-            const mobileMale = safeVoices.find(v => v.name === "Daniel") || safeVoices.find(isMaleName);
-            const mobileFemale = safeVoices.find(v => v.name === "Samantha") || safeVoices.find(isFemaleName);
-            voiceCache.male = mobileMale || mobileFemale || safeVoices[0];
-            voiceCache.female = mobileFemale || mobileMale || safeVoices[0];
-            voiceCache.auto = [voiceCache.male, voiceCache.female].filter(Boolean);
-        } else {
-            // Desktop: Prioritize diversity from the safe list.
-            const males = safeVoices.filter(v => isMaleName(v.name, v.voiceURI));
-            const females = safeVoices.filter(v => isFemaleName(v.name, v.voiceURI));
-            voiceCache.male = males[0] || females[0] || safeVoices[0];
-            voiceCache.female = females[0] || males[0] || safeVoices[0];
-            voiceCache.auto = [...new Set([...males, ...females, ...safeVoices])];
-        }
-
-        if (voiceCache.auto.length === 0) voiceCache.auto.push(safeVoices[0]);
-        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0];
-        if (!voiceCache.female) voiceCache.female = voiceCache.auto[0];
+        const vs = speechSynthesis.getVoices();
+        if (!vs.length) return;
+        const en = vs.filter(v => /^en([-_]|$)/i.test(v.lang) || /english/i.test(v.name));
         
-    } catch (e) {
-        console.error('Error picking voices', e);
-    }
-}
+        // Find specific male and female voices
+        voiceCache.female = en.find(v => /female|jenny|ariel|emma|olivia|zira|samantha|alloy|nova/i.test(v.name)) || null;
+        voiceCache.male = en.find(v => /male|david|guy|ryan|brian|matthew|daniel|andrew|roger/i.test(v.name)) || null;
 
-// Sanitizes text for Text-to-Speech.
-function sanitizeForTTS(s) {
-    if (!s) return s;
-    let t = s.replace(/\([^)]*\)/g, '').replace(/（[^）]*）/g, '');
-    t = t.replace(/<[^>]+>/g, '');
-    t = t.replace(/[↔↮→—–…\/｜≠=]/g, ' ');
-    t = t.replace(/[\u3040-\u30FF\u3400-\u9FFF\uF900-\uFAFF]/g, '');
-    t = t.replace(/\s{2,}/g, ' ').trim();
-    return t;
-}
+        // Create a diverse list for "auto" mode
+        const autoVoiceSet = new Set();
+        if (voiceCache.male) autoVoiceSet.add(voiceCache.male);
+        if (voiceCache.female) autoVoiceSet.add(voiceCache.female);
+        
+        const usUkVoices = en.filter(v => v.lang.startsWith('en-US') || v.lang.startsWith('en-GB'));
+        usUkVoices.forEach(v => autoVoiceSet.add(v));
+        
+        const otherVoices = en.filter(v => !v.lang.startsWith('en-US') && !v.lang.startsWith('en-GB'));
+        // Add all other english voices to the list for more variety
+        otherVoices.forEach(v => autoVoiceSet.add(v));
+        
+        voiceCache.auto = Array.from(autoVoiceSet).sort(() => 0.5 - Math.random());
+        
+        // Fallback for male/female if not found
+        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || en[0] || vs[0];
+        if (!voiceCache.female) voiceCache.female = voiceCache.auto[1] || voiceCache.auto[0] || en[0] || vs[0];
 
-function getVoiceMode() { return localStorage.getItem(VOICE_MODE) || 'auto' }
-
-// Main speech function.
-function speak(text) {
-    if (!('speechSynthesis' in window) || !text) return;
-    try { speechSynthesis.cancel(); } catch (e) {}
-    
-    const prepared = sanitizeForTTS(text);
-    if (!prepared) return;
-
-    const rateEl = document.getElementById('rate');
-    const rawRate = rateEl ? parseFloat(rateEl.value) : 1.0;
-    const mode = getVoiceMode();
-
-    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
-
-    let voiceToUse = null;
-    if (mode === 'male') {
-        voiceToUse = voiceCache.male;
-    } else if (mode === 'female') {
-        voiceToUse = voiceCache.female;
-    } else {
-        if (voiceCache.auto && voiceCache.auto.length > 0) {
-            voiceCache.toggle = (voiceCache.toggle + 1) % voiceCache.auto.length;
-            voiceToUse = voiceCache.auto[voiceCache.toggle];
-        }
-    }
-    
-    const u = new SpeechSynthesisUtterance(prepared);
-    u.lang = 'en-US';
-    u.rate = clamp(rawRate, 0.8, 1.2);
-    u.pitch = clamp(1.0, 0.85, 1.15);
-    u.voice = voiceToUse;
-    
-    if (u.voice || speechSynthesis.getVoices().length > 0) {
-        speechSynthesis.speak(u);
-    } else {
-        setTimeout(() => {
-            if (!u.voice) {
-                 if (mode === 'male') voiceToUse = voiceCache.male;
-                 else if (mode === 'female') voiceToUse = voiceCache.female;
-                 else if (voiceCache.auto && voiceCache.auto.length) voiceToUse = voiceCache.auto[voiceCache.toggle];
-                 u.voice = voiceToUse;
-            }
-            speechSynthesis.speak(u);
-        }, 250);
-    }
+    } catch (e) { console.error('Error picking voices', e); }
 }
 
 function navigateToSentence(index) {
@@ -719,6 +589,11 @@ function navigateToSentence(index) {
     currentStep = 1;
     stepUnlocked = 3; // Unlock all steps immediately for free navigation
     renderCurrentStep();
+}
+
+if ('speechSynthesis' in window) {
+    speechSynthesis.onvoiceschanged = pickVoices;
+    pickVoices(); // Initial call
 }
 
 function initAudioControls() {
@@ -798,6 +673,67 @@ function syncAppSettings() {
 }
 
 // --- FUNCTIONS ---
+
+function sanitizeForTTS(s) {
+    if (!s) return s;
+    let t = s.replace(/\([^)]*\)/g, '').replace(/（[^）]*）/g, '');
+    t = t.replace(/<[^>]+>/g, ''); // strip html tags for speech
+    t = t.replace(/[↔↮→—–…\/｜≠=]/g, ' ');
+    t = t.replace(/[\u3040-\u30FF\u3400-\u9FFF\uF900-\uFAFF]/g, ''); // Remove Japanese chars
+    t = t.replace(/\s{2,}/g, ' ').trim();
+    return t;
+}
+
+function getVoiceMode() { return localStorage.getItem(VOICE_MODE) || 'auto' }
+
+function speak(text) {
+    if (!('speechSynthesis' in window) || !text) return;
+    try { speechSynthesis.cancel(); } catch (e) { }
+    
+    const prepared = sanitizeForTTS(text);
+    if (!prepared) return;
+
+    const rateEl = document.getElementById('rate');
+    const rawRate = rateEl ? parseFloat(rateEl.value) : 1.0;
+    const mode = getVoiceMode();
+
+    // Utility to clamp a value between a min and max.
+    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+
+    let voiceToUse = null;
+    if (mode === 'male') {
+        voiceToUse = voiceCache.male;
+    } else if (mode === 'female') {
+        voiceToUse = voiceCache.female;
+    } else { // auto
+        if (voiceCache.auto.length > 0) {
+            voiceCache.toggle = (voiceCache.toggle + 1) % voiceCache.auto.length;
+            voiceToUse = voiceCache.auto[voiceCache.toggle];
+        }
+    }
+    
+    const u = new SpeechSynthesisUtterance(prepared);
+    u.lang = 'en-US';
+    u.rate = clamp(rawRate, 0.8, 1.2); // Clamp rate to a safe range
+    u.pitch = clamp(1.0, 0.85, 1.15);  // Clamp pitch to a safe range
+    u.voice = voiceToUse;
+    
+    // Safety check for when voices are not yet loaded
+    if (u.voice || speechSynthesis.getVoices().length > 0) {
+        speechSynthesis.speak(u);
+    } else {
+        setTimeout(() => {
+            // Re-attempt to assign a voice if it loaded late
+            if (!u.voice) {
+                 if (mode === 'male') voiceToUse = voiceCache.male;
+                 else if (mode === 'female') voiceToUse = voiceCache.female;
+                 else if (voiceCache.auto.length) voiceToUse = voiceCache.auto[voiceCache.toggle];
+                 u.voice = voiceToUse;
+            }
+            speechSynthesis.speak(u);
+        }, 250);
+    }
+}
 
 function showMainMenu() {
     resultScreen.classList.add('hidden');
