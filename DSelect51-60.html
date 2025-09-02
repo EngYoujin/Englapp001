@@ -812,8 +812,6 @@ function speak(text) {
     const rawRate = rateEl ? parseFloat(rateEl.value) : 1.0;
     const mode = getVoiceMode();
 
-    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
-
     let voiceToUse = null;
     if (mode === 'male') {
         voiceToUse = voiceCache.male;
@@ -828,8 +826,7 @@ function speak(text) {
     
     const u = new SpeechSynthesisUtterance(prepared);
     u.lang = 'en-US';
-    u.rate = clamp(rawRate, 0.8, 1.2);
-    u.pitch = clamp(1.0, 0.85, 1.15);
+    u.rate = rawRate;
     u.voice = voiceToUse;
     
     // Safety check for when voices are not yet loaded
