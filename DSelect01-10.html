@@ -570,10 +570,7 @@ async function pickVoicesForMobile() {
 async function pickVoicesForPC() {
     console.log("Desktop device detected. Applying diverse voice selection.");
     const allVoices = await listVoices();
-    if (!allVoices.length) {
-        console.warn("PC: No voices returned from API.");
-        return;
-    }
+    if (!allVoices.length) { console.warn("PC: No voices returned from API."); return; }
 
     const enVoices = allVoices.filter(v => /^en([-_]|$)/i.test(v.lang) || /english/i.test(v.name));
     if (!enVoices.length) {
@@ -581,52 +578,62 @@ async function pickVoicesForPC() {
         voiceCache.auto = allVoices;
         return;
     }
-    
-    const usVoices = enVoices.filter(v => v.lang === 'en-US');
 
+    const usVoices = enVoices.filter(v => v.lang === 'en-US');
     const femaleKeywords = /female|jenny|aria|zira|samantha|tessa|susan|catherine/i;
     const maleKeywords = /male|david|mark|daniel|paul|alan|guy/i;
 
     let foundMale = null;
-    // --- New logic for Male Voice Selection ---
-    // 1. Prioritize American Male voices by keyword.
+    let foundFemale = null;
+
+    // --- Step 1: Find best candidates independently ---
+    // Find best female (prioritize keywords)
+    foundFemale = enVoices.find(v => femaleKeywords.test(v.name));
+    
+    // Find best male (prioritize US, then keywords, then non-female)
     if (usVoices.length > 0) {
         foundMale = usVoices.find(v => maleKeywords.test(v.name));
+        if (!foundMale) {
+            foundMale = usVoices.find(v => !femaleKeywords.test(v.name));
+        }
     }
-    // 2. If not found, try any English male voice by keyword.
     if (!foundMale) {
         foundMale = enVoices.find(v => maleKeywords.test(v.name));
     }
-    // 3. (Chrome Fix) If still not found, find an American voice that is NOT female.
-    if (!foundMale && usVoices.length > 0) {
-        foundMale = usVoices.find(v => !femaleKeywords.test(v.name));
-    }
-    // 4. (Original Chrome Fix) If still not found, find any English voice that is NOT female.
     if (!foundMale) {
         foundMale = enVoices.find(v => !femaleKeywords.test(v.name));
     }
+    
+    // --- Step 2: Resolve conflicts and fill gaps ---
+    // If both are the same, the male selection (which is for the problematic Chrome) was likely a guess.
+    // Let's keep the female (which was working) and find a different male.
+    if (foundMale && foundFemale && foundMale === foundFemale) {
+        // Find a different male voice.
+        const alternateMale = enVoices.find(v => v !== foundFemale && !femaleKeywords.test(v.name));
+        if (alternateMale) {
+            foundMale = alternateMale;
+        } else {
+            // If we can't find a distinctly non-female voice, just find any other voice.
+            foundMale = enVoices.find(v => v !== foundFemale) || foundMale;
+        }
+    }
 
-    // --- Female Voice Selection ---
-    let foundFemale = enVoices.find(v => femaleKeywords.test(v.name));
-    // Fallback: find a voice that isn't the one we picked for male.
+    // --- Step 3: Final fallbacks for missing voices ---
     if (!foundFemale) {
-        foundFemale = enVoices.find(v => v !== foundMale);
+        // Find a voice that is not the chosen male voice.
+        foundFemale = enVoices.find(v => v !== foundMale) || enVoices[0] || null;
+    }
+    if (!foundMale) {
+        // Find a voice that is not the chosen female voice.
+        foundMale = enVoices.find(v => v !== foundFemale) || enVoices[0] || null;
     }
     
-    // --- Final Fallbacks ---
-    if (!foundMale && enVoices.length > 0) foundMale = enVoices[0];
-    if (!foundFemale && enVoices.length > 0) foundFemale = enVoices.find(v => v !== foundMale) || enVoices[0];
-
-    voiceCache.male = foundMale || null;
-    voiceCache.female = foundFemale || null;
-
-    // For 'auto' mode, use all available English voices for maximum diversity, as requested.
-    const autoVoiceSet = new Set(enVoices);
-    voiceCache.auto = Array.from(autoVoiceSet).sort(() => 0.5 - Math.random());
+    voiceCache.male = foundMale;
+    voiceCache.female = foundFemale;
     
-    // Final sanity check for auto
+    // For 'auto' mode, use all available English voices for maximum diversity
+    voiceCache.auto = Array.from(new Set(enVoices)).sort(() => 0.5 - Math.random());
     if (voiceCache.auto.length === 0 && allVoices.length > 0) {
-        console.warn("PC: Auto voice list was empty after filtering. Using all available voices as fallback.");
         voiceCache.auto = allVoices;
     }
 }
