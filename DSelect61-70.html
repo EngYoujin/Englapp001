@@ -190,239 +190,208 @@ TEMPLATE INSTRUCTION / テンプレート利用方法
 ================================================================================
 以下の `const quizData = [ ... ];` の `[` と `]` の間に、
 新しい例文データを貼り付けてください。
-
-- 各例文は `{ ... }` の形式で記述します。
-- 例文と例文の間は、必ず `,` (カンマ) で区切ってください。
-- 最後の例文の後ろには `,` (カンマ) を付けないでください。
-
-貼り付け例：
-const quizData = [
-    {
-        "id": 11,
-        "originalSentence": "...",
-        // ... (例文11のデータ)
-    },
-    {
-        "id": 12,
-        "originalSentence": "...",
-        // ... (例文12のデータ)
-    }
-    // ... 最後の例文まで続く
-];
 ================================================================================
 */
 const quizData = [
     {
         "id": 61,
-        "originalSentence": "He claims that this valuable property belongs to him.",
-        "translation": "彼はこの価値ある財産が自分のものであると主張している。",
+        "originalSentence": "The company established a new branch in the city center.",
+        "translation": "その会社は市の中心部に新しい支店を設立した。",
         "quiz": {
-            "target": "claims",
-            "choices": ["claims", "requests", "admits", "suggests"],
-            "meaning": "…だと主張する"
+          "target": "established",
+          "choices": ["established", "created", "built", "founded"],
+          "meaning": "…を設立する"
         },
         "application": {
-            "situation": "友達がUFOを見たなど、ちょっと信じがたい話をしていて、自分はその話を疑っているとき。",
-            "sentence": "My brother claims he saw a UFO last night, but I'm <span class='tooltip-trigger'>not so sure<span class='tooltip-content'>「どうかな」「確信はないな」という、少し疑っている気持ちを表す表現。</span></span>.",
-            "translation": "弟は昨日の夜UFOを見たって主張してるけど、僕はどうも信じられないな。"
+          "situation": "友達が新しいカフェを開店した。市の中心部に素敵な場所を見つけたそう。",
+          "sentence": "My friend established a new cafe in the <span class='tooltip-trigger'>heart of the city<span class='tooltip-content'>「市の中心部」のこと。最も賑やかで便利な場所。</span></span>.",
+          "translation": "友達が市の中心部に新しいカフェを設立した。"
         },
         "flashcards": [
-            { "en": "claim", "ja": "…だと主張する", "kana": "ク**レ**イム", "phonetic": "/kleɪm/", "hint": "c" },
-            { "en": "two-thirds", "ja": "3分の2", "kana": "トゥー **サ**ーズ", "phonetic": "/tuː θɜːrdz/", "hint": "t" },
-            { "en": "property", "ja": "財産、不動産", "kana": "プ**ラ**パティ", "phonetic": "/ˈprɑːpərti/", "hint": "p" },
-            { "en": "belong to", "ja": "…の所有物である", "kana": "ビ**ロ**ング トゥ", "phonetic": "/bɪˈlɔːŋ tuː/", "hint": "b" }
+          { "en": "branch", "ja": "支店", "kana": "**ブラ**ンチ", "phonetic": "/bræntʃ/", "hint": "b" },
+          { "en": "city center", "ja": "市の中心部", "kana": "**シ**ティ・**セ**ンター", "phonetic": "/ˈsɪti ˈsentər/", "hint": "c" }
         ]
-    },
-    {
+      },
+      {
         "id": 62,
-        "originalSentence": "Be careful, the river is not shallow but very deep.",
-        "translation": "気をつけて、その川は浅くなく、とても深いです。",
+        "originalSentence": "The team conducted a thorough investigation of the incident.",
+        "translation": "チームはその事件について徹底的な調査を行った。",
         "quiz": {
-            "target": "shallow",
-            "choices": ["shallow", "deep", "narrow", "wide"],
-            "meaning": "浅い"
+          "target": "conducted",
+          "choices": ["conducted", "performed", "carried out", "executed"],
+          "meaning": "…を実施する、行う"
         },
         "application": {
-            "situation": "映画の感想を話していて、登場人物のキャラクターについて意見を言うとき。",
-            "sentence": "I found the main character to be a bit shallow; his <span class='tooltip-trigger'>motivations<span class='tooltip-content'>「動機」のこと。なぜその行動を取ったのかという理由。</span></span> weren't very believable.",
-            "translation": "主人公がちょっと浅はかだと感じたな。彼の動機にはあまり説得力がなかったよ。"
+          "situation": "学校で小さなトラブルが起きて、先生たちが詳しく調べてくれた。",
+          "sentence": "The teachers conducted a thorough investigation to <span class='tooltip-trigger'>get to the bottom of<span class='tooltip-content'>「真相を突き止める」という意味。問題の根本原因を明らかにすること。</span></span> the problem.",
+          "translation": "先生たちは問題の真相を突き止めるため、徹底的な調査を行った。"
         },
         "flashcards": [
-            { "en": "stream", "ja": "小川", "kana": "スト**リ**ーム", "phonetic": "/striːm/", "hint": "s" },
-            { "en": "shallow", "ja": "浅い", "kana": "**シャ**ロウ", "phonetic": "/ˈʃæloʊ/", "hint": "s" },
-            { "en": "foot", "ja": "フィート（長さの単位）", "kana": "フット", "phonetic": "/fʊt/", "hint": "f" },
-            { "en": "deep", "ja": "深い", "kana": "**ディ**ープ", "phonetic": "/diːp/", "hint": "d" }
+          { "en": "thorough", "ja": "徹底的な", "kana": "**サ**ロー", "phonetic": "/ˈθɜːroʊ/", "hint": "t" },
+          { "en": "investigation", "ja": "調査", "kana": "インヴェスティ**ゲ**イション", "phonetic": "/ɪnˌvestɪˈɡeɪʃn/", "hint": "i" },
+          { "en": "incident", "ja": "事件、出来事", "kana": "**イン**シデント", "phonetic": "/ˈɪnsɪdənt/", "hint": "i" }
         ]
-    },
-    {
+      },
+      {
         "id": 63,
-        "originalSentence": "Please weigh this package before you send it.",
-        "translation": "送る前にこの小包の重さを量ってください。",
+        "originalSentence": "The company implemented a new policy to improve efficiency.",
+        "translation": "その会社は効率を向上させるために新しい方針を実施した。",
         "quiz": {
-            "target": "weigh",
-            "choices": ["weigh", "cost", "deliver", "contain"],
-            "meaning": "…の重さを量る"
+          "target": "implemented",
+          "choices": ["implemented", "introduced", "applied", "enforced"],
+          "meaning": "…を実施する、導入する"
         },
         "application": {
-            "situation": "旅行の準備で、スーツケースの重さが気になるとき。",
-            "sentence": "I need to weigh my suitcase to make sure it's not <span class='tooltip-trigger'>overweight<span class='tooltip-content'>「重量超過」のこと。空港のチェックインカウンターでよく聞く言葉。</span></span> for the flight.",
-            "translation": "飛行機の重量制限を超えていないか確認するために、スーツケースの重さを量らなきゃ。"
+          "situation": "クラスで新しいルールを決めて、みんなで守るようにした。",
+          "sentence": "We implemented a new policy to <span class='tooltip-trigger'>reduce waste<span class='tooltip-content'>「無駄を減らす」という意味。資源や時間の無駄を削減すること。</span></span> in our classroom.",
+          "translation": "私たちは教室での無駄を減らすために新しい方針を実施した。"
         },
         "flashcards": [
-            { "en": "package", "ja": "小包、包み", "kana": "**パ**ケジ", "phonetic": "/ˈpækɪdʒ/", "hint": "p" },
-            { "en": "weigh", "ja": "…の重さがある", "kana": "ウェイ", "phonetic": "/weɪ/", "hint": "w" },
-            { "en": "pound", "ja": "ポンド（重量・貨幣単位）", "kana": "**パ**ウンド", "phonetic": "/paʊnd/", "hint": "p" },
-            { "en": "more or less", "ja": "だいたい", "kana": "モア オア **レ**ス", "phonetic": "/mɔːr ɔːr les/", "hint": "m" }
+          { "en": "policy", "ja": "方針、政策", "kana": "**ポ**リシー", "phonetic": "/ˈpɑːləsi/", "hint": "p" },
+          { "en": "improve", "ja": "…を改善する", "kana": "イム**プル**ーヴ", "phonetic": "/ɪmˈpruːv/", "hint": "i" },
+          { "en": "efficiency", "ja": "効率", "kana": "イ**フィ**シェンシー", "phonetic": "/ɪˈfɪʃənsi/", "hint": "e" }
         ]
-    },
-    {
+      },
+      {
         "id": 64,
-        "originalSentence": "This room is approximately twice as large as mine.",
-        "translation": "この部屋は私の部屋のほぼ2倍の大きさです。",
+        "originalSentence": "The team maintained high standards throughout the project.",
+        "translation": "チームはプロジェクト全体を通して高い基準を維持した。",
         "quiz": {
-            "target": "approximately",
-            "choices": ["approximately", "totally", "suddenly", "over"],
-            "meaning": "ほぼ、およそ"
+          "target": "maintained",
+          "choices": ["maintained", "kept", "preserved", "sustained"],
+          "meaning": "…を維持する"
         },
         "application": {
-            "situation": "待ち合わせの時間にどれくらいで着くか伝えるとき。",
-            "sentence": "I'm on the train now. I should be there in approximately 15 minutes.",
-            "translation": "今、電車に乗ったところ。15分くらいでそっちに着くはずだよ。"
+          "situation": "文化祭の準備で、最初から最後まで品質を落とさずに頑張った。",
+          "sentence": "We maintained high standards from the beginning to the end of the <span class='tooltip-trigger'>cultural festival<span class='tooltip-content'>「文化祭」のこと。学校で行われる文化活動の発表会。</span></span> preparation.",
+          "translation": "私たちは文化祭の準備を始めから終わりまで、高い基準を維持した。"
         },
         "flashcards": [
-            { "en": "approximately", "ja": "ほぼ、およそ", "kana": "アプ**ロ**クスミトゥリィ", "phonetic": "/əˈprɑːksɪmətli/", "hint": "a" },
-            { "en": "twice as large as", "ja": "…の2倍の大きさの", "kana": "トゥワイス アズ **ラ**ージ アズ", "phonetic": "/twaɪs æz lɑːrdʒ æz/", "hint": "t" },
-            { "en": "Mars", "ja": "火星", "kana": "**マ**ーズ", "phonetic": "/mɑːrz/", "hint": "M" }
+          { "en": "high standards", "ja": "高い基準", "kana": "**ハ**イ・**スタ**ンダーズ", "phonetic": "/haɪ ˈstændərdz/", "hint": "h" },
+          { "en": "throughout", "ja": "…全体を通して", "kana": "スルー**アウ**ト", "phonetic": "/θruːˈaʊt/", "hint": "t" },
+          { "en": "project", "ja": "プロジェクト", "kana": "**プロ**ジェクト", "phonetic": "/ˈprɑːdʒekt/", "hint": "p" }
         ]
-    },
-    {
+      },
+      {
         "id": 65,
-        "originalSentence": "I came across an interesting article about space travel.",
-        "translation": "宇宙旅行に関する面白い記事を偶然見つけた。",
+        "originalSentence": "The company secured a major contract with a leading firm.",
+        "translation": "その会社は一流企業との大きな契約を獲得した。",
         "quiz": {
-            "target": "came across",
-            "choices": ["came across", "searched for", "wrote", "picked up"],
-            "meaning": "偶然…を見つける"
+          "target": "secured",
+          "choices": ["secured", "obtained", "acquired", "gained"],
+          "meaning": "…を獲得する、確保する"
         },
         "application": {
-            "situation": "部屋の片付けをしていたら、昔の写真や手紙が出てきたとき。",
-            "sentence": "While cleaning my room, I came across my old photo albums. It was a real <span class='tooltip-trigger'>blast from the past<span class='tooltip-content'>「懐かしい思い出」という意味のイディオム。「blast」は元々「爆発」だが、スラングで「とても楽しい時間」も意味する。</span></span>!",
-            "translation": "部屋を掃除していたら、古いアルバムを偶然見つけたんだ。すごく懐かしい気持ちになったよ！"
+          "situation": "バイトの面接で、憧れの会社から採用の内定をもらった。",
+          "sentence": "I secured a part-time job at the <span class='tooltip-trigger'>company of my dreams<span class='tooltip-content'>「憧れの会社」のこと。ずっと働きたいと思っていた理想の企業。</span></span>.",
+          "translation": "私は憧れの会社でバイトの仕事を獲得した。"
         },
         "flashcards": [
-            { "en": "come across", "ja": "偶然…を見つける", "kana": "カム ア**ク**ロス", "phonetic": "/kʌm əˈkrɔːs/", "hint": "c" },
-            { "en": "article", "ja": "記事", "kana": "**ア**ーティクル", "phonetic": "/ˈɑːrtɪkl/", "hint": "a" },
-            { "en": "favorite", "ja": "お気に入りの", "kana": "**フェ**イヴァリット", "phonetic": "/ˈfeɪvərɪt/", "hint": "f" },
-            { "en": "novel", "ja": "（長編）小説", "kana": "**ノ**ヴォウ", "phonetic": "/ˈnɑːvəl/", "hint": "n" },
-            { "en": "tear out", "ja": "…を（破り）取る", "kana": "**テ**ア **ア**ウト", "phonetic": "/ter aʊt/", "hint": "t" }
+          { "en": "major", "ja": "主要な、大きな", "kana": "**メイ**ジャー", "phonetic": "/ˈmeɪdʒər/", "hint": "m" },
+          { "en": "contract", "ja": "契約", "kana": "**コ**ントラクト", "phonetic": "/ˈkɑːntrækt/", "hint": "c" },
+          { "en": "leading", "ja": "一流の、先導的な", "kana": "**リー**ディング", "phonetic": "/ˈliːdɪŋ/", "hint": "l" }
         ]
-    },
-    {
+      },
+      {
         "id": 66,
-        "originalSentence": "Can you pick out a tie to go with this shirt?",
-        "translation": "このシャツに合うネクタイを選んでくれますか？",
+        "originalSentence": "The team demonstrated excellent teamwork during the crisis.",
+        "translation": "チームは危機の際に素晴らしいチームワークを示した。",
         "quiz": {
-            "target": "go with",
-            "choices": ["go with", "put on", "take off", "try on"],
-            "meaning": "…に合う、調和する"
+          "target": "demonstrated",
+          "choices": ["demonstrated", "showed", "displayed", "exhibited"],
+          "meaning": "…を示す、実証する"
         },
         "application": {
-            "situation": "新しい家具を買うときに、部屋の雰囲気に合うかどうか相談するとき。",
-            "sentence": "I like this blue sofa, but do you think it will go with the curtains and the <span class='tooltip-trigger'>rug<span class='tooltip-content'>床に敷く「敷物」のこと。カーペットよりも小さいものを指すことが多い。</span></span>?",
-            "translation": "この青いソファは好きだけど、カーテンやラグに合うと思う？"
+          "situation": "体育祭で最後のリレー。みんなで協力して見事に逆転勝利した。",
+          "sentence": "Our class demonstrated excellent teamwork during the <span class='tooltip-trigger'>final relay<span class='tooltip-content'>「最終リレー」のこと。体育祭などの最後に行われるリレー競技。</span></span>.",
+          "translation": "私たちのクラスは最終リレーで素晴らしいチームワークを示した。"
         },
         "flashcards": [
-            { "en": "pick out", "ja": "…を選び出す", "kana": "ピック **ア**ウト", "phonetic": "/pɪk aʊt/", "hint": "p" },
-            { "en": "item", "ja": "品目、もの", "kana": "**ア**イテム", "phonetic": "/ˈaɪtəm/", "hint": "i" },
-            { "en": "go with", "ja": "…に合う", "kana": "ゴウ ウィズ", "phonetic": "/ɡoʊ wɪð/", "hint": "g" },
-            { "en": "pants", "ja": "ズボン", "kana": "パンツ", "phonetic": "/pænts/", "hint": "p" }
+          { "en": "excellent", "ja": "素晴らしい", "kana": "**エ**クセレント", "phonetic": "/ˈeksələnt/", "hint": "e" },
+          { "en": "teamwork", "ja": "チームワーク", "kana": "**ティ**ームワーク", "phonetic": "/ˈtiːmwɜːrk/", "hint": "t" },
+          { "en": "crisis", "ja": "危機", "kana": "**クライ**シス", "phonetic": "/ˈkraɪsɪs/", "hint": "c" }
         ]
-    },
-    {
+      },
+      {
         "id": 67,
-        "originalSentence": "The room was so smoky I could barely breathe.",
-        "translation": "部屋はとても煙たくて、私はかろうじて息をすることができた。",
+        "originalSentence": "The company invested heavily in research and development.",
+        "translation": "その会社は研究開発に多額の投資をした。",
         "quiz": {
-            "target": "barely",
-            "choices": ["barely", "deeply", "loudly", "calmly"],
-            "meaning": "かろうじて、やっと"
+          "target": "invested",
+          "choices": ["invested", "spent", "allocated", "devoted"],
+          "meaning": "…に投資する"
         },
         "application": {
-            "situation": "満員電車で、やっとの思いで電車に乗ったとき。",
-            "sentence": "The train was so crowded this morning, I barely managed to <span class='tooltip-trigger'>squeeze in<span class='tooltip-content'>「（狭い場所に）割り込む、押し入る」という意味。満員電車などで使われる表現。</span></span> before the doors closed.",
-            "translation": "今朝の電車はすごく混んでて、ドアが閉まる前にかろうじて乗り込めたよ。"
+          "situation": "将来のためにお金を貯めて、資格取得のための勉強に投資した。",
+          "sentence": "I invested my savings in <span class='tooltip-trigger'>professional development<span class='tooltip-content'>「専門能力の向上」のこと。仕事に役立つスキルや資格を身につけること。</span></span> courses.",
+          "translation": "私は貯金を専門能力向上のためのコースに投資した。"
         },
         "flashcards": [
-            { "en": "faint", "ja": "気を失う", "kana": "**フェ**イント", "phonetic": "/feɪnt/", "hint": "f" },
-            { "en": "barely", "ja": "かろうじて…（する）", "kana": "**ベ**アリィ", "phonetic": "/ˈberli/", "hint": "b" },
-            { "en": "breathe", "ja": "呼吸する", "kana": "ブ**リ**ーズ", "phonetic": "/briːð/", "hint": "b" }
+          { "en": "heavily", "ja": "多額に、大量に", "kana": "**ヘ**ヴィリィ", "phonetic": "/ˈhevɪli/", "hint": "h" },
+          { "en": "research", "ja": "研究", "kana": "リ**サ**ーチ", "phonetic": "/rɪˈsɜːrtʃ/", "hint": "r" },
+          { "en": "development", "ja": "開発", "kana": "ディ**ヴェ**ロップメント", "phonetic": "/dɪˈveləpmənt/", "hint": "d" }
         ]
-    },
-    {
+      },
+      {
         "id": 68,
-        "originalSentence": "I advise you to stay here for the time being.",
-        "translation": "当分の間は、ここにいることをお勧めします。",
+        "originalSentence": "The team created an innovative solution to the problem.",
+        "translation": "チームはその問題に対する革新的な解決策を作り出した。",
         "quiz": {
-            "target": "for the time being",
-            "choices": ["for the time being", "in the future", "in advance", "at that time"],
-            "meaning": "当分の間は"
+          "target": "created",
+          "choices": ["created", "developed", "designed", "produced"],
+          "meaning": "…を作り出す、創造する"
         },
         "application": {
-            "situation": "引越し先はまだ決まっていないが、とりあえず今の場所に住み続けることを話すとき。",
-            "sentence": "I'm still looking for a new apartment, but I'll <span class='tooltip-trigger'>stay at<span class='tooltip-content'>「～に滞在する」という意味。ホテルや友人宅などに泊まる場合に使われる。</span></span> my <span class='tooltip-trigger'>current<span class='tooltip-content'>「現在の」という意味。'current situation'（現状）など。</span></span> place for the time being.",
-            "translation": "まだ新しいアパートを探しているけど、当分の間は今の場所に住むつもりだよ。"
+          "situation": "クラスで環境問題について話し合って、ユニークなアイデアを考え出した。",
+          "sentence": "We created an innovative solution to <span class='tooltip-trigger'>reduce plastic waste<span class='tooltip-content'>「プラスチック廃棄物を減らす」という意味。環境に優しい取り組み。</span></span> in our school.",
+          "translation": "私たちは学校でのプラスチック廃棄物を減らす革新的な解決策を作り出した。"
         },
         "flashcards": [
-            { "en": "advise", "ja": "…に助言する", "kana": "アド**ヴァ**イズ", "phonetic": "/ədˈvaɪz/", "hint": "a" },
-            { "en": "comment", "ja": "コメント、見解", "kana": "**カ**メント", "phonetic": "/ˈkɑːment/", "hint": "c" },
-            { "en": "the press", "ja": "報道陣", "kana": "ザ プ**レ**ス", "phonetic": "/ðə pres/", "hint": "p" },
-            { "en": "for the time being", "ja": "当分の間は", "kana": "フォー ザ タイム **ビ**ーイング", "phonetic": "/fɔːr ðə taɪm ˈbiːɪŋ/", "hint": "f" }
+          { "en": "innovative", "ja": "革新的な", "kana": "**イ**ノヴェイティヴ", "phonetic": "/ˈɪnəveɪtɪv/", "hint": "i" },
+          { "en": "solution", "ja": "解決策", "kana": "ソ**ルー**ション", "phonetic": "/səˈluːʃn/", "hint": "s" },
+          { "en": "problem", "ja": "問題", "kana": "**プロ**ブレム", "phonetic": "/ˈprɑːbləm/", "hint": "p" }
         ]
-    },
-    {
+      },
+      {
         "id": 69,
-        "originalSentence": "We don't have sufficient evidence to solve the case.",
-        "translation": "我々にはその事件を解決するための十分な証拠がない。",
+        "originalSentence": "The company launched a new product line to meet market demands.",
+        "translation": "その会社は市場の需要に応えるために新しい商品ラインを発売した。",
         "quiz": {
-            "target": "sufficient",
-            "choices": ["sufficient", "initial", "potential", "personal"],
-            "meaning": "十分な"
+          "target": "launched",
+          "choices": ["launched", "introduced", "released", "started"],
+          "meaning": "…を発売する、開始する"
         },
         "application": {
-            "situation": "旅行の計画を立てているが、まだ情報が足りないと感じるとき。",
-            "sentence": "Before we book anything, we need to <span class='tooltip-trigger'>gather<span class='tooltip-content'>「～を集める」という意味。情報や人々など、様々なものを集める際に使われる。</span></span> sufficient information about the local transportation.",
-            "translation": "何か予約する前に、現地の交通機関について十分な情報を集める必要があるね。"
+          "situation": "友達が作った手作りアクセサリーが人気になって、オンラインショップを始めた。",
+          "sentence": "My friend launched an online shop to sell her <span class='tooltip-trigger'>handmade accessories<span class='tooltip-content'>「手作りアクセサリー」のこと。自分で作った装飾品や小物。</span></span>.",
+          "translation": "友達は手作りアクセサリーを売るためにオンラインショップを開始した。"
         },
         "flashcards": [
-            { "en": "at present", "ja": "現時点で", "kana": "アット プ**レ**ゼント", "phonetic": "/æt ˈpreznt/", "hint": "a" },
-            { "en": "sufficient", "ja": "十分な", "kana": "サ**フィ**シェント", "phonetic": "/səˈfɪʃənt/", "hint": "s" },
-            { "en": "evidence", "ja": "証拠", "kana": "**エ**ヴィデンス", "phonetic": "/ˈevɪdəns/", "hint": "e" },
-            { "en": "prove", "ja": "…を証明する", "kana": "プルーヴ", "phonetic": "/pruːv/", "hint": "p" },
-            { "en": "guilty", "ja": "有罪の", "kana": "**ギ**ルティ", "phonetic": "/ˈɡɪlti/", "hint": "g" }
+          { "en": "product line", "ja": "商品ライン", "kana": "**プロ**ダクト・**ラ**イン", "phonetic": "/ˈprɑːdʌkt laɪn/", "hint": "p" },
+          { "en": "meet", "ja": "…に応える", "kana": "**ミ**ート", "phonetic": "/miːt/", "hint": "m" },
+          { "en": "market demands", "ja": "市場の需要", "kana": "**マ**ーケット・ディ**マ**ンド", "phonetic": "/ˈmɑːrkɪt dɪˈmændz/", "hint": "m" }
         ]
-    },
-    {
+      },
+      {
         "id": 70,
-        "originalSentence": "This year's exports will probably exceed last year's total.",
-        "translation": "今年の輸出総額は、おそらく去年の合計を超えるだろう。",
+        "originalSentence": "The team achieved remarkable results through collaboration.",
+        "translation": "チームは協力を通して驚くべき結果を達成した。",
         "quiz": {
-            "target": "exceed",
-            "choices": ["exceed", "equal", "decrease", "affect"],
-            "meaning": "…を超える"
+          "target": "achieved",
+          "choices": ["achieved", "accomplished", "attained", "reached"],
+          "meaning": "…を達成する"
         },
         "application": {
-            "situation": "期待していた以上に映画やコンサートが素晴らしかったと感想を言うとき。",
-            "sentence": "The concert was amazing! It totally exceeded all my <span class='tooltip-trigger'>expectations<span class='tooltip-content'>「期待」「予想」という意味。'expectation'の複数形で使われることが多い。</span></span>.",
-            "translation": "あのコンサートは最高だった！完全に僕の期待を超えてたよ。"
+          "situation": "クラス全員で協力して、学校の記録を更新するような素晴らしい成果を上げた。",
+          "sentence": "We achieved remarkable results through <span class='tooltip-trigger'>close collaboration<span class='tooltip-content'>「密接な協力」のこと。みんなで力を合わせて取り組むこと。</span></span>.",
+          "translation": "私たちは密接な協力を通して驚くべき結果を達成した。"
         },
         "flashcards": [
-            { "en": "export", "ja": "輸出", "kana": "**エ**クスポート", "phonetic": "/ˈekspɔːrt/", "hint": "e" },
-            { "en": "exceed", "ja": "…を超える", "kana": "イク**スィ**ード", "phonetic": "/ɪkˈsiːd/", "hint": "e" },
-            { "en": "import", "ja": "輸入", "kana": "**イ**ンポート", "phonetic": "/ˈɪmpɔːrt/", "hint": "i" },
-            { "en": "trade balance", "ja": "貿易収支", "kana": "**トゥ**レイド **バ**ランス", "phonetic": "/treɪd ˈbæləns/", "hint": "t" },
-            { "en": "surplus", "ja": "黒字", "kana": "**サ**ァプラス", "phonetic": "/ˈsɜːrplʌs/", "hint": "s" }
+          { "en": "remarkable", "ja": "驚くべき、注目すべき", "kana": "リ**マ**ーカブル", "phonetic": "/rɪˈmɑːrkəbl/", "hint": "r" },
+          { "en": "results", "ja": "結果", "kana": "リ**ザ**ルツ", "phonetic": "/rɪˈzʌlts/", "hint": "r" },
+          { "en": "collaboration", "ja": "協力", "kana": "コラボ**レ**イション", "phonetic": "/kəˌlæbəˈreɪʃn/", "hint": "c" }
         ]
-    }
+      }
 ];
 
 // --- PERSISTENCE KEYS ---
@@ -496,8 +465,12 @@ function getItemId(sentenceId, type, identifier = '') {
 let currentSentenceIndex = 0;
 let currentStep = 1;
 let isSequentialMode = false; 
+
+// --- [REPLACED] Voice/Audio related state
 let speechSynthesis = window.speechSynthesis;
+// This cache will be populated by the new pickVoices function.
 let voiceCache = { male: null, female: null, auto: [], toggle: 0 };
+
 let quizQueue = [];
 let stepUnlocked = 1;
 let finalCheckCards = [];
@@ -526,7 +499,11 @@ const stepViews = {
 const stepIndicatorsContainer = document.getElementById('step-indicators-container');
 
 // --- INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Asynchronously load and filter voices first
+    if ('speechSynthesis' in window) {
+        await pickVoices();
+    }
     showMainMenu();
     initAudioControls();
 });
@@ -589,37 +566,135 @@ stepIndicatorsContainer.addEventListener('click', (e) => {
 });
 
 
-// --- Voice Initialization Logic ---
-function pickVoices() {
-    try {
-        const vs = speechSynthesis.getVoices();
-        if (!vs.length) return;
-        const en = vs.filter(v => /^en([-_]|$)/i.test(v.lang) || /english/i.test(v.name));
-        
-        // Find specific male and female voices
-        voiceCache.female = en.find(v => /female|jenny|ariel|emma|olivia|zira|samantha|alloy|nova/i.test(v.name)) || null;
-        voiceCache.male = en.find(v => /male|david|guy|ryan|brian|matthew|daniel|andrew|roger/i.test(v.name)) || null;
+// --- [Ultimate Hybrid] Voice Initialization Logic ---
 
-        // Create a diverse list for "auto" mode
-        const autoVoiceSet = new Set();
-        if (voiceCache.male) autoVoiceSet.add(voiceCache.male);
-        if (voiceCache.female) autoVoiceSet.add(voiceCache.female);
-        
-        const usUkVoices = en.filter(v => v.lang.startsWith('en-US') || v.lang.startsWith('en-GB'));
-        usUkVoices.forEach(v => autoVoiceSet.add(v));
-        
-        const otherVoices = en.filter(v => !v.lang.startsWith('en-US') && !v.lang.startsWith('en-GB'));
-        // Add all other english voices to the list for more variety
-        otherVoices.forEach(v => autoVoiceSet.add(v));
-        
-        voiceCache.auto = Array.from(autoVoiceSet).sort(() => 0.5 - Math.random());
-        
-        // Fallback for male/female if not found
-        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || en[0] || vs[0];
-        if (!voiceCache.female) voiceCache.female = voiceCache.auto[1] || voiceCache.auto[0] || en[0] || vs[0];
-
-    } catch (e) { console.error('Error picking voices', e); }
+// --- Common Helpers ---
+function listVoices() {
+    return new Promise(resolve => {
+        let voices = speechSynthesis.getVoices();
+        if (voices.length) {
+            return resolve(voices);
+        }
+        speechSynthesis.onvoiceschanged = () => {
+            voices = speechSynthesis.getVoices();
+            resolve(voices);
+        };
+    });
 }
+
+function isMobile() {
+    const ua = navigator.userAgent;
+    return /android|iphone|ipad|ipod/i.test(ua);
+}
+
+// --- Mobile-Specific Logic (Stability First) ---
+async function pickVoicesForMobile() {
+    console.log("Mobile device detected. Applying strict voice filtering for stability.");
+    const allVoices = await listVoices();
+    const safeVoices = allVoices.filter(v => v.lang.startsWith('en-') && !/hindi|india|googlee|generic|network|xiaomi/i.test(v.name));
+    if (safeVoices.length === 0) {
+        console.warn("Mobile: No safe English voices found.");
+        return;
+    }
+
+    let mobileMale = safeVoices.find(v => v.name === "Daniel") || safeVoices.find(v => /male/i.test(v.name));
+    let mobileFemale = safeVoices.find(v => v.name === "Samantha") || safeVoices.find(v => /female/i.test(v.name));
+
+    // Fallbacks
+    if (!mobileMale) mobileMale = safeVoices.find(v => !/female/i.test(v.name)) || safeVoices[0];
+    if (!mobileFemale) mobileFemale = safeVoices.find(v => v !== mobileMale) || safeVoices[0];
+
+    voiceCache.male = mobileMale || null;
+    voiceCache.female = mobileFemale || null;
+    voiceCache.auto = [mobileMale, mobileFemale].filter(v => v !== null && v !== undefined);
+    if (voiceCache.auto.length === 0 && safeVoices.length > 0) {
+      voiceCache.auto.push(safeVoices[0]);
+    }
+}
+
+// --- PC-Specific Logic (Diversity First) ---
+async function pickVoicesForPC() {
+    console.log("Desktop PC detected. Reversing logic to find a male voice first.");
+    const allVoices = await listVoices();
+    if (!allVoices.length) { console.warn("PC: No voices available."); return; }
+
+    let enVoices = allVoices.filter(v => v.lang.startsWith('en-'));
+    if (enVoices.length === 0) { enVoices = allVoices.filter(v => /english/i.test(v.name)); }
+
+    if (enVoices.length === 0) {
+        console.warn("PC: No English voices found. Using any available voices.");
+        voiceCache.male = allVoices[0] || null;
+        voiceCache.female = allVoices[1] || allVoices[0] || null;
+        voiceCache.auto = allVoices;
+        return;
+    }
+
+    const femaleKeywords = /female|jenny|aria|zira|samantha|tessa|susan|catherine/i;
+    const maleKeywords = /male|david|mark|daniel|paul|alan|guy/i;
+
+    let femaleVoice, maleVoice;
+
+    // --- Reversed Strategy: Prioritize getting a good MALE voice, then find a DIFFERENT female voice. ---
+
+    // 1. Find the best possible male voice (or at least, the most "not-female" voice).
+    maleVoice = enVoices.find(v => maleKeywords.test(v.name)) 
+                || enVoices.find(v => maleKeywords.test(v.voiceURI || ''))
+                || enVoices.find(v => !femaleKeywords.test(v.name) && !femaleKeywords.test(v.voiceURI || '')) // Find a voice that isn't explicitly female
+                || enVoices[0]; // Ultimate fallback to the very first English voice
+
+    // 2. Find a FEMALE voice that is explicitly DIFFERENT from the male voice.
+    femaleVoice = enVoices.find(v => v !== maleVoice && femaleKeywords.test(v.name))
+                  || enVoices.find(v => v !== maleVoice); // Absolute fallback: just get any other voice.
+
+    // If we only found one voice total, femaleVoice might be null. In that case, use the male voice for both.
+    if (!femaleVoice) {
+        femaleVoice = maleVoice;
+    }
+
+    voiceCache.female = femaleVoice;
+    voiceCache.male = maleVoice;
+
+    console.log(`[Reversed Logic] Selected Male: ${voiceCache.male?.name} (${voiceCache.male?.lang})`);
+    console.log(`[Reversed Logic] Selected Female: ${voiceCache.female?.name} (${voiceCache.female?.lang})`);
+
+    // For 'auto' mode, use all available English voices for maximum diversity
+    voiceCache.auto = Array.from(new Set(enVoices)).sort(() => 0.5 - Math.random());
+    if (voiceCache.auto.length === 0 && allVoices.length > 0) {
+        voiceCache.auto = allVoices;
+    }
+}
+
+// --- Main Hybrid Voice Selector ---
+async function pickVoices() {
+    try {
+        if (isMobile()) {
+            await pickVoicesForMobile();
+        } else {
+            await pickVoicesForPC();
+        }
+        
+        // Final sanity checks to prevent empty voice cache
+        if (!voiceCache.auto || voiceCache.auto.length === 0) {
+             const allVoices = await listVoices();
+             const enVoices = allVoices.filter(v => v.lang.startsWith('en-'));
+             voiceCache.auto = enVoices.length > 0 ? [enVoices[0]] : (allVoices.length > 0 ? [allVoices[0]] : []);
+        }
+        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || null;
+        if (!voiceCache.female) voiceCache.female = voiceCache.auto.find(v => v !== voiceCache.male) || voiceCache.auto[0] || null;
+
+    } catch (e) {
+        console.error('Error picking voices', e);
+        // Ultimate fallback
+        const allVoices = speechSynthesis.getVoices();
+        const enVoice = allVoices.find(v => v.lang.startsWith('en-')) || allVoices[0];
+        if (enVoice) {
+            voiceCache.male = enVoice;
+            voiceCache.female = enVoice;
+            voiceCache.auto = [enVoice];
+        }
+    }
+}
+
 
 function navigateToSentence(index) {
     if (index < 0 || index >= quizData.length) return;
@@ -632,11 +707,6 @@ function navigateToSentence(index) {
     currentStep = 1;
     stepUnlocked = 3; // Unlock all steps immediately for free navigation
     renderCurrentStep();
-}
-
-if ('speechSynthesis' in window) {
-    speechSynthesis.onvoiceschanged = pickVoices;
-    pickVoices(); // Initial call
 }
 
 function initAudioControls() {
@@ -720,52 +790,61 @@ function syncAppSettings() {
 function sanitizeForTTS(s) {
     if (!s) return s;
     let t = s.replace(/\([^)]*\)/g, '').replace(/（[^）]*）/g, '');
-    t = t.replace(/<[^>]+>/g, ''); // strip html tags for speech
+    t = t.replace(/<[^>]+>/g, '');
     t = t.replace(/[↔↮→—–…\/｜≠=]/g, ' ');
-    t = t.replace(/[\u3040-\u30FF\u3400-\u9FFF\uF900-\uFAFF]/g, ''); // Remove Japanese chars
+    t = t.replace(/[\u3040-\u30FF\u3400-\u9FFF\uF900-\uFAFF]/g, '');
     t = t.replace(/\s{2,}/g, ' ').trim();
     return t;
 }
 
 function getVoiceMode() { return localStorage.getItem(VOICE_MODE) || 'auto' }
 
+// Main speech function.
 function speak(text) {
     if (!('speechSynthesis' in window) || !text) return;
-    try { speechSynthesis.cancel(); } catch (e) { }
+    try { speechSynthesis.cancel(); } catch (e) {}
     
     const prepared = sanitizeForTTS(text);
     if (!prepared) return;
 
-    const rate = parseFloat(document.getElementById('rate')?.value || '1');
+    const rateEl = document.getElementById('rate');
+    const rawRate = rateEl ? parseFloat(rateEl.value) : 1.0;
     const mode = getVoiceMode();
+
+    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
 
     let voiceToUse = null;
     if (mode === 'male') {
         voiceToUse = voiceCache.male;
     } else if (mode === 'female') {
         voiceToUse = voiceCache.female;
-    } else { // auto
-        if (voiceCache.auto.length > 0) {
+    } else {
+        if (voiceCache.auto && voiceCache.auto.length > 0) {
             voiceCache.toggle = (voiceCache.toggle + 1) % voiceCache.auto.length;
             voiceToUse = voiceCache.auto[voiceCache.toggle];
         }
     }
     
-    // Final fallback
-    if (!voiceToUse) {
-        const allVoices = speechSynthesis.getVoices();
-        voiceToUse = allVoices.find(v => v.lang.startsWith('en')) || allVoices[0];
-    }
-    
     const u = new SpeechSynthesisUtterance(prepared);
     u.lang = 'en-US';
-    u.rate = rate;
+    u.rate = clamp(rawRate, 0.8, 1.2);
+    u.pitch = clamp(1.0, 0.85, 1.15);
     u.voice = voiceToUse;
     
-    if (speechSynthesis.getVoices().length === 0) {
-        setTimeout(() => speechSynthesis.speak(u), 250);
-    } else {
+    // Safety check for when voices are not yet loaded
+    if (u.voice || speechSynthesis.getVoices().length > 0) {
         speechSynthesis.speak(u);
+    } else {
+        setTimeout(() => {
+            // Re-attempt to assign a voice if it loaded late
+            if (!u.voice) {
+                 if (mode === 'male') voiceToUse = voiceCache.male;
+                 else if (mode === 'female') voiceToUse = voiceCache.female;
+                 else if (voiceCache.auto && voiceCache.auto.length) voiceToUse = voiceCache.auto[voiceCache.toggle];
+                 u.voice = voiceToUse;
+            }
+            speechSynthesis.speak(u);
+        }, 250);
     }
 }
 
