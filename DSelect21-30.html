@@ -482,7 +482,6 @@ const stepIndicatorsContainer = document.getElementById('step-indicators-contain
 document.addEventListener('DOMContentLoaded', async () => {
     // Asynchronously load and filter voices first
     if ('speechSynthesis' in window) {
-        await displayVoiceListForDebug(); // Display the list on the page
         await pickVoices();
     }
     showMainMenu();
