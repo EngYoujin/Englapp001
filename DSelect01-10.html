@@ -603,20 +603,31 @@ async function pickVoices() {
             return;
         }
 
-        const isMaleName = (name = "") => /(Evan|Daniel|Mark|David|Alex(?!a)|George|Tom|Microsoft Mark|Microsoft David|Google UK English Male)/i.test(name);
+        // --- NEW LOGIC ---
+        // 1. The 'auto' pool is now ALL safe voices, ensuring maximum diversity.
+        //    This solves the PC issue where male voices were being excluded.
+        voiceCache.auto = [...safeVoices].sort(() => 0.5 - Math.random());
+
+        // 2. For the dedicated 'male' and 'female' buttons, find the best representatives.
+        const isMaleName = (name = "") => /(Daniel|Mark|David|Alex(?!a)|George|Tom|Microsoft Mark|Microsoft David|Google UK English Male)/i.test(name);
         const isFemaleName = (name = "") => /(Samantha|Allison|Ava|Victoria|Martha|Aria|Zira|Jenny|Microsoft Aria|Microsoft Zira|Google US English|Google UK English Female)/i.test(name);
 
-        const male = safeVoices.filter(v => isMaleName(v.name));
-        const female = safeVoices.filter(v => isFemaleName(v.name));
-        const unclassified = safeVoices.filter(v => !male.includes(v) && !female.includes(v));
+        let specificMale = safeVoices.find(v => isMaleName(v.name));
+        let specificFemale = safeVoices.find(v => isFemaleName(v.name));
 
-        const maleBucket = male.length ? male : unclassified;
-        const femaleBucket = female.length ? female : unclassified;
+        // 3. Provide robust fallbacks for the dedicated modes from the diverse 'auto' pool.
+        if (!specificMale) {
+            // Find a voice that is NOT likely female, if possible.
+            specificMale = voiceCache.auto.find(v => !isFemaleName(v.name)) || voiceCache.auto[0];
+        }
+        if (!specificFemale) {
+            // Find a voice that is different from the chosen male voice.
+            specificFemale = voiceCache.auto.find(v => v !== specificMale) || voiceCache.auto[1] || voiceCache.auto[0];
+        }
         
-        voiceCache.auto = [...new Set([...maleBucket, ...femaleBucket])].sort(() => 0.5 - Math.random());
-        
-        voiceCache.male = maleBucket[0] || voiceCache.auto[0] || null;
-        voiceCache.female = femaleBucket.find(v => v !== voiceCache.male) || voiceCache.auto.find(v => v !== voiceCache.male) || voiceCache.auto[0] || null;
+        voiceCache.male = specificMale || null;
+        voiceCache.female = specificFemale || null;
+        // --- END NEW LOGIC ---
 
     } catch (e) { console.error('Error picking voices', e); }
 }
