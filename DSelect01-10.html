@@ -588,29 +588,26 @@ async function pickVoicesForPC() {
     const maleKeywords = /male|david|mark|daniel|paul|alan|guy/i;
 
     let foundMale = null;
-    // --- Final Attempt Logic for Male Voice Selection ---
-    const isMale = (v) => maleKeywords.test(v.name) || maleKeywords.test(v.voiceURI);
-    const isFemale = (v) => femaleKeywords.test(v.name) || femaleKeywords.test(v.voiceURI);
-
-    // 1. Prioritize American Male voices by keyword (checking name and voiceURI).
+    // --- New logic for Male Voice Selection ---
+    // 1. Prioritize American Male voices by keyword.
     if (usVoices.length > 0) {
-        foundMale = usVoices.find(isMale);
+        foundMale = usVoices.find(v => maleKeywords.test(v.name));
     }
     // 2. If not found, try any English male voice by keyword.
     if (!foundMale) {
-        foundMale = enVoices.find(isMale);
+        foundMale = enVoices.find(v => maleKeywords.test(v.name));
     }
     // 3. (Chrome Fix) If still not found, find an American voice that is NOT female.
     if (!foundMale && usVoices.length > 0) {
-        foundMale = usVoices.find(v => !isFemale(v));
+        foundMale = usVoices.find(v => !femaleKeywords.test(v.name));
     }
     // 4. (Original Chrome Fix) If still not found, find any English voice that is NOT female.
     if (!foundMale) {
-        foundMale = enVoices.find(v => !isFemale(v));
+        foundMale = enVoices.find(v => !femaleKeywords.test(v.name));
     }
 
     // --- Female Voice Selection ---
-    let foundFemale = enVoices.find(isFemale);
+    let foundFemale = enVoices.find(v => femaleKeywords.test(v.name));
     // Fallback: find a voice that isn't the one we picked for male.
     if (!foundFemale) {
         foundFemale = enVoices.find(v => v !== foundMale);
