@@ -814,7 +814,7 @@ function speak(text) {
                  else if (voiceCache.auto.length) voiceToUse = voiceCache.auto[voiceCache.toggle];
                  u.voice = voiceToUse;
             }
-            speechSynthesis.speak(u);
+        speechSynthesis.speak(u);
         }, 250);
     }
 }
