@@ -468,7 +468,11 @@ const stepViews = {
 const stepIndicatorsContainer = document.getElementById('step-indicators-container');
 
 // --- INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Asynchronously load and filter voices first
+    if ('speechSynthesis' in window) {
+        await pickVoices();
+    }
     showMainMenu();
     initAudioControls();
 });
@@ -531,55 +535,88 @@ stepIndicatorsContainer.addEventListener('click', (e) => {
 });
 
 
-// --- Voice Initialization Logic ---
-function pickVoices() {
+// --- Voice Initialization Logic (NEW - based on GPT5 code) ---
+
+// Helper to ensure voices are loaded, wrapping getVoices in a Promise.
+function listVoices() {
+    return new Promise(resolve => {
+        let voices = speechSynthesis.getVoices();
+        if (voices.length) {
+            return resolve(voices);
+        }
+        speechSynthesis.onvoiceschanged = () => {
+            voices = speechSynthesis.getVoices();
+            resolve(voices);
+        };
+    });
+}
+
+// Whitelist of known good voice names
+const SAFE_EN_VOICE_NAMES = [
+  // Apple (iOS/macOS)
+  "Samantha", "Allison", "Ava", "Alex", "Daniel", "Martha", "Victoria",
+  // Microsoft (Windows/Edge)
+  "Microsoft Aria", "Microsoft Zira", "Microsoft Mark", "Microsoft David",
+  // Google (Android/Chrome)
+  "Google US English", "Google UK English Female", "Google UK English Male"
+];
+
+// Blacklist of keywords for novelty/bad voices
+const BLOCKLIST_KEYWORDS = [
+  "Novelty", "Whisper", "Bells", "Cellos", "Bad News", "Good News", "Zarvox",
+  "Boing", "Singing", "Cartoon", "Robot", "Buzzer", "Trinoids", "SFX", "Emoji",
+  "Sound", "笑", "ロボ", "Fun", "Comic", "effect", "weird", "strange", "echo",
+  "chorus", "giggle", "radio", "bad", "poor", "voiceover"
+];
+
+function isBlockedVoice(v) {
+  const nameAndUri = ((v?.name || "") + " " + (v?.voiceURI || "")).toLowerCase();
+  return BLOCKLIST_KEYWORDS.some(k => nameAndUri.includes(k.toLowerCase()));
+}
+
+function isSafeEnglishVoice(v) {
+  if (!v || !/^en(-|_)/i.test(v.lang || "")) return false;
+  if (isBlockedVoice(v)) return false;
+  // It's safe if it's a default voice or its name is on the whitelist
+  return v.default || SAFE_EN_VOICE_NAMES.some(n => (v.name || "").includes(n));
+}
+
+async function getSafeEnglishVoices() {
+  const voices = await listVoices();
+  const en = (voices || []).filter(v => /^en(-|_)/i.test(v.lang || ""));
+  if (!en.length) return [];
+
+  const safe = en.filter(isSafeEnglishVoice);
+  if (safe.length > 0) return safe;
+
+  // Fallback: If no "safe" voices, return any non-blocked English voice
+  const fallback = en.filter(v => !isBlockedVoice(v));
+  return fallback.length ? fallback : en; // Last resort: return any English voice
+}
+
+// Main function to populate our app's voiceCache
+async function pickVoices() {
     try {
-        const vs = speechSynthesis.getVoices();
-        if (!vs.length) return;
-
-        // 1. Define strict blacklisting and whitelisting criteria
-        const BLACKLIST_KEYWORDS = /(novelty|robot|funny|laugh|comic|silly|filter|effect|weird|strange|echo|chorus|whisper|giggle|radio|bad|poor|voiceover)/i;
-        const WHITELIST_VENDORS = /(google|microsoft|apple|amazon|samsung)/i;
-        const PREFERRED_LANGS = ['en-US', 'en-GB', 'en-AU', 'en-CA'];
-
-        // 2. Filter out clearly bad voices first based on the blacklist
-        const allEnglishVoices = vs.filter(v => v.lang.startsWith('en-') && !BLACKLIST_KEYWORDS.test(v.name));
-
-        // 3. Create a high-quality "safe" list based on vendors and preferred languages
-        let safeVoices = allEnglishVoices.filter(v => 
-            WHITELIST_VENDORS.test(v.name) || 
-            PREFERRED_LANGS.includes(v.lang) ||
-            v.default === true
-        );
-
-        // 4. If the safe list is too small, use the broader (but still blacklist-filtered) list as a fallback
-        if (safeVoices.length < 3) {
-            safeVoices = allEnglishVoices;
-        }
-        
-        // If still no voices, we can't do anything.
+        const safeVoices = await getSafeEnglishVoices();
         if (safeVoices.length === 0) {
-            console.warn("No safe English voices found. As a last resort, trying any available English voice.");
-            safeVoices = vs.filter(v => v.lang.startsWith('en-'));
-            if(safeVoices.length === 0) return; // give up
+            console.warn("No usable English voices found.");
+            return;
         }
 
-        // 5. Populate caches from the safe list
-        voiceCache.female = safeVoices.find(v => /female|jenny|ariel|emma|olivia|zira|samantha|alloy|nova/i.test(v.name)) || null;
-        voiceCache.male = safeVoices.find(v => /male|david|guy|ryan|brian|matthew|daniel|andrew|roger/i.test(v.name)) || null;
+        const isMaleName = (name = "") => /(Evan|Daniel|Mark|David|Alex(?!a)|George|Tom|Microsoft Mark|Microsoft David|Google UK English Male)/i.test(name);
+        const isFemaleName = (name = "") => /(Samantha|Allison|Ava|Victoria|Martha|Aria|Zira|Jenny|Microsoft Aria|Microsoft Zira|Google US English|Google UK English Female)/i.test(name);
 
-        // 6. Create the 'auto' pool from the safe list and shuffle it
-        voiceCache.auto = [...safeVoices].sort(() => 0.5 - Math.random());
+        const male = safeVoices.filter(v => isMaleName(v.name));
+        const female = safeVoices.filter(v => isFemaleName(v.name));
+        const unclassified = safeVoices.filter(v => !male.includes(v) && !female.includes(v));
+
+        const maleBucket = male.length ? male : unclassified;
+        const femaleBucket = female.length ? female : unclassified;
         
-        // 7. Ensure male/female have fallbacks from the safe pool
-        if (!voiceCache.male) {
-            // Prefer a non-female voice if possible, otherwise take the first available
-            voiceCache.male = voiceCache.auto.find(v => v !== voiceCache.female) || voiceCache.auto[0];
-        }
-        if (!voiceCache.female) {
-            // Prefer a non-male voice if possible, otherwise take the second or first available
-            voiceCache.female = voiceCache.auto.find(v => v !== voiceCache.male) || voiceCache.auto[1] || voiceCache.auto[0];
-        }
+        voiceCache.auto = [...new Set([...maleBucket, ...femaleBucket])].sort(() => 0.5 - Math.random());
+        
+        voiceCache.male = maleBucket[0] || voiceCache.auto[0] || null;
+        voiceCache.female = femaleBucket.find(v => v !== voiceCache.male) || voiceCache.auto.find(v => v !== voiceCache.male) || voiceCache.auto[0] || null;
 
     } catch (e) { console.error('Error picking voices', e); }
 }
@@ -699,8 +736,12 @@ function speak(text) {
     const prepared = sanitizeForTTS(text);
     if (!prepared) return;
 
-    const rate = parseFloat(document.getElementById('rate')?.value || '1');
+    const rateEl = document.getElementById('rate');
+    const rawRate = rateEl ? parseFloat(rateEl.value) : 1.0;
     const mode = getVoiceMode();
+
+    // Utility to clamp a value between a min and max, as suggested by the new logic.
+    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
 
     let voiceToUse = null;
     if (mode === 'male') {
@@ -714,21 +755,25 @@ function speak(text) {
         }
     }
     
-    // Final fallback
-    if (!voiceToUse) {
-        const allVoices = speechSynthesis.getVoices();
-        voiceToUse = allVoices.find(v => v.lang.startsWith('en')) || allVoices[0];
-    }
-    
     const u = new SpeechSynthesisUtterance(prepared);
     u.lang = 'en-US';
-    u.rate = rate;
+    u.rate = clamp(rawRate, 0.8, 1.2); // Clamp rate to a safe range
+    u.pitch = clamp(1.0, 0.85, 1.15);  // Clamp pitch to a safe range
     u.voice = voiceToUse;
     
-    if (speechSynthesis.getVoices().length === 0) {
-        setTimeout(() => speechSynthesis.speak(u), 250);
-    } else {
+    // Safety check for when voices are not yet loaded
+    if (u.voice || speechSynthesis.getVoices().length > 0) {
         speechSynthesis.speak(u);
+    } else {
+        setTimeout(() => {
+            // Re-attempt to assign a voice if it loaded late
+            if (!u.voice) {
+                 if (mode === 'male') u.voice = voiceCache.male;
+                 else if (mode === 'female') u.voice = voiceCache.female;
+                 else if (voiceCache.auto.length) u.voice = voiceCache.auto[voiceCache.toggle];
+            }
+            speechSynthesis.speak(u);
+        }, 250);
     }
 }
 
