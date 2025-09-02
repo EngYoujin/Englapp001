@@ -471,6 +471,7 @@ const stepIndicatorsContainer = document.getElementById('step-indicators-contain
 document.addEventListener('DOMContentLoaded', async () => {
     // Asynchronously load and filter voices first
     if ('speechSynthesis' in window) {
+        await displayVoiceListForDebug(); // Display the list on the page
         await pickVoices();
     }
     showMainMenu();
@@ -535,120 +536,34 @@ stepIndicatorsContainer.addEventListener('click', (e) => {
 });
 
 
-// --- Voice Initialization Logic (NEW - Robust Whitelist/Blacklist Method) ---
-
-// Helper to ensure voices are loaded, wrapping getVoices in a Promise.
-function listVoices() {
-    return new Promise(resolve => {
-        let voices = speechSynthesis.getVoices();
-        if (voices.length) {
-            return resolve(voices);
-        }
-        speechSynthesis.onvoiceschanged = () => {
-            voices = speechSynthesis.getVoices();
-            resolve(voices);
-        };
-    });
-}
-
-// Whitelist of known good voice names
-const SAFE_EN_VOICE_NAMES = [
-  // Apple (iOS/macOS)
-  "Samantha", "Allison", "Ava", "Alex", "Daniel", "Martha", "Victoria",
-  // Microsoft (Windows/Edge)
-  "Microsoft Aria", "Microsoft Zira", "Microsoft Mark", "Microsoft David",
-  // Google (Android/Chrome)
-  "Google US English", "Google UK English Female", "Google UK English Male"
-];
-
-// Blacklist of keywords for novelty/bad voices
-const BLOCKLIST_KEYWORDS = [
-  "Novelty", "Whisper", "Bells", "Cellos", "Bad News", "Good News", "Zarvox",
-  "Boing", "Singing", "Cartoon", "Robot", "Buzzer", "Trinoids", "SFX", "Emoji",
-  "Sound", "笑", "ロボ", "Fun", "Comic", "effect", "weird", "strange", "echo",
-  "chorus", "giggle", "radio", "bad", "poor", "voiceover"
-];
-
-function isBlockedVoice(v) {
-  const nameAndUri = ((v?.name || "") + " " + (v?.voiceURI || "")).toLowerCase();
-  return BLOCKLIST_KEYWORDS.some(k => nameAndUri.includes(k.toLowerCase()));
-}
-
-function isSafeEnglishVoice(v) {
-  if (!v || !/^en(-|_)/i.test(v.lang || "")) return false;
-  if (isBlockedVoice(v)) return false;
-  // It's safe if it's a default voice or its name is on the whitelist
-  return v.default || SAFE_EN_VOICE_NAMES.some(n => (v.name || "").includes(n));
-}
-
-async function getSafeEnglishVoices() {
-  const voices = await listVoices();
-  const en = (voices || []).filter(v => /^en(-|_)/i.test(v.lang || ""));
-  if (!en.length) return [];
-
-  const safe = en.filter(isSafeEnglishVoice);
-  if (safe.length > 0) return safe;
-
-  // Fallback: If no "safe" voices, return any non-blocked English voice
-  const fallback = en.filter(v => !isBlockedVoice(v));
-  return fallback.length ? fallback : en; // Last resort: return any English voice
-}
-
-// --- [HYBRID STRATEGY] Device Detection ---
-function isMobile() {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    return /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
-}
-
-// Main function to populate our app's voiceCache
-async function pickVoices() {
+// --- Voice Initialization Logic ---
+function pickVoices() {
     try {
-        const safeVoices = await getSafeEnglishVoices();
-        if (safeVoices.length === 0) {
-            console.warn("No usable English voices found.");
-            return;
-        }
+        const vs = speechSynthesis.getVoices();
+        if (!vs.length) return;
+        const en = vs.filter(v => /^en([-_]|$)/i.test(v.lang) || /english/i.test(v.name));
+        
+        // Find specific male and female voices
+        voiceCache.female = en.find(v => /female|jenny|ariel|emma|olivia|zira|samantha|alloy|nova/i.test(v.name)) || null;
+        voiceCache.male = en.find(v => /male|david|guy|ryan|brian|matthew|daniel|andrew|roger/i.test(v.name)) || null;
 
-        const mobile = isMobile();
-        const isMaleName = (name = "") => /(Daniel|Mark|David|Alex(?!a)|George|Tom|Microsoft Mark|Microsoft David|Google UK English Male)/i.test(name);
-        const isFemaleName = (name = "") => /(Samantha|Allison|Ava|Victoria|Martha|Aria|Zira|Jenny|Microsoft Aria|Microsoft Zira|Google US English|Google UK English Female)/i.test(name);
-
-        if (mobile) {
-            // --- MOBILE-SPECIFIC, SAFETY-FIRST LOGIC ---
-            console.log("Mobile device detected. Applying strict voice filtering.");
-            let bestMale = safeVoices.find(v => isMaleName(v.name));
-            let bestFemale = safeVoices.find(v => isFemaleName(v.name));
-
-            if (!bestMale) bestMale = safeVoices.find(v => !isFemaleName(v.name));
-            if (!bestFemale) bestFemale = safeVoices.find(v => v !== bestMale);
-            
-            voiceCache.male = bestMale || null;
-            voiceCache.female = bestFemale || null;
-
-            voiceCache.auto = [];
-            if (bestMale) voiceCache.auto.push(bestMale);
-            if (bestFemale && bestFemale !== bestMale) voiceCache.auto.push(bestFemale);
-
-            if (voiceCache.auto.length === 0 && safeVoices.length > 0) {
-                voiceCache.auto.push(safeVoices[0]);
-                voiceCache.male = safeVoices[0];
-                voiceCache.female = safeVoices[0];
-            }
-
-        } else {
-            // --- PC/DESKTOP LOGIC (DIVERSITY-FOCUSED) ---
-            console.log("Desktop device detected. Applying diverse voice selection.");
-            voiceCache.auto = [...safeVoices].sort(() => 0.5 - Math.random());
-
-            let specificMale = safeVoices.find(v => isMaleName(v.name));
-            let specificFemale = safeVoices.find(v => isFemaleName(v.name));
-
-            if (!specificMale) specificMale = voiceCache.auto.find(v => !isFemaleName(v.name)) || voiceCache.auto[0];
-            if (!specificFemale) specificFemale = voiceCache.auto.find(v => v !== specificMale) || voiceCache.auto[1] || voiceCache.auto[0];
-            
-            voiceCache.male = specificMale || null;
-            voiceCache.female = specificFemale || null;
-        }
+        // Create a diverse list for "auto" mode
+        const autoVoiceSet = new Set();
+        if (voiceCache.male) autoVoiceSet.add(voiceCache.male);
+        if (voiceCache.female) autoVoiceSet.add(voiceCache.female);
+        
+        const usUkVoices = en.filter(v => v.lang.startsWith('en-US') || v.lang.startsWith('en-GB'));
+        usUkVoices.forEach(v => autoVoiceSet.add(v));
+        
+        const otherVoices = en.filter(v => !v.lang.startsWith('en-US') && !v.lang.startsWith('en-GB'));
+        // Add all other english voices to the list for more variety
+        otherVoices.forEach(v => autoVoiceSet.add(v));
+        
+        voiceCache.auto = Array.from(autoVoiceSet).sort(() => 0.5 - Math.random());
+        
+        // Fallback for male/female if not found
+        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || en[0] || vs[0];
+        if (!voiceCache.female) voiceCache.female = voiceCache.auto[1] || voiceCache.auto[0] || en[0] || vs[0];
 
     } catch (e) { console.error('Error picking voices', e); }
 }
@@ -664,6 +579,11 @@ function navigateToSentence(index) {
     currentStep = 1;
     stepUnlocked = 3; // Unlock all steps immediately for free navigation
     renderCurrentStep();
+}
+
+if ('speechSynthesis' in window) {
+    speechSynthesis.onvoiceschanged = pickVoices;
+    pickVoices(); // Initial call
 }
 
 function initAudioControls() {
@@ -1338,6 +1258,42 @@ function renderReview() {
             </div>
         `;
         document.getElementById('review-back-to-toc').addEventListener('click', showMainMenu);
+    }
+}
+
+// --- [DEBUG] This is a temporary function to display voices directly on the page ---
+async function displayVoiceListForDebug() {
+    try {
+        // This function should already exist in the main script block
+        const listVoices = () => new Promise(resolve => {
+            let voices = speechSynthesis.getVoices();
+            if (voices.length) return resolve(voices);
+            speechSynthesis.onvoiceschanged = () => resolve(speechSynthesis.getVoices());
+        });
+
+        const voices = await listVoices();
+        const tocScreen = document.getElementById('toc-screen');
+        if (!tocScreen) return;
+
+        const debugDiv = document.createElement('div');
+        debugDiv.style.cssText = 'padding: 1rem; border: 2px solid red; margin: 1rem 0; background-color: #fff0f0; font-family: monospace; font-size: 12px; line-height: 1.5; text-align: left;';
+
+        let html = '<h2 style="font-weight: bold; font-size: 16px; margin-bottom: 10px;">利用可能な音声リスト（この内容をコピーしてください）</h2><ul>';
+        if (voices.length > 0) {
+            voices.forEach(v => {
+                html += `<li><strong>name:</strong> ${v.name}, <strong>lang:</strong> ${v.lang}, <strong>default:</strong> ${v.default}</li>`;
+            });
+        } else {
+            html += '<li>利用可能な音声が見つかりませんでした。ページを再読み込みしてみてください。</li>';
+        }
+        html += '</ul>';
+
+        debugDiv.innerHTML = html;
+        tocScreen.prepend(debugDiv);
+    } catch (e) {
+        // Fallback for error
+        const tocScreen = document.getElementById('toc-screen');
+        if(tocScreen) tocScreen.insertAdjacentHTML('afterbegin', '<div style="color: red; border: 1px solid red; padding: 10px;">音声リストの取得中にエラーが発生しました。</div>');
     }
 }
 </script>
