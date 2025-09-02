@@ -194,198 +194,158 @@ TEMPLATE INSTRUCTION / テンプレート利用方法
 */
 const quizData = [
     {
-        "id": 71,
-        "originalSentence": "The company expanded its operations to international markets.",
-        "translation": "その会社は事業を国際市場に拡大した。",
-        "quiz": {
-          "target": "expanded",
-          "choices": ["expanded", "extended", "enlarged", "increased"],
-          "meaning": "…を拡大する"
-        },
+        "id": 1,
+        "originalSentence": "Please make a reservation for two at least one day in advance.",
+        "translation": "少なくとも1日前までに2名で予約をしてください。",
+        "quiz": { "target": "reservation", "choices": ["reservation", "promise", "effort", "decision"], "meaning": "予約" },
         "application": {
-          "situation": "友達の家族が小さなカフェを始めて、今度は海外にも出店するそう。",
-          "sentence": "My friend's family expanded their cafe business to <span class='tooltip-trigger'>international markets<span class='tooltip-content'>「国際市場」のこと。海外の市場やビジネスチャンス。</span></span>.",
-          "translation": "友達の家族はカフェ事業を国際市場に拡大した。"
+            "situation": "友達と超人気のテーマカフェに行くことに。サイトを見たら「予約必須」の文字が！",
+            "sentence": "I <span class='tooltip-trigger'>gotta<span class='tooltip-content'>gotta = got to<br>「～しなければならない」</span></span> make a reservation for that new cafe before it gets <span class='tooltip-trigger'>booked out<span class='tooltip-content'>booked out = 予約でいっぱい</span></span> by influencers.",
+            "translation": "インフルエンサーで予約が埋まる前に、あの新しいカフェを予約しなきゃ。"
         },
         "flashcards": [
-          { "en": "operations", "ja": "事業、運営", "kana": "オペ**レ**イションズ", "phonetic": "/ˌɑːpəˈreɪʃnz/", "hint": "o" },
-          { "en": "international", "ja": "国際的な", "kana": "インターナ**ショ**ナル", "phonetic": "/ˌɪntərˈnæʃənl/", "hint": "i" },
-          { "en": "markets", "ja": "市場", "kana": "**マ**ーケッツ", "phonetic": "/ˈmɑːrkɪts/", "hint": "m" }
+            { "en": "make a reservation", "ja": "予約をする", "kana": "メイク ア レザ**ヴェ**イション", "phonetic": "/meɪk ə ˌrezərˈveɪʃən/", "hint": "m" },
+            { "en": "at least", "ja": "少なくとも", "kana": "アット・**リー**スト", "phonetic": "/ət liːst/", "hint": "a" },
+            { "en": "in advance", "ja": "前もって", "kana": "イン・アド**ヴァ**ンス", "phonetic": "/ɪn ədˈvæns/", "hint": "i" }
         ]
-      },
-      {
-        "id": 72,
-        "originalSentence": "The team enhanced the product's performance significantly.",
-        "translation": "チームは製品の性能を大幅に向上させた。",
-        "quiz": {
-          "target": "enhanced",
-          "choices": ["enhanced", "improved", "upgraded", "boosted"],
-          "meaning": "…を向上させる"
-        },
+    },
+    {
+        "id": 2,
+        "originalSentence": "I can't turn down this amazing offer; it just doesn't make sense.",
+        "translation": "この素晴らしい申し出は断れないよ。道理に合わないからね。",
+        "quiz": { "target": "make sense", "choices": ["make sense", "make sure", "make use of", "make a promise"], "meaning": "道理にかなう" },
         "application": {
-          "situation": "スマホのアプリが重くて使いにくかったけど、アップデートでめちゃくちゃ快適になった。",
-          "sentence": "The latest update enhanced the app's performance <span class='tooltip-trigger'>significantly<span class='tooltip-content'>「大幅に」という意味。目に見えるほど大きな改善。</span></span>.",
-          "translation": "最新のアップデートでアプリの性能が大幅に向上した。"
+            "situation": "友達が「時給3000円、シフト自由、まかない付きのバイトがあるけど断った」と言っている。",
+            "sentence": "Wait, you <span class='tooltip-trigger'>turned that down<span class='tooltip-content'>turn down = 断る</span></span>? That doesn't make any sense!",
+            "translation": "え、断ったの？全くもって意味がわからないよ！"
         },
         "flashcards": [
-          { "en": "performance", "ja": "性能、実績", "kana": "パー**フォ**ーマンス", "phonetic": "/pərˈfɔːrməns/", "hint": "p" },
-          { "en": "significantly", "ja": "大幅に", "kana": "シグ**ニ**フィカントリィ", "phonetic": "/sɪɡˈnɪfɪkəntli/", "hint": "s" }
+            { "en": "turn down", "ja": "～を断る", "kana": "**ター**ン・ダウン", "phonetic": "/tɜːrn daʊn/", "hint": "t" },
+            { "en": "offer", "ja": "申し出、提案", "kana": "**オ**ファー", "phonetic": "/ˈɔːfər/", "hint": "o" }
         ]
-      },
-      {
-        "id": 73,
-        "originalSentence": "The company adapted its strategy to changing market conditions.",
-        "translation": "その会社は変化する市場状況に戦略を適応させた。",
-        "quiz": {
-          "target": "adapted",
-          "choices": ["adapted", "adjusted", "modified", "changed"],
-          "meaning": "…を適応させる"
-        },
+    },
+    {
+        "id": 3,
+        "originalSentence": "I can't trust any candidate who makes unrealistic promises.",
+        "translation": "非現実的な約束をする候補者は誰も信用できない。",
+        "quiz": { "target": "candidate", "choices": ["candidate", "consumer", "scientist", "valley"], "meaning": "候補者" },
         "application": {
-          "situation": "クラスで新しいルールができて、みんなで対応方法を考え直した。",
-          "sentence": "We adapted our study strategy to the <span class='tooltip-trigger'>new classroom rules<span class='tooltip-content'>「新しい教室のルール」のこと。変更された学校の規則。</span></span>.",
-          "translation": "私たちは新しい教室のルールに学習戦略を適応させた。"
+            "situation": "クラス委員選挙。A君は「宿題をなくします！」、Bさんは「毎日お菓子を配ります！」と言っている。",
+            "sentence": "Honestly, I don't trust either candidate. Their promises are too <span class='tooltip-trigger'>unrealistic<span class='tooltip-content'>unrealistic = 非現実的な</span></span>.",
+            "translation": "正直、どっちの候補者も信用できないよ。公約が非現実的すぎる。"
         },
         "flashcards": [
-          { "en": "strategy", "ja": "戦略", "kana": "**スト**ラテジー", "phonetic": "/ˈstrætədʒi/", "hint": "s" },
-          { "en": "market conditions", "ja": "市場状況", "kana": "**マ**ーケット・コン**ディ**ションズ", "phonetic": "/ˈmɑːrkɪt kənˈdɪʃnz/", "hint": "m" }
+            { "en": "trust", "ja": "～を信用する", "kana": "**トラ**スト", "phonetic": "/trʌst/", "hint": "t" },
+            { "en": "make a promise", "ja": "約束をする", "kana": "**メイ**ク・ア・**プロ**ミス", "phonetic": "/meɪk ə ˈprɑːmɪs/", "hint": "m" }
         ]
-      },
-      {
-        "id": 74,
-        "originalSentence": "The team optimized the workflow for better efficiency.",
-        "translation": "チームはより良い効率のためにワークフローを最適化した。",
-        "quiz": {
-          "target": "optimized",
-          "choices": ["optimized", "improved", "streamlined", "enhanced"],
-          "meaning": "…を最適化する"
-        },
+    },
+    {
+        "id": 4,
+        "originalSentence": "The witness made a false statement during the trial.",
+        "translation": "その証人は裁判中に偽りの陳述をした。",
+        "quiz": { "target": "statement", "choices": ["statement", "structure", "effort", "reservation"], "meaning": "陳述、声明" },
         "application": {
-          "situation": "部活の練習メニューを見直して、短時間で効果的な練習方法に変更した。",
-          "sentence": "We optimized our practice routine for <span class='tooltip-trigger'>better efficiency<span class='tooltip-content'>「より良い効率」のこと。時間を無駄にせず効果的に進めること。</span></span>.",
-          "translation": "私たちはより良い効率のために練習メニューを最適化した。"
+            "situation": "弟がお母さんのプリンを食べたのに、「僕じゃないよ、お兄ちゃんだよ！」と嘘をついている。",
+            "sentence": "My little brother made a false statement to Mom, <span class='tooltip-trigger'>blaming me for<span class='tooltip-content'>blame A for B = BのことでAを責める</span></span> eating her pudding!",
+            "translation": "弟がお母さんに嘘の供述をして、僕がプリンを食べたって罪をなすりつけたんだ！"
         },
         "flashcards": [
-          { "en": "workflow", "ja": "ワークフロー", "kana": "**ワ**ークフロー", "phonetic": "/ˈwɜːrkfloʊ/", "hint": "w" },
-          { "en": "efficiency", "ja": "効率", "kana": "イ**フィ**シェンシー", "phonetic": "/ɪˈfɪʃənsi/", "hint": "e" }
+            { "en": "false", "ja": "誤った、偽りの", "kana": "**フォー**ルス", "phonetic": "/fɔːls/", "hint": "f" },
+            { "en": "trial", "ja": "裁判", "kana": "**トラ**イアル", "phonetic": "/ˈtraɪəl/", "hint": "t" }
         ]
-      },
-      {
-        "id": 75,
-        "originalSentence": "The company integrated new technology into its systems.",
-        "translation": "その会社は新しい技術をシステムに統合した。",
-        "quiz": {
-          "target": "integrated",
-          "choices": ["integrated", "incorporated", "merged", "combined"],
-          "meaning": "…を統合する"
-        },
+    },
+     {
+        "id": 5,
+        "originalSentence": "Please make sure the building has a solid structure.",
+        "translation": "その建物がしっかりした構造であることを必ず確認してください。",
+        "quiz": { "target": "structure", "choices": ["structure", "trial", "experience", "intelligence"], "meaning": "構造、構成" },
         "application": {
-          "situation": "学校に新しいタブレットが導入されて、授業で使えるようになった。",
-          "sentence": "Our school integrated tablets into the <span class='tooltip-trigger'>learning environment<span class='tooltip-content'>「学習環境」のこと。勉強するための環境やシステム。</span></span>.",
-          "translation": "私たちの学校は学習環境にタブレットを統合した。"
+            "situation": "レポートの締め切り前夜。話があちこちに飛んでしまい、まとまらない…！",
+            "sentence": "My argument is <span class='tooltip-trigger'>all over the place<span class='tooltip-content'>all over the place = めちゃくちゃ、散らかっている</span></span>. I need to give it a more logical structure.",
+            "translation": "私の主張はめちゃくちゃだ。もっと論理的な構造を持たせないと。"
         },
         "flashcards": [
-          { "en": "technology", "ja": "技術", "kana": "テク**ノ**ロジー", "phonetic": "/tekˈnɑːlədʒi/", "hint": "t" },
-          { "en": "systems", "ja": "システム", "kana": "**シ**ステムズ", "phonetic": "/ˈsɪstəmz/", "hint": "s" }
+            { "en": "make sure", "ja": "必ず～するようにする", "kana": "**メイ**ク・**シュ**ア", "phonetic": "/meɪk ʃʊr/", "hint": "m" },
+            { "en": "solid", "ja": "しっかりした", "kana": "**ソ**リッド", "phonetic": "/ˈsɑːlɪd/", "hint": "s" },
+            { "en": "logical", "ja": "論理的な", "kana": "**ロ**ジカル", "phonetic": "/ˈlɑːdʒɪkl/", "hint": "l" }
         ]
-      },
-      {
-        "id": 76,
-        "originalSentence": "The team coordinated efforts across multiple departments.",
-        "translation": "チームは複数の部署間で努力を調整した。",
-        "quiz": {
-          "target": "coordinated",
-          "choices": ["coordinated", "organized", "managed", "arranged"],
-          "meaning": "…を調整する"
-        },
+    },
+    {
+        "id": 6,
+        "originalSentence": "With more experience, you can make a wiser decision.",
+        "translation": "もっと経験を積めば、より賢明な決断ができます。",
+        "quiz": { "target": "experience", "choices": ["experience", "effort", "promise", "sense"], "meaning": "経験" },
         "application": {
-          "situation": "文化祭で各クラスがバラバラに動いていたけど、全体のスケジュールを調整した。",
-          "sentence": "We coordinated the festival schedule across <span class='tooltip-trigger'>multiple classes<span class='tooltip-content'>「複数のクラス」のこと。いくつかのクラスやグループ。</span></span>.",
-          "translation": "私たちは複数のクラス間で文化祭のスケジュールを調整した。"
+            "situation": "初めてのバイトは失敗ばかり。でも、続けていくうちに「あ、これはこうすればいいんだ」とコツが掴めてきた。",
+            "sentence": "It's true what they say: the more experience you get, the better you become at <span class='tooltip-trigger'>handling things<span class='tooltip-content'>handle things = 物事を処理する、対処する</span></span>.",
+            "translation": "本当だよね、経験を積めば積むほど、物事の対処が上手くなるっていうのは。"
         },
         "flashcards": [
-          { "en": "efforts", "ja": "努力", "kana": "**エ**フォーツ", "phonetic": "/ˈefərts/", "hint": "e" },
-          { "en": "departments", "ja": "部署", "kana": "ディ**パ**ートメンツ", "phonetic": "/dɪˈpɑːrtmənts/", "hint": "d" }
+            { "en": "wise", "ja": "賢明な", "kana": "**ワ**イズ", "phonetic": "/waɪz/", "hint": "w" },
+            { "en": "make a decision", "ja": "決断する", "kana": "**メイ**ク・ア・ディ**シ**ジョン", "phonetic": "/meɪk ə dɪˈsɪʒn/", "hint": "m" }
         ]
-      },
-      {
-        "id": 77,
-        "originalSentence": "The company standardized its procedures across all branches.",
-        "translation": "その会社は全支店で手順を標準化した。",
-        "quiz": {
-          "target": "standardized",
-          "choices": ["standardized", "normalized", "regulated", "uniformed"],
-          "meaning": "…を標準化する"
-        },
+    },
+    {
+        "id": 7,
+        "originalSentence": "We make use of data to predict future trends.",
+        "translation": "私たちは将来のトレンドを予測するためにデータを利用します。",
+        "quiz": { "target": "predict", "choices": ["predict", "deceive", "trust", "offer"], "meaning": "～を予測する" },
         "application": {
-          "situation": "学校のルールが統一されて、どのクラスでも同じルールが適用されるようになった。",
-          "sentence": "The school standardized its rules across <span class='tooltip-trigger'>all classrooms<span class='tooltip-content'>「全教室」のこと。学校内のすべてのクラス。</span></span>.",
-          "translation": "学校は全教室でルールを標準化した。"
+            "situation": "明日の天気予報は晴れ。でも、最近のゲリラ豪雨を考えると、本当に当たるかな？",
+            "sentence": "It's so hard to predict the weather <span class='tooltip-trigger'>accurately<span class='tooltip-content'>accurately = 正確に</span></span> these days, even with all the technology.",
+            "translation": "最近はあらゆるテクノロジーを使っても、天気を正確に予測するのは本当に難しい。"
         },
         "flashcards": [
-          { "en": "procedures", "ja": "手順", "kana": "プロ**シ**ージャーズ", "phonetic": "/prəˈsiːdʒərz/", "hint": "p" },
-          { "en": "branches", "ja": "支店", "kana": "**ブラ**ンチェズ", "phonetic": "/ˈbræntʃɪz/", "hint": "b" }
+            { "en": "make use of", "ja": "～を利用する", "kana": "**メイ**ク・**ユー**ス・オブ", "phonetic": "/meɪk juːs əv/", "hint": "m" },
+            { "en": "artificial intelligence", "ja": "人工知能", "kana": "アーティ**フィ**シャル・イン**テ**リジェンス", "phonetic": "/ˌɑːrtɪˈfɪʃl ɪnˈtelɪdʒəns/", "hint": "a" }
         ]
-      },
-      {
-        "id": 78,
-        "originalSentence": "The team prioritized tasks based on urgency and importance.",
-        "translation": "チームは緊急度と重要性に基づいてタスクに優先順位をつけた。",
-        "quiz": {
-          "target": "prioritized",
-          "choices": ["prioritized", "ranked", "ordered", "arranged"],
-          "meaning": "…に優先順位をつける"
-        },
+    },
+    {
+        "id": 8,
+        "originalSentence": "Unless you make an effort, you will fail the test.",
+        "translation": "努力しない限り、君はテストに落ちるだろう。",
+        "quiz": { "target": "effort", "choices": ["effort", "offer", "trial", "sense"], "meaning": "努力" },
         "application": {
-          "situation": "テスト期間中にやるべきことが山ほどあって、重要度順に整理した。",
-          "sentence": "I prioritized my study tasks based on <span class='tooltip-trigger'>urgency and importance<span class='tooltip-content'>「緊急度と重要性」のこと。どれを先にやるべきかの判断基準。</span></span>.",
-          "translation": "私は緊急度と重要性に基づいて勉強のタスクに優先順位をつけた。"
+            "situation": "テスト期間中、友達はみんな必死に勉強している。「まあ、大丈夫でしょ」と油断していると…",
+            "sentence": "I need to make a <span class='tooltip-trigger'>serious<span class='tooltip-content'>serious = 本気の、真剣な</span></span> effort to study, or I'm going to fail this exam.",
+            "translation": "本気で勉強に努力しないと、この試験に落ちちゃうよ。"
         },
         "flashcards": [
-          { "en": "tasks", "ja": "タスク、課題", "kana": "**タ**スクス", "phonetic": "/tæsks/", "hint": "t" },
-          { "en": "urgency", "ja": "緊急度", "kana": "**ア**ージェンシー", "phonetic": "/ˈɜːrdʒənsi/", "hint": "u" },
-          { "en": "importance", "ja": "重要性", "kana": "イム**ポ**ータンス", "phonetic": "/ɪmˈpɔːrtns/", "hint": "i" }
+            { "en": "unless", "ja": "～でない限り", "kana": "アン**レ**ス", "phonetic": "/ənˈles/", "hint": "u" },
+            { "en": "be left behind", "ja": "取り残される", "kana": "ビー・**レ**フト・ビ**ハ**インド", "phonetic": "/bi left bɪˈhaɪnd/", "hint": "b" }
         ]
-      },
-      {
-        "id": 79,
-        "originalSentence": "The company allocated resources efficiently to maximize profits.",
-        "translation": "その会社は利益を最大化するために資源を効率的に配分した。",
-        "quiz": {
-          "target": "allocated",
-          "choices": ["allocated", "distributed", "assigned", "apportioned"],
-          "meaning": "…を配分する"
-        },
+    },
+    {
+        "id": 9,
+        "originalSentence": "Many 'free' games are designed to deceive players into spending money.",
+        "translation": "多くの「無料」ゲームは、プレイヤーをだましてお金を使わせるように設計されている。",
+        "quiz": { "target": "deceive", "choices": ["deceive", "predict", "trust", "offer"], "meaning": "～をだます" },
         "application": {
-          "situation": "文化祭の予算を各クラスに公平に分けて、みんなで使えるようにした。",
-          "sentence": "We allocated the festival budget <span class='tooltip-trigger'>fairly among<span class='tooltip-content'>「～の間で公平に」という意味。みんなに平等に分けること。</span></span> all classes.",
-          "translation": "私たちは文化祭の予算を全クラスに公平に配分した。"
+            "situation": "「完全無料！」のスマホゲーム。始めたら、進めるのに結局課金が必要だった。",
+            "sentence": "Many 'free' games <span class='tooltip-trigger'>are designed to<span class='tooltip-content'>「～するように設計されている」という意味。意図的な目的があることを示す。</span></span> deceive players <span class='tooltip-trigger'>into spending<span class='tooltip-content'>'deceive A into doing B'で「AをだましてBさせる」という形になる。</span></span> money.",
+            "translation": "多くの「無料」ゲームは、プレイヤーをだましてお金を使わせるように設計されている。"
         },
         "flashcards": [
-          { "en": "resources", "ja": "資源", "kana": "リ**ソ**ースズ", "phonetic": "/rɪˈsɔːrsɪz/", "hint": "r" },
-          { "en": "maximize", "ja": "…を最大化する", "kana": "**マ**クシマイズ", "phonetic": "/ˈmæksɪmaɪz/", "hint": "m" },
-          { "en": "profits", "ja": "利益", "kana": "**プロ**フィッツ", "phonetic": "/ˈprɑːfɪts/", "hint": "p" }
+            { "en": "deliberate", "ja": "意図的な", "kana": "ディ**リ**ベレト", "phonetic": "/dɪˈlɪbərət/", "hint": "d" },
+            { "en": "attempt", "ja": "試み", "kana": "ア**テ**ンプト", "phonetic": "/əˈtempt/", "hint": "a" },
+            { "en": "consumer", "ja": "消費者", "kana": "コン**スュー**マー", "phonetic": "/kənˈsuːmər/", "hint": "c" }
         ]
-      },
-      {
-        "id": 80,
-        "originalSentence": "The team evaluated the project's success using multiple criteria.",
-        "translation": "チームは複数の基準を使ってプロジェクトの成功を評価した。",
-        "quiz": {
-          "target": "evaluated",
-          "choices": ["evaluated", "assessed", "measured", "judged"],
-          "meaning": "…を評価する"
-        },
+    },
+    {
+        "id": 10,
+        "originalSentence": "We decided to go on foot through the beautiful valley.",
+        "translation": "私たちはその美しい谷を徒歩で通り抜けることに決めた。",
+        "quiz": { "target": "on foot", "choices": ["on foot", "in advance", "at least", "behind"], "meaning": "徒歩で" },
         "application": {
-          "situation": "部活の成果を、試合の結果だけでなく、チームワークや努力も含めて評価した。",
-          "sentence": "We evaluated our team's performance using <span class='tooltip-trigger'>multiple criteria<span class='tooltip-content'>「複数の基準」のこと。いろいろな角度からの評価方法。</span></span>.",
-          "translation": "私たちは複数の基準を使ってチームの成果を評価した。"
+            "situation": "夏フェス！最寄り駅から会場までバスが出てるけど長蛇の列…。「もう歩いちゃおうか！」",
+            "sentence": "The shuttle bus line was <span class='tooltip-trigger'>insane<span class='tooltip-content'>insane = ヤバい、正気じゃない</span></span>, so we decided to get to the festival site on foot.",
+            "translation": "シャトルバスの列がヤバかったから、フェス会場まで歩いていくことにしたんだ。"
         },
         "flashcards": [
-          { "en": "success", "ja": "成功", "kana": "サク**セ**ス", "phonetic": "/səkˈses/", "hint": "s" },
-          { "en": "criteria", "ja": "基準", "kana": "クライ**テ**リア", "phonetic": "/kraɪˈtɪriə/", "hint": "c" }
+            { "en": "make one's way", "ja": "進む", "kana": "**メイ**ク・ワンズ・**ウェ**イ", "phonetic": "/meɪk wʌnz weɪ/", "hint": "m" },
+            { "en": "valley", "ja": "谷", "kana": "**ヴァ**リー", "phonetic": "/ˈvæli/", "hint": "v" }
         ]
-      }
+    }
 ];
 
 // --- PERSISTENCE KEYS ---
