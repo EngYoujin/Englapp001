@@ -479,7 +479,12 @@ const stepViews = {
 const stepIndicatorsContainer = document.getElementById('step-indicators-container');
 
 // --- INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Asynchronously load and filter voices first
+    if ('speechSynthesis' in window) {
+        await displayVoiceListForDebug(); // Display the list on the page
+        await pickVoices();
+    }
     showMainMenu();
     initAudioControls();
 });
@@ -562,9 +567,8 @@ function pickVoices() {
         usUkVoices.forEach(v => autoVoiceSet.add(v));
         
         const otherVoices = en.filter(v => !v.lang.startsWith('en-US') && !v.lang.startsWith('en-GB'));
-        if (otherVoices.length > 0) {
-            autoVoiceSet.add(otherVoices[Math.floor(Math.random() * otherVoices.length)]);
-        }
+        // Add all other english voices to the list for more variety
+        otherVoices.forEach(v => autoVoiceSet.add(v));
         
         voiceCache.auto = Array.from(autoVoiceSet).sort(() => 0.5 - Math.random());
         
@@ -690,8 +694,12 @@ function speak(text) {
     const prepared = sanitizeForTTS(text);
     if (!prepared) return;
 
-    const rate = parseFloat(document.getElementById('rate')?.value || '1');
+    const rateEl = document.getElementById('rate');
+    const rawRate = rateEl ? parseFloat(rateEl.value) : 1.0;
     const mode = getVoiceMode();
+
+    // Utility to clamp a value between a min and max.
+    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
 
     let voiceToUse = null;
     if (mode === 'male') {
@@ -705,21 +713,26 @@ function speak(text) {
         }
     }
     
-    // Final fallback
-    if (!voiceToUse) {
-        const allVoices = speechSynthesis.getVoices();
-        voiceToUse = allVoices.find(v => v.lang.startsWith('en')) || allVoices[0];
-    }
-    
     const u = new SpeechSynthesisUtterance(prepared);
     u.lang = 'en-US';
-    u.rate = rate;
+    u.rate = clamp(rawRate, 0.8, 1.2); // Clamp rate to a safe range
+    u.pitch = clamp(1.0, 0.85, 1.15);  // Clamp pitch to a safe range
     u.voice = voiceToUse;
     
-    if (speechSynthesis.getVoices().length === 0) {
-        setTimeout(() => speechSynthesis.speak(u), 250);
-    } else {
+    // Safety check for when voices are not yet loaded
+    if (u.voice || speechSynthesis.getVoices().length > 0) {
         speechSynthesis.speak(u);
+    } else {
+        setTimeout(() => {
+            // Re-attempt to assign a voice if it loaded late
+            if (!u.voice) {
+                 if (mode === 'male') voiceToUse = voiceCache.male;
+                 else if (mode === 'female') voiceToUse = voiceCache.female;
+                 else if (voiceCache.auto.length) voiceToUse = voiceCache.auto[voiceCache.toggle];
+                 u.voice = voiceToUse;
+            }
+            speechSynthesis.speak(u);
+        }, 250);
     }
 }
 
@@ -1256,6 +1269,42 @@ function renderReview() {
             </div>
         `;
         document.getElementById('review-back-to-toc').addEventListener('click', showMainMenu);
+    }
+}
+
+// --- [DEBUG] This is a temporary function to display voices directly on the page ---
+async function displayVoiceListForDebug() {
+    try {
+        // This function should already exist in the main script block
+        const listVoices = () => new Promise(resolve => {
+            let voices = speechSynthesis.getVoices();
+            if (voices.length) return resolve(voices);
+            speechSynthesis.onvoiceschanged = () => resolve(speechSynthesis.getVoices());
+        });
+
+        const voices = await listVoices();
+        const tocScreen = document.getElementById('toc-screen');
+        if (!tocScreen) return;
+
+        const debugDiv = document.createElement('div');
+        debugDiv.style.cssText = 'padding: 1rem; border: 2px solid red; margin: 1rem 0; background-color: #fff0f0; font-family: monospace; font-size: 12px; line-height: 1.5; text-align: left;';
+
+        let html = '<h2 style="font-weight: bold; font-size: 16px; margin-bottom: 10px;">利用可能な音声リスト（この内容をコピーしてください）</h2><ul>';
+        if (voices.length > 0) {
+            voices.forEach(v => {
+                html += `<li><strong>name:</strong> ${v.name}, <strong>lang:</strong> ${v.lang}, <strong>default:</strong> ${v.default}</li>`;
+            });
+        } else {
+            html += '<li>利用可能な音声が見つかりませんでした。ページを再読み込みしてみてください。</li>';
+        }
+        html += '</ul>';
+
+        debugDiv.innerHTML = html;
+        tocScreen.prepend(debugDiv);
+    } catch (e) {
+        // Fallback for error
+        const tocScreen = document.getElementById('toc-screen');
+        if(tocScreen) tocScreen.insertAdjacentHTML('afterbegin', '<div style="color: red; border: 1px solid red; padding: 10px;">音声リストの取得中にエラーが発生しました。</div>');
     }
 }
 </script>
