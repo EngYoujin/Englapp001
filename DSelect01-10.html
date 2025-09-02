@@ -190,25 +190,6 @@ TEMPLATE INSTRUCTION / テンプレート利用方法
 ================================================================================
 以下の `const quizData = [ ... ];` の `[` と `]` の間に、
 新しい例文データを貼り付けてください。
-
-- 各例文は `{ ... }` の形式で記述します。
-- 例文と例文の間は、必ず `,` (カンマ) で区切ってください。
-- 最後の例文の後ろには `,` (カンマ) を付けないでください。
-
-貼り付け例：
-const quizData = [
-    {
-        "id": 11,
-        "originalSentence": "...",
-        // ... (例文11のデータ)
-    },
-    {
-        "id": 12,
-        "originalSentence": "...",
-        // ... (例文12のデータ)
-    }
-    // ... 最後の例文まで続く
-];
 ================================================================================
 */
 const quizData = [
@@ -539,9 +520,9 @@ stepIndicatorsContainer.addEventListener('click', (e) => {
 });
 
 
-// --- [NEW] Perfected Voice Logic ---
+// --- [Ultimate Hybrid] Voice Initialization Logic ---
 
-// Asynchronously gets the list of available voices, waiting if necessary.
+// --- Common Helpers ---
 function listVoices() {
     return new Promise(resolve => {
         let voices = speechSynthesis.getVoices();
@@ -555,87 +536,92 @@ function listVoices() {
     });
 }
 
-// Whitelist of known high-quality English voice names.
-const SAFE_EN_VOICE_NAMES = [
-    "Alex", "Allison", "Ava", "Daniel", "David", "Fiona", "Fred", "Google US English", "Google UK English Female", "Google UK English Male", "Joelle", "Karen", "Kate", "Lee", "Martha", "Microsoft Aria", "Microsoft David", "Microsoft Guy", "Microsoft Mark", "Microsoft Zira", "Moira", "Nathan", "Oliver", "Rishi", "Samantha", "Susan", "Tessa", "Tom", "Veena", "Victoria"
-];
-
-// Blacklist of keywords found in low-quality or novelty voices.
-const BLOCKLIST_KEYWORDS = [
-    "novelty", "funny", "robot", "morse", "pipe", "organ", "whisper", "laugh", "jiggle", "giggle", "sneeze", "mumble", "zarvox", "good", "news", "bad", "news", "bubbles", "cellos", "deranged", "reflection", "trinoids"
-];
-
-// Checks if a voice is on the blocklist.
-function isBlockedVoice(v) {
-    const name = v.name.toLowerCase();
-    const uri = (v.voiceURI || "").toLowerCase();
-    return BLOCKLIST_KEYWORDS.some(keyword => name.includes(keyword) || uri.includes(keyword));
-}
-
-// Checks if a voice is an approved, high-quality English voice.
-function isSafeEnglishVoice(v) {
-    if (!v.lang.startsWith("en-") || isBlockedVoice(v)) return false;
-    return SAFE_EN_VOICE_NAMES.some(safeName => v.name.includes(safeName));
-}
-
-// Gets a filtered list of only safe voices.
-async function getSafeEnglishVoices() {
-    try {
-        const allVoices = await listVoices();
-        return allVoices.filter(isSafeEnglishVoice);
-    } catch (e) {
-        console.error("Error getting safe voices:", e);
-        return [];
-    }
-}
-
-// Detects if the user is on a mobile device.
 function isMobile() {
     const ua = navigator.userAgent;
     return /android|iphone|ipad|ipod/i.test(ua);
 }
 
-// Populates the voiceCache using a hybrid strategy for mobile and desktop.
-async function pickVoices() {
-    try {
-        const safeVoices = await getSafeEnglishVoices();
-        if (safeVoices.length === 0) {
-            console.warn("No safe English voices found. Using system defaults as fallback.");
-            const allVoices = await listVoices();
-            const anyEnVoice = allVoices.filter(v => v.lang.startsWith('en-'));
-            voiceCache.auto = anyEnVoice.length ? anyEnVoice : allVoices;
-            voiceCache.male = anyEnVoice.find(v => /male/i.test(v.name)) || voiceCache.auto[0];
-            voiceCache.female = anyEnVoice.find(v => /female/i.test(v.name)) || voiceCache.auto[0];
-            return;
-        }
+// --- Mobile-Specific Logic (Stability First) ---
+async function pickVoicesForMobile() {
+    console.log("Mobile device detected. Applying strict voice filtering for stability.");
+    const allVoices = await listVoices();
+    const safeVoices = allVoices.filter(v => v.lang.startsWith('en-') && !/hindi|india|googlee|generic|network|xiaomi/i.test(v.name));
+    if (safeVoices.length === 0) {
+        console.warn("Mobile: No safe English voices found.");
+        return;
+    }
 
-        const isMaleName = (name = "", uri = "") => /(Daniel|Mark|David|Alex(?!a)|George|Tom|Microsoft Mark|Microsoft David|Google UK English Male|male)/i.test(name) || /male/i.test(uri || "");
-        const isFemaleName = (name = "", uri = "") => /(Samantha|Allison|Ava|Victoria|Martha|Aria|Zira|Jenny|Microsoft Aria|Microsoft Zira|Google US English|Google UK English Female|female)/i.test(name) || /female/i.test(uri || "");
+    let mobileMale = safeVoices.find(v => v.name === "Daniel") || safeVoices.find(v => /male/i.test(v.name));
+    let mobileFemale = safeVoices.find(v => v.name === "Samantha") || safeVoices.find(v => /female/i.test(v.name));
 
-        if (isMobile()) {
-            // Mobile: Prioritize stability with specific, reliable voices.
-            const mobileMale = safeVoices.find(v => v.name === "Daniel") || safeVoices.find(v => isMaleName(v.name, v.voiceURI));
-            const mobileFemale = safeVoices.find(v => v.name === "Samantha") || safeVoices.find(v => isFemaleName(v.name, v.voiceURI));
-            voiceCache.male = mobileMale || mobileFemale || safeVoices[0];
-            voiceCache.female = mobileFemale || mobileMale || safeVoices[0];
-            voiceCache.auto = [voiceCache.male, voiceCache.female].filter(Boolean);
-        } else {
-            // Desktop: Prioritize diversity from the safe list.
-            const males = safeVoices.filter(v => isMaleName(v.name, v.voiceURI));
-            const females = safeVoices.filter(v => isFemaleName(v.name, v.voiceURI));
-            voiceCache.male = males[0] || females[0] || safeVoices[0];
-            voiceCache.female = females[0] || males[0] || safeVoices[0];
-            voiceCache.auto = [...new Set([...males, ...females, ...safeVoices])];
-        }
+    // Fallbacks
+    if (!mobileMale) mobileMale = safeVoices.find(v => !/female/i.test(v.name)) || safeVoices[0];
+    if (!mobileFemale) mobileFemale = safeVoices.find(v => v !== mobileMale) || safeVoices[0];
 
-        if (voiceCache.auto.length === 0) voiceCache.auto.push(safeVoices[0]);
-        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0];
-        if (!voiceCache.female) voiceCache.female = voiceCache.auto[0];
-        
-    } catch (e) {
-        console.error('Error picking voices', e);
+    voiceCache.male = mobileMale || null;
+    voiceCache.female = mobileFemale || null;
+    voiceCache.auto = [mobileMale, mobileFemale].filter(v => v !== null && v !== undefined);
+    if (voiceCache.auto.length === 0 && safeVoices.length > 0) {
+      voiceCache.auto.push(safeVoices[0]);
     }
 }
+
+// --- PC-Specific Logic (Diversity First) ---
+async function pickVoicesForPC() {
+    console.log("Desktop device detected. Applying diverse voice selection.");
+    const allVoices = await listVoices();
+    if (!allVoices.length) return;
+
+    const enVoices = allVoices.filter(v => /^en([-_]|$)/i.test(v.lang) || /english/i.test(v.name));
+
+    voiceCache.female = enVoices.find(v => /female|jenny|aria|zira|samantha/i.test(v.name)) || null;
+    voiceCache.male = enVoices.find(v => /male|david|mark|daniel/i.test(v.name)) || null;
+
+    const autoVoiceSet = new Set();
+    if (voiceCache.male) autoVoiceSet.add(voiceCache.male);
+    if (voiceCache.female) autoVoiceSet.add(voiceCache.female);
+    
+    // Add all English voices for maximum diversity
+    enVoices.forEach(v => autoVoiceSet.add(v));
+    
+    voiceCache.auto = Array.from(autoVoiceSet).sort(() => 0.5 - Math.random());
+    
+    // Fallbacks
+    if (!voiceCache.male) voiceCache.male = voiceCache.auto.find(v => !/female/i.test(v.name)) || voiceCache.auto[0] || null;
+    if (!voiceCache.female) voiceCache.female = voiceCache.auto.find(v => v !== voiceCache.male) || voiceCache.auto[0] || null;
+}
+
+// --- Main Hybrid Voice Selector ---
+async function pickVoices() {
+    try {
+        if (isMobile()) {
+            await pickVoicesForMobile();
+        } else {
+            await pickVoicesForPC();
+        }
+        
+        // Final sanity checks to prevent empty voice cache
+        if (!voiceCache.auto || voiceCache.auto.length === 0) {
+             const allVoices = await listVoices();
+             const enVoices = allVoices.filter(v => v.lang.startsWith('en-'));
+             voiceCache.auto = enVoices.length > 0 ? [enVoices[0]] : (allVoices.length > 0 ? [allVoices[0]] : []);
+        }
+        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || null;
+        if (!voiceCache.female) voiceCache.female = voiceCache.auto.find(v => v !== voiceCache.male) || voiceCache.auto[0] || null;
+
+    } catch (e) {
+        console.error('Error picking voices', e);
+        // Ultimate fallback
+        const allVoices = speechSynthesis.getVoices();
+        const enVoice = allVoices.find(v => v.lang.startsWith('en-')) || allVoices[0];
+        if (enVoice) {
+            voiceCache.male = enVoice;
+            voiceCache.female = enVoice;
+            voiceCache.auto = [enVoice];
+        }
+    }
+}
+
 
 function navigateToSentence(index) {
     if (index < 0 || index >= quizData.length) return;
@@ -772,10 +758,12 @@ function speak(text) {
     u.pitch = clamp(1.0, 0.85, 1.15);
     u.voice = voiceToUse;
     
+    // Safety check for when voices are not yet loaded
     if (u.voice || speechSynthesis.getVoices().length > 0) {
         speechSynthesis.speak(u);
     } else {
         setTimeout(() => {
+            // Re-attempt to assign a voice if it loaded late
             if (!u.voice) {
                  if (mode === 'male') voiceToUse = voiceCache.male;
                  else if (mode === 'female') voiceToUse = voiceCache.female;
@@ -1320,42 +1308,6 @@ function renderReview() {
             </div>
         `;
         document.getElementById('review-back-to-toc').addEventListener('click', showMainMenu);
-    }
-}
-
-// --- [DEBUG] This is a temporary function to display voices directly on the page ---
-async function displayVoiceListForDebug() {
-    try {
-        // This function should already exist in the main script block
-        const listVoices = () => new Promise(resolve => {
-            let voices = speechSynthesis.getVoices();
-            if (voices.length) return resolve(voices);
-            speechSynthesis.onvoiceschanged = () => resolve(speechSynthesis.getVoices());
-        });
-
-        const voices = await listVoices();
-        const tocScreen = document.getElementById('toc-screen');
-        if (!tocScreen) return;
-
-        const debugDiv = document.createElement('div');
-        debugDiv.style.cssText = 'padding: 1rem; border: 2px solid red; margin: 1rem 0; background-color: #fff0f0; font-family: monospace; font-size: 12px; line-height: 1.5; text-align: left;';
-
-        let html = '<h2 style="font-weight: bold; font-size: 16px; margin-bottom: 10px;">利用可能な音声リスト（この内容をコピーしてください）</h2><ul>';
-        if (voices.length > 0) {
-            voices.forEach(v => {
-                html += `<li><strong>name:</strong> ${v.name}, <strong>lang:</strong> ${v.lang}, <strong>default:</strong> ${v.default}</li>`;
-            });
-        } else {
-            html += '<li>利用可能な音声が見つかりませんでした。ページを再読み込みしてみてください。</li>';
-        }
-        html += '</ul>';
-
-        debugDiv.innerHTML = html;
-        tocScreen.prepend(debugDiv);
-    } catch (e) {
-        // Fallback for error
-        const tocScreen = document.getElementById('toc-screen');
-        if(tocScreen) tocScreen.insertAdjacentHTML('afterbegin', '<div style="color: red; border: 1px solid red; padding: 10px;">音声リストの取得中にエラーが発生しました。</div>');
     }
 }
 </script>
