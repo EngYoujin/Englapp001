@@ -190,162 +190,235 @@ TEMPLATE INSTRUCTION / テンプレート利用方法
 ================================================================================
 以下の `const quizData = [ ... ];` の `[` と `]` の間に、
 新しい例文データを貼り付けてください。
+
+- 各例文は `{ ... }` の形式で記述します。
+- 例文と例文の間は、必ず `,` (カンマ) で区切ってください。
+- 最後の例文の後ろには `,` (カンマ) を付けないでください。
+
+貼り付け例：
+const quizData = [
+    {
+        "id": 11,
+        "originalSentence": "...",
+        // ... (例文11のデータ)
+    },
+    {
+        "id": 12,
+        "originalSentence": "...",
+        // ... (例文12のデータ)
+    }
+    // ... 最後の例文まで続く
+];
 ================================================================================
 */
 const quizData = [
-    {
-        "id": 1,
-        "originalSentence": "Please make a reservation for two at least one day in advance.",
-        "translation": "少なくとも1日前までに2名で予約をしてください。",
-        "quiz": { "target": "reservation", "choices": ["reservation", "promise", "effort", "decision"], "meaning": "予約" },
-        "application": {
-            "situation": "友達と超人気のテーマカフェに行くことに。サイトを見たら「予約必須」の文字が！",
-            "sentence": "I <span class='tooltip-trigger'>gotta<span class='tooltip-content'>gotta = got to<br>「～しなければならない」</span></span> make a reservation for that new cafe before it gets <span class='tooltip-trigger'>booked out<span class='tooltip-content'>booked out = 予約でいっぱい</span></span> by influencers.",
-            "translation": "インフルエンサーで予約が埋まる前に、あの新しいカフェを予約しなきゃ。"
-        },
-        "flashcards": [
-            { "en": "make a reservation", "ja": "予約をする", "kana": "メイク ア レザ**ヴェ**イション", "phonetic": "/meɪk ə ˌrezərˈveɪʃən/", "hint": "m" },
-            { "en": "at least", "ja": "少なくとも", "kana": "アット・**リー**スト", "phonetic": "/ət liːst/", "hint": "a" },
-            { "en": "in advance", "ja": "前もって", "kana": "イン・アド**ヴァ**ンス", "phonetic": "/ɪn ədˈvæns/", "hint": "i" }
-        ]
+  {
+    "id": 71,
+    "originalSentence": "I don't think we need to increase the defense budget.",
+    "translation": "私たちは防衛予算を増やす必要はないと思います。",
+    "quiz": {
+      "target": "increase",
+      "choices": ["increase", "spend", "limit", "adjust"],
+      "meaning": "…を増やす"
     },
-    {
-        "id": 2,
-        "originalSentence": "I can't turn down this amazing offer; it just doesn't make sense.",
-        "translation": "この素晴らしい申し出は断れないよ。道理に合わないからね。",
-        "quiz": { "target": "make sense", "choices": ["make sense", "make sure", "make use of", "make a promise"], "meaning": "道理にかなう" },
-        "application": {
-            "situation": "友達が「時給3000円、シフト自由、まかない付きのバイトがあるけど断った」と言っている。",
-            "sentence": "Wait, you <span class='tooltip-trigger'>turned that down<span class='tooltip-content'>turn down = 断る</span></span>? That doesn't make any sense!",
-            "translation": "え、断ったの？全くもって意味がわからないよ！"
-        },
-        "flashcards": [
-            { "en": "turn down", "ja": "～を断る", "kana": "**ター**ン・ダウン", "phonetic": "/tɜːrn daʊn/", "hint": "t" },
-            { "en": "offer", "ja": "申し出、提案", "kana": "**オ**ファー", "phonetic": "/ˈɔːfər/", "hint": "o" }
-        ]
+    "application": {
+      "situation": "親に「ゲームの時間を減らしなさい」と言われ、お小遣いアップを交渉するとき。",
+      "sentence": "I'll agree to decrease my <span class='tooltip-trigger'>screen time<span class='tooltip-content'>スマホやテレビなど、画面を見る時間のこと。</span></span> if you agree to <span class='tooltip-trigger'>increase<span class='tooltip-content'>～を増やす</span></span> my <span class='tooltip-trigger'>allowance<span class='tooltip-content'>「お小遣い」のこと。</span></span>. It's a <span class='tooltip-trigger'>win-win<span class='tooltip-content'>両者にとって利益のある、得な状況のこと。</span></span>, right?",
+      "translation": "もしお小遣いを増やしてくれるなら、スクリーンタイムを減らすことに同意するよ。お互いにとって得でしょ？"
     },
-    {
-        "id": 3,
-        "originalSentence": "I can't trust any candidate who makes unrealistic promises.",
-        "translation": "非現実的な約束をする候補者は誰も信用できない。",
-        "quiz": { "target": "candidate", "choices": ["candidate", "consumer", "scientist", "valley"], "meaning": "候補者" },
-        "application": {
-            "situation": "クラス委員選挙。A君は「宿題をなくします！」、Bさんは「毎日お菓子を配ります！」と言っている。",
-            "sentence": "Honestly, I don't trust either candidate. Their promises are too <span class='tooltip-trigger'>unrealistic<span class='tooltip-content'>unrealistic = 非現実的な</span></span>.",
-            "translation": "正直、どっちの候補者も信用できないよ。公約が非現実的すぎる。"
-        },
-        "flashcards": [
-            { "en": "trust", "ja": "～を信用する", "kana": "**トラ**スト", "phonetic": "/trʌst/", "hint": "t" },
-            { "en": "make a promise", "ja": "約束をする", "kana": "**メイ**ク・ア・**プロ**ミス", "phonetic": "/meɪk ə ˈprɑːmɪs/", "hint": "m" }
-        ]
+    "flashcards": [
+      { "en": "increase", "ja": "…を増やす、増える", "kana": "インク**リ**ース", "phonetic": "/ɪnˈkriːs/", "hint": "i" },
+      { "en": "defense", "ja": "防衛", "kana": "ディ**フェ**ンス", "phonetic": "/dɪˈfens/", "hint": "d" },
+      { "en": "budget", "ja": "予算", "kana": "**バ**ジット", "phonetic": "/ˈbʌdʒɪt/", "hint": "b" }
+    ]
+  },
+  {
+    "id": 72,
+    "originalSentence": "He is suspected of supplying weapons to the rebels.",
+    "translation": "彼は反乱軍に武器を供給した疑いがかけられている。",
+    "quiz": {
+      "target": "suspected",
+      "choices": ["suspected", "believed", "known", "forgiven"],
+      "meaning": "…を疑う"
     },
-    {
-        "id": 4,
-        "originalSentence": "The witness made a false statement during the trial.",
-        "translation": "その証人は裁判中に偽りの陳述をした。",
-        "quiz": { "target": "statement", "choices": ["statement", "structure", "effort", "reservation"], "meaning": "陳述、声明" },
-        "application": {
-            "situation": "弟がお母さんのプリンを食べたのに、「僕じゃないよ、お兄ちゃんだよ！」と嘘をついている。",
-            "sentence": "My little brother made a false statement to Mom, <span class='tooltip-trigger'>blaming me for<span class='tooltip-content'>blame A for B = BのことでAを責める</span></span> eating her pudding!",
-            "translation": "弟がお母さんに嘘の供述をして、僕がプリンを食べたって罪をなすりつけたんだ！"
-        },
-        "flashcards": [
-            { "en": "false", "ja": "誤った、偽りの", "kana": "**フォー**ルス", "phonetic": "/fɔːls/", "hint": "f" },
-            { "en": "trial", "ja": "裁判", "kana": "**トラ**イアル", "phonetic": "/ˈtraɪəl/", "hint": "t" }
-        ]
+    "application": {
+      "situation": "冷蔵庫の最後のプリンがなくなった！誰が犯人か、家族会議が始まるとき。",
+      "sentence": "My little brother is <span class='tooltip-trigger'>suspected<span class='tooltip-content'>疑われている</span></span> of eating the last pudding because he has cream on his cheek.",
+      "translation": "弟はほっぺにクリームがついてるから、最後のプリンを食べたんじゃないかと疑われている。"
     },
-     {
-        "id": 5,
-        "originalSentence": "Please make sure the building has a solid structure.",
-        "translation": "その建物がしっかりした構造であることを必ず確認してください。",
-        "quiz": { "target": "structure", "choices": ["structure", "trial", "experience", "intelligence"], "meaning": "構造、構成" },
-        "application": {
-            "situation": "レポートの締め切り前夜。話があちこちに飛んでしまい、まとまらない…！",
-            "sentence": "My argument is <span class='tooltip-trigger'>all over the place<span class='tooltip-content'>all over the place = めちゃくちゃ、散らかっている</span></span>. I need to give it a more logical structure.",
-            "translation": "私の主張はめちゃくちゃだ。もっと論理的な構造を持たせないと。"
-        },
-        "flashcards": [
-            { "en": "make sure", "ja": "必ず～するようにする", "kana": "**メイ**ク・**シュ**ア", "phonetic": "/meɪk ʃʊr/", "hint": "m" },
-            { "en": "solid", "ja": "しっかりした", "kana": "**ソ**リッド", "phonetic": "/ˈsɑːlɪd/", "hint": "s" },
-            { "en": "logical", "ja": "論理的な", "kana": "**ロ**ジカル", "phonetic": "/ˈlɑːdʒɪkl/", "hint": "l" }
-        ]
+    "flashcards": [
+      { "en": "suspect", "ja": "…を疑う", "kana": "サス**ペ**クト", "phonetic": "/səˈspekt/", "hint": "s" },
+      { "en": "organization", "ja": "組織、団体", "kana": "オーガナイ**ゼ**イション", "phonetic": "/ˌɔːrɡənəˈzeɪʃən/", "hint": "o" },
+      { "en": "supply", "ja": "…を供給する", "kana": "サプ**ラ**イ", "phonetic": "/səˈplaɪ/", "hint": "s" },
+      { "en": "rebel", "ja": "反抗者、反乱兵", "kana": "**レ**ベル", "phonetic": "/ˈrebəl/", "hint": "r" }
+    ]
+  },
+  {
+    "id": 73,
+    "originalSentence": "AI will no doubt replace many conventional jobs.",
+    "translation": "AIは間違いなく多くの従来の仕事に取って代わるだろう。",
+    "quiz": {
+      "target": "replace",
+      "choices": ["replace", "support", "improve", "develop"],
+      "meaning": "…に取って代わる"
     },
-    {
-        "id": 6,
-        "originalSentence": "With more experience, you can make a wiser decision.",
-        "translation": "もっと経験を積めば、より賢明な決断ができます。",
-        "quiz": { "target": "experience", "choices": ["experience", "effort", "promise", "sense"], "meaning": "経験" },
-        "application": {
-            "situation": "初めてのバイトは失敗ばかり。でも、続けていくうちに「あ、これはこうすればいいんだ」とコツが掴めてきた。",
-            "sentence": "It's true what they say: the more experience you get, the better you become at <span class='tooltip-trigger'>handling things<span class='tooltip-content'>handle things = 物事を処理する、対処する</span></span>.",
-            "translation": "本当だよね、経験を積めば積むほど、物事の対処が上手くなるっていうのは。"
-        },
-        "flashcards": [
-            { "en": "wise", "ja": "賢明な", "kana": "**ワ**イズ", "phonetic": "/waɪz/", "hint": "w" },
-            { "en": "make a decision", "ja": "決断する", "kana": "**メイ**ク・ア・ディ**シ**ジョン", "phonetic": "/meɪk ə dɪˈsɪʒn/", "hint": "m" }
-        ]
+    "application": {
+      "situation": "スマホの新しい機種が出て、買い替えるかどうか迷っているとき。",
+      "sentence": "I'm <span class='tooltip-trigger'>thinking of<span class='tooltip-content'>「～しようかと考えている」という、まだ決定ではないが検討している段階で使う表現。</span></span> <span class='tooltip-trigger'>replacing<span class='tooltip-content'>～に取って代わる、～を交換する</span></span> my old phone. The <span class='tooltip-trigger'>battery life<span class='tooltip-content'>「バッテリーの持ち時間」のこと。</span></span> on this one is terrible these days.",
+      "translation": "古いスマホを買い替えようか考えてるんだ。こっちのバッテリー、最近ひどいんだよね。"
     },
-    {
-        "id": 7,
-        "originalSentence": "We make use of data to predict future trends.",
-        "translation": "私たちは将来のトレンドを予測するためにデータを利用します。",
-        "quiz": { "target": "predict", "choices": ["predict", "deceive", "trust", "offer"], "meaning": "～を予測する" },
-        "application": {
-            "situation": "明日の天気予報は晴れ。でも、最近のゲリラ豪雨を考えると、本当に当たるかな？",
-            "sentence": "It's so hard to predict the weather <span class='tooltip-trigger'>accurately<span class='tooltip-content'>accurately = 正確に</span></span> these days, even with all the technology.",
-            "translation": "最近はあらゆるテクノロジーを使っても、天気を正確に予測するのは本当に難しい。"
-        },
-        "flashcards": [
-            { "en": "make use of", "ja": "～を利用する", "kana": "**メイ**ク・**ユー**ス・オブ", "phonetic": "/meɪk juːs əv/", "hint": "m" },
-            { "en": "artificial intelligence", "ja": "人工知能", "kana": "アーティ**フィ**シャル・イン**テ**リジェンス", "phonetic": "/ˌɑːrtɪˈfɪʃl ɪnˈtelɪdʒəns/", "hint": "a" }
-        ]
+    "flashcards": [
+      { "en": "replace", "ja": "…に取って代わる", "kana": "リプ**レ**イス", "phonetic": "/rɪˈpleɪs/", "hint": "r" },
+      { "en": "method", "ja": "方法", "kana": "**メ**ソッド", "phonetic": "/ˈmeθəd/", "hint": "m" },
+      { "en": "no doubt", "ja": "たぶん、きっと", "kana": "ノウ **ダ**ウト", "phonetic": "/noʊ daʊt/", "hint": "n" },
+      { "en": "conventional", "ja": "従来の、因習的な", "kana": "コン**ヴェ**ンショナル", "phonetic": "/kənˈvenʃənəl/", "hint": "c" }
+    ]
+  },
+  {
+    "id": 74,
+    "originalSentence": "To be honest, I'm not getting along with my new boss.",
+    "translation": "正直なところ、新しい上司とはうまくいっていない。",
+    "quiz": {
+      "target": "getting along with",
+      "choices": ["getting along with", "living with", "arguing with", "avoiding"],
+      "meaning": "…とうまくやっていく"
     },
-    {
-        "id": 8,
-        "originalSentence": "Unless you make an effort, you will fail the test.",
-        "translation": "努力しない限り、君はテストに落ちるだろう。",
-        "quiz": { "target": "effort", "choices": ["effort", "offer", "trial", "sense"], "meaning": "努力" },
-        "application": {
-            "situation": "テスト期間中、友達はみんな必死に勉強している。「まあ、大丈夫でしょ」と油断していると…",
-            "sentence": "I need to make a <span class='tooltip-trigger'>serious<span class='tooltip-content'>serious = 本気の、真剣な</span></span> effort to study, or I'm going to fail this exam.",
-            "translation": "本気で勉強に努力しないと、この試験に落ちちゃうよ。"
-        },
-        "flashcards": [
-            { "en": "unless", "ja": "～でない限り", "kana": "アン**レ**ス", "phonetic": "/ənˈles/", "hint": "u" },
-            { "en": "be left behind", "ja": "取り残される", "kana": "ビー・**レ**フト・ビ**ハ**インド", "phonetic": "/bi left bɪˈhaɪnd/", "hint": "b" }
-        ]
+    "application": {
+      "situation": "新しいクラスや職場で、まだ馴染めていないと感じるとき。",
+      "sentence": "I was worried at first, but I'm starting to <span class='tooltip-trigger'>get along with<span class='tooltip-content'>～とうまくやっていく</span></span> my new classmates. We have the same <span class='tooltip-trigger'>taste in music<span class='tooltip-content'>「音楽の趣味」という意味。'taste in ~'で「～の趣味・センス」を表す。</span></span>!",
+      "translation": "最初は心配だったけど、新しいクラスメイトたちとだんだん仲良くなってきた。音楽の趣味が同じなんだ！"
     },
-    {
-        "id": 9,
-        "originalSentence": "Many 'free' games are designed to deceive players into spending money.",
-        "translation": "多くの「無料」ゲームは、プレイヤーをだましてお金を使わせるように設計されている。",
-        "quiz": { "target": "deceive", "choices": ["deceive", "predict", "trust", "offer"], "meaning": "～をだます" },
-        "application": {
-            "situation": "「完全無料！」のスマホゲーム。始めたら、進めるのに結局課金が必要だった。",
-            "sentence": "Many 'free' games <span class='tooltip-trigger'>are designed to<span class='tooltip-content'>「～するように設計されている」という意味。意図的な目的があることを示す。</span></span> deceive players <span class='tooltip-trigger'>into spending<span class='tooltip-content'>'deceive A into doing B'で「AをだましてBさせる」という形になる。</span></span> money.",
-            "translation": "多くの「無料」ゲームは、プレイヤーをだましてお金を使わせるように設計されている。"
-        },
-        "flashcards": [
-            { "en": "deliberate", "ja": "意図的な", "kana": "ディ**リ**ベレト", "phonetic": "/dɪˈlɪbərət/", "hint": "d" },
-            { "en": "attempt", "ja": "試み", "kana": "ア**テ**ンプト", "phonetic": "/əˈtempt/", "hint": "a" },
-            { "en": "consumer", "ja": "消費者", "kana": "コン**スュー**マー", "phonetic": "/kənˈsuːmər/", "hint": "c" }
-        ]
+    "flashcards": [
+      { "en": "get along with", "ja": "…とうまくやっていく", "kana": "ゲット ア**ロ**ング ウィズ", "phonetic": "/ɡet əˈlɔːŋ wɪð/", "hint": "g" },
+      { "en": "to be honest", "ja": "正直に言うと", "kana": "トゥ ビー **オ**ネスト", "phonetic": "/tuː biː ˈɑːnɪst/", "hint": "t" },
+      { "en": "neighbor", "ja": "隣人", "kana": "**ネ**イバー", "phonetic": "/ˈneɪbər/", "hint": "n" }
+    ]
+  },
+  {
+    "id": 75,
+    "originalSentence": "I majored in psychology in college.",
+    "translation": "私は大学で心理学を専攻しました。",
+    "quiz": {
+      "target": "majored in",
+      "choices": ["majored in", "failed in", "quit", "chose"],
+      "meaning": "…を専攻する"
     },
-    {
-        "id": 10,
-        "originalSentence": "We decided to go on foot through the beautiful valley.",
-        "translation": "私たちはその美しい谷を徒歩で通り抜けることに決めた。",
-        "quiz": { "target": "on foot", "choices": ["on foot", "in advance", "at least", "behind"], "meaning": "徒歩で" },
-        "application": {
-            "situation": "夏フェス！最寄り駅から会場までバスが出てるけど長蛇の列…。「もう歩いちゃおうか！」",
-            "sentence": "The shuttle bus line was <span class='tooltip-trigger'>insane<span class='tooltip-content'>insane = ヤバい、正気じゃない</span></span>, so we decided to get to the festival site on foot.",
-            "translation": "シャトルバスの列がヤバかったから、フェス会場まで歩いていくことにしたんだ。"
-        },
-        "flashcards": [
-            { "en": "make one's way", "ja": "進む", "kana": "**メイ**ク・ワンズ・**ウェ**イ", "phonetic": "/meɪk wʌnz weɪ/", "hint": "m" },
-            { "en": "valley", "ja": "谷", "kana": "**ヴァ**リー", "phonetic": "/ˈvæli/", "hint": "v" }
-        ]
-    }
+    "application": {
+      "situation": "大学時代に何を勉強していたか、自己紹介などで話すとき。",
+      "sentence": "I <span class='tooltip-trigger'>majored in<span class='tooltip-content'>～を専攻した</span></span> economics, but <span class='tooltip-trigger'>to be honest<span class='tooltip-content'>「正直に言うと」という会話の切り出しによく使う表現。本音を言う前にクッションとして置く。</span></span>, I spent more time in the music club than in the library.",
+      "translation": "経済学を専攻したけど、正直なところ、図書館より音楽サークルにいる時間の方が長かったな。"
+    },
+    "flashcards": [
+      { "en": "major in", "ja": "…を専攻する", "kana": "**メ**イジャー イン", "phonetic": "/ˈmeɪdʒər ɪn/", "hint": "m" },
+      { "en": "educational", "ja": "教育の", "kana": "エデュ**ケ**イショナル", "phonetic": "/ˌedʒuˈkeɪʃənəl/", "hint": "e" },
+      { "en": "psychology", "ja": "心理学", "kana": "サイ**コ**ロジィ", "phonetic": "/saɪˈkɑːlədʒi/", "hint": "p" }
+    ]
+  },
+  {
+    "id": 76,
+    "originalSentence": "It's tough to convince him to change his mind.",
+    "translation": "彼の考えを変えるよう納得させるのは難しい。",
+    "quiz": {
+      "target": "convince",
+      "choices": ["convince", "ask", "tell", "force"],
+      "meaning": "…（人）を納得させる"
+    },
+    "application": {
+      "situation": "友達を旅行に誘いたいけど、なかなか首を縦に振ってくれないとき。",
+      "sentence": "It's tough to <span class='tooltip-trigger'>convince<span class='tooltip-content'>～を納得させる</span></span> my friend to try spicy food. He's a really <span class='tooltip-trigger'>picky eater<span class='tooltip-content'>「偏食家」「好き嫌いが激しい人」のこと。「picky」は「えり好みする」という意味。</span></span>.",
+      "translation": "友達に辛い食べ物を試すよう納得させるのは大変だよ。彼は本当に好き嫌いが激しいんだ。"
+    },
+    "flashcards": [
+      { "en": "convince", "ja": "…を納得させる", "kana": "コン**ヴィ**ンス", "phonetic": "/kənˈvɪns/", "hint": "c" },
+      { "en": "tough", "ja": "（対処が）難しい", "kana": "タフ", "phonetic": "/tʌf/", "hint": "t" },
+      { "en": "resist", "ja": "…に抵抗する", "kana": "リ**ズィ**スト", "phonetic": "/rɪˈzɪst/", "hint": "r" },
+      { "en": "change", "ja": "変化", "kana": "**チェ**インジ", "phonetic": "/tʃeɪndʒ/", "hint": "c" }
+    ]
+  },
+  {
+    "id": 77,
+    "originalSentence": "He is talented but considered slightly odd by his peers.",
+    "translation": "彼は才能があるが、仲間からは少し変わっていると思われている。",
+    "quiz": {
+      "target": "odd",
+      "choices": ["odd", "talented", "normal", "popular"],
+      "meaning": "奇妙な、変わった"
+    },
+    "application": {
+      "situation": "すごく面白い友達だけど、ちょっと変わった趣味を持っていることを話すとき。",
+      "sentence": "He's a great guy, but he has some slightly <span class='tooltip-trigger'>odd<span class='tooltip-content'>奇妙な、変わった</span></span> hobbies, like collecting <span class='tooltip-trigger'>rubber ducks<span class='tooltip-content'>お風呂に浮かべる「ゴム製のアヒルのおもちゃ」のこと。</span></span>.",
+      "translation": "彼はすごく良い奴なんだけど、ゴム製のアヒルを集めるみたいな、ちょっと変わった趣味があるんだ。"
+    },
+    "flashcards": [
+      { "en": "odd", "ja": "奇妙な", "kana": "オッド", "phonetic": "/ɑːd/", "hint": "o" },
+      { "en": "extremely", "ja": "極めて", "kana": "イクス**トゥリ**ームリィ", "phonetic": "/ɪkˈstriːmli/", "hint": "e" },
+      { "en": "talented", "ja": "才能のある", "kana": "**タ**レンティド", "phonetic": "/ˈtæləntɪd/", "hint": "t" },
+      { "en": "consider A to be B", "ja": "AをBだと考える", "kana": "コン**スィ**ダー エイ トゥ ビー ビ", "phonetic": "/kənˈsɪdər eɪ tuː biː biː/", "hint": "c" }
+    ]
+  },
+  {
+    "id": 78,
+    "originalSentence": "In many cultures, modesty is regarded as a virtue.",
+    "translation": "多くの文化で、謙虚さは美徳と見なされている。",
+    "quiz": {
+      "target": "virtue",
+      "choices": ["virtue", "vice", "habit", "skill"],
+      "meaning": "美徳"
+    },
+    "application": {
+      "situation": "忍耐強く待つことの大切さについて、子供に言い聞かせるとき。",
+      "sentence": "Remember, <span class='tooltip-trigger'>patience<span class='tooltip-content'>「忍耐」「我慢強さ」のこと。</span></span> is a <span class='tooltip-trigger'>virtue<span class='tooltip-content'>美徳</span></span>. Good things come to those who wait.",
+      "translation": "覚えておきなさい、忍耐は美徳ですよ。待つ人の元には良いことが訪れます。"
+    },
+    "flashcards": [
+      { "en": "virtue", "ja": "美徳", "kana": "**ヴ**ァーチュー", "phonetic": "/ˈvɜːrtʃuː/", "hint": "v" },
+      { "en": "modesty", "ja": "謙遜", "kana": "**モ**デスティ", "phonetic": "/ˈmɑːdəsti/", "hint": "m" },
+      { "en": "regard A as B", "ja": "AをBだと考える", "kana": "リ**ガ**ード エイ アズ ビー", "phonetic": "/rɪˈɡɑːrd eɪ æz biː/", "hint": "r" },
+      { "en": "vice", "ja": "悪いこと、悪徳（反意語）", "kana": "ヴァイス", "phonetic": "/vaɪs/", "hint": "v" }
+    ]
+  },
+  {
+    "id": 79,
+    "originalSentence": "We must get rid of regulations that restrict creativity.",
+    "translation": "私たちは創造性を制限する規制を取り除かなければならない。",
+    "quiz": {
+      "target": "get rid of",
+      "choices": ["get rid of", "keep", "strengthen", "follow"],
+      "meaning": "…を取り除く"
+    },
+    "application": {
+      "situation": "大掃除をして、もう何年も着ていない服を処分しようと決めたとき。",
+      "sentence": "I'm finally going to <span class='tooltip-trigger'>get rid of<span class='tooltip-content'>～を取り除く</span></span> all these old clothes I never wear. It's time to <span class='tooltip-trigger'>declutter<span class='tooltip-content'>「（不要なものを）片付ける」「整理整頓する」という意味の最近よく使われる単語。</span></span>!",
+      "translation": "もう着ない古い服は全部、ついに処分することにしたよ。片付ける時が来たんだ！"
+    },
+    "flashcards": [
+      { "en": "get rid of", "ja": "…を取り除く", "kana": "ゲット **リ**ッド オヴ", "phonetic": "/ɡet rɪd əv/", "hint": "g" },
+      { "en": "regulation", "ja": "規制", "kana": "レギュ**レ**イション", "phonetic": "/ˌreɡjuˈleɪʃən/", "hint": "r" },
+      { "en": "restrict", "ja": "…を制限する", "kana": "リスト**リ**クト", "phonetic": "/rɪˈstrɪkt/", "hint": "r" },
+      { "en": "innovation", "ja": "革新", "kana": "イノ**ヴェ**イション", "phonetic": "/ˌɪnəˈveɪʃən/", "hint": "i" }
+    ]
+  },
+  {
+    "id": 80,
+    "originalSentence": "Use this special liquid to remove tough stains from any surface.",
+    "translation": "どんな表面からでも頑固なシミを取り除くには、この特別な液体を使いなさい。",
+    "quiz": {
+      "target": "stains",
+      "choices": ["stains", "colors", "dust", "scratches"],
+      "meaning": "しみ"
+    },
+    "application": {
+      "situation": "白いシャツにコーヒーをこぼしてしまい、ショックを受けているとき。",
+      "sentence": "Oh no! I just <span class='tooltip-trigger'>spilled<span class='tooltip-content'>液体などを「こぼした」という意味。</span></span> coffee all over my new shirt. I hope this <span class='tooltip-trigger'>stain<span class='tooltip-content'>しみ</span></span> <span class='tooltip-trigger'>comes out<span class='tooltip-content'>「（しみが）落ちる、取れる」という意味の句動詞。</span></span>.",
+      "translation": "うわー！新しいシャツにコーヒーをこぼしちゃった。このしみが取れるといいんだけど。"
+    },
+    "flashcards": [
+      { "en": "stain", "ja": "しみ", "kana": "ステイン", "phonetic": "/steɪn/", "hint": "s" },
+      { "en": "liquid", "ja": "液体", "kana": "**リ**クウィッド", "phonetic": "/ˈlɪkwɪd/", "hint": "l" },
+      { "en": "remove", "ja": "…を取り除く", "kana": "リ**ム**ーヴ", "phonetic": "/rɪˈmuːv/", "hint": "r" },
+      { "en": "surface", "ja": "表面", "kana": "**サ**ーフィス", "phonetic": "/ˈsɜːrfɪs/", "hint": "s" }
+    ]
+  }
 ];
 
 // --- PERSISTENCE KEYS ---
@@ -419,12 +492,8 @@ function getItemId(sentenceId, type, identifier = '') {
 let currentSentenceIndex = 0;
 let currentStep = 1;
 let isSequentialMode = false; 
-
-// --- [REPLACED] Voice/Audio related state
 let speechSynthesis = window.speechSynthesis;
-// This cache will be populated by the new pickVoices function.
 let voiceCache = { male: null, female: null, auto: [], toggle: 0 };
-
 let quizQueue = [];
 let stepUnlocked = 1;
 let finalCheckCards = [];
@@ -453,11 +522,7 @@ const stepViews = {
 const stepIndicatorsContainer = document.getElementById('step-indicators-container');
 
 // --- INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', async () => {
-    // Asynchronously load and filter voices first
-    if ('speechSynthesis' in window) {
-        await pickVoices();
-    }
+document.addEventListener('DOMContentLoaded', () => {
     showMainMenu();
     initAudioControls();
 });
@@ -520,135 +585,37 @@ stepIndicatorsContainer.addEventListener('click', (e) => {
 });
 
 
-// --- [Ultimate Hybrid] Voice Initialization Logic ---
-
-// --- Common Helpers ---
-function listVoices() {
-    return new Promise(resolve => {
-        let voices = speechSynthesis.getVoices();
-        if (voices.length) {
-            return resolve(voices);
-        }
-        speechSynthesis.onvoiceschanged = () => {
-            voices = speechSynthesis.getVoices();
-            resolve(voices);
-        };
-    });
-}
-
-function isMobile() {
-    const ua = navigator.userAgent;
-    return /android|iphone|ipad|ipod/i.test(ua);
-}
-
-// --- Mobile-Specific Logic (Stability First) ---
-async function pickVoicesForMobile() {
-    console.log("Mobile device detected. Applying strict voice filtering for stability.");
-    const allVoices = await listVoices();
-    const safeVoices = allVoices.filter(v => v.lang.startsWith('en-') && !/hindi|india|googlee|generic|network|xiaomi/i.test(v.name));
-    if (safeVoices.length === 0) {
-        console.warn("Mobile: No safe English voices found.");
-        return;
-    }
-
-    let mobileMale = safeVoices.find(v => v.name === "Daniel") || safeVoices.find(v => /male/i.test(v.name));
-    let mobileFemale = safeVoices.find(v => v.name === "Samantha") || safeVoices.find(v => /female/i.test(v.name));
-
-    // Fallbacks
-    if (!mobileMale) mobileMale = safeVoices.find(v => !/female/i.test(v.name)) || safeVoices[0];
-    if (!mobileFemale) mobileFemale = safeVoices.find(v => v !== mobileMale) || safeVoices[0];
-
-    voiceCache.male = mobileMale || null;
-    voiceCache.female = mobileFemale || null;
-    voiceCache.auto = [mobileMale, mobileFemale].filter(v => v !== null && v !== undefined);
-    if (voiceCache.auto.length === 0 && safeVoices.length > 0) {
-      voiceCache.auto.push(safeVoices[0]);
-    }
-}
-
-// --- PC-Specific Logic (Diversity First) ---
-async function pickVoicesForPC() {
-    console.log("Desktop PC detected. Reversing logic to find a male voice first.");
-    const allVoices = await listVoices();
-    if (!allVoices.length) { console.warn("PC: No voices available."); return; }
-
-    let enVoices = allVoices.filter(v => v.lang.startsWith('en-'));
-    if (enVoices.length === 0) { enVoices = allVoices.filter(v => /english/i.test(v.name)); }
-
-    if (enVoices.length === 0) {
-        console.warn("PC: No English voices found. Using any available voices.");
-        voiceCache.male = allVoices[0] || null;
-        voiceCache.female = allVoices[1] || allVoices[0] || null;
-        voiceCache.auto = allVoices;
-        return;
-    }
-
-    const femaleKeywords = /female|jenny|aria|zira|samantha|tessa|susan|catherine/i;
-    const maleKeywords = /male|david|mark|daniel|paul|alan|guy/i;
-
-    let femaleVoice, maleVoice;
-
-    // --- Reversed Strategy: Prioritize getting a good MALE voice, then find a DIFFERENT female voice. ---
-
-    // 1. Find the best possible male voice (or at least, the most "not-female" voice).
-    maleVoice = enVoices.find(v => maleKeywords.test(v.name)) 
-                || enVoices.find(v => maleKeywords.test(v.voiceURI || ''))
-                || enVoices.find(v => !femaleKeywords.test(v.name) && !femaleKeywords.test(v.voiceURI || '')) // Find a voice that isn't explicitly female
-                || enVoices[0]; // Ultimate fallback to the very first English voice
-
-    // 2. Find a FEMALE voice that is explicitly DIFFERENT from the male voice.
-    femaleVoice = enVoices.find(v => v !== maleVoice && femaleKeywords.test(v.name))
-                  || enVoices.find(v => v !== maleVoice); // Absolute fallback: just get any other voice.
-
-    // If we only found one voice total, femaleVoice might be null. In that case, use the male voice for both.
-    if (!femaleVoice) {
-        femaleVoice = maleVoice;
-    }
-
-    voiceCache.female = femaleVoice;
-    voiceCache.male = maleVoice;
-
-    console.log(`[Reversed Logic] Selected Male: ${voiceCache.male?.name} (${voiceCache.male?.lang})`);
-    console.log(`[Reversed Logic] Selected Female: ${voiceCache.female?.name} (${voiceCache.female?.lang})`);
-
-    // For 'auto' mode, use all available English voices for maximum diversity
-    voiceCache.auto = Array.from(new Set(enVoices)).sort(() => 0.5 - Math.random());
-    if (voiceCache.auto.length === 0 && allVoices.length > 0) {
-        voiceCache.auto = allVoices;
-    }
-}
-
-// --- Main Hybrid Voice Selector ---
-async function pickVoices() {
+// --- Voice Initialization Logic ---
+function pickVoices() {
     try {
-        if (isMobile()) {
-            await pickVoicesForMobile();
-        } else {
-            await pickVoicesForPC();
-        }
+        const vs = speechSynthesis.getVoices();
+        if (!vs.length) return;
+        const en = vs.filter(v => /^en([-_]|$)/i.test(v.lang) || /english/i.test(v.name));
         
-        // Final sanity checks to prevent empty voice cache
-        if (!voiceCache.auto || voiceCache.auto.length === 0) {
-             const allVoices = await listVoices();
-             const enVoices = allVoices.filter(v => v.lang.startsWith('en-'));
-             voiceCache.auto = enVoices.length > 0 ? [enVoices[0]] : (allVoices.length > 0 ? [allVoices[0]] : []);
-        }
-        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || null;
-        if (!voiceCache.female) voiceCache.female = voiceCache.auto.find(v => v !== voiceCache.male) || voiceCache.auto[0] || null;
+        // Find specific male and female voices
+        voiceCache.female = en.find(v => /female|jenny|ariel|emma|olivia|zira|samantha|alloy|nova/i.test(v.name)) || null;
+        voiceCache.male = en.find(v => /male|david|guy|ryan|brian|matthew|daniel|andrew|roger/i.test(v.name)) || null;
 
-    } catch (e) {
-        console.error('Error picking voices', e);
-        // Ultimate fallback
-        const allVoices = speechSynthesis.getVoices();
-        const enVoice = allVoices.find(v => v.lang.startsWith('en-')) || allVoices[0];
-        if (enVoice) {
-            voiceCache.male = enVoice;
-            voiceCache.female = enVoice;
-            voiceCache.auto = [enVoice];
-        }
-    }
+        // Create a diverse list for "auto" mode
+        const autoVoiceSet = new Set();
+        if (voiceCache.male) autoVoiceSet.add(voiceCache.male);
+        if (voiceCache.female) autoVoiceSet.add(voiceCache.female);
+        
+        const usUkVoices = en.filter(v => v.lang.startsWith('en-US') || v.lang.startsWith('en-GB'));
+        usUkVoices.forEach(v => autoVoiceSet.add(v));
+        
+        const otherVoices = en.filter(v => !v.lang.startsWith('en-US') && !v.lang.startsWith('en-GB'));
+        // Add all other english voices to the list for more variety
+        otherVoices.forEach(v => autoVoiceSet.add(v));
+        
+        voiceCache.auto = Array.from(autoVoiceSet).sort(() => 0.5 - Math.random());
+        
+        // Fallback for male/female if not found
+        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || en[0] || vs[0];
+        if (!voiceCache.female) voiceCache.female = voiceCache.auto[1] || voiceCache.auto[0] || en[0] || vs[0];
+
+    } catch (e) { console.error('Error picking voices', e); }
 }
-
 
 function navigateToSentence(index) {
     if (index < 0 || index >= quizData.length) return;
@@ -661,6 +628,11 @@ function navigateToSentence(index) {
     currentStep = 1;
     stepUnlocked = 3; // Unlock all steps immediately for free navigation
     renderCurrentStep();
+}
+
+if ('speechSynthesis' in window) {
+    speechSynthesis.onvoiceschanged = pickVoices;
+    pickVoices(); // Initial call
 }
 
 function initAudioControls() {
@@ -744,61 +716,52 @@ function syncAppSettings() {
 function sanitizeForTTS(s) {
     if (!s) return s;
     let t = s.replace(/\([^)]*\)/g, '').replace(/（[^）]*）/g, '');
-    t = t.replace(/<[^>]+>/g, '');
+    t = t.replace(/<[^>]+>/g, ''); // strip html tags for speech
     t = t.replace(/[↔↮→—–…\/｜≠=]/g, ' ');
-    t = t.replace(/[\u3040-\u30FF\u3400-\u9FFF\uF900-\uFAFF]/g, '');
+    t = t.replace(/[\u3040-\u30FF\u3400-\u9FFF\uF900-\uFAFF]/g, ''); // Remove Japanese chars
     t = t.replace(/\s{2,}/g, ' ').trim();
     return t;
 }
 
 function getVoiceMode() { return localStorage.getItem(VOICE_MODE) || 'auto' }
 
-// Main speech function.
 function speak(text) {
     if (!('speechSynthesis' in window) || !text) return;
-    try { speechSynthesis.cancel(); } catch (e) {}
+    try { speechSynthesis.cancel(); } catch (e) { }
     
     const prepared = sanitizeForTTS(text);
     if (!prepared) return;
 
-    const rateEl = document.getElementById('rate');
-    const rawRate = rateEl ? parseFloat(rateEl.value) : 1.0;
+    const rate = parseFloat(document.getElementById('rate')?.value || '1');
     const mode = getVoiceMode();
-
-    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
 
     let voiceToUse = null;
     if (mode === 'male') {
         voiceToUse = voiceCache.male;
     } else if (mode === 'female') {
         voiceToUse = voiceCache.female;
-    } else {
-        if (voiceCache.auto && voiceCache.auto.length > 0) {
+    } else { // auto
+        if (voiceCache.auto.length > 0) {
             voiceCache.toggle = (voiceCache.toggle + 1) % voiceCache.auto.length;
             voiceToUse = voiceCache.auto[voiceCache.toggle];
         }
     }
     
+    // Final fallback
+    if (!voiceToUse) {
+        const allVoices = speechSynthesis.getVoices();
+        voiceToUse = allVoices.find(v => v.lang.startsWith('en')) || allVoices[0];
+    }
+    
     const u = new SpeechSynthesisUtterance(prepared);
     u.lang = 'en-US';
-    u.rate = clamp(rawRate, 0.8, 1.2);
-    u.pitch = clamp(1.0, 0.85, 1.15);
+    u.rate = rate;
     u.voice = voiceToUse;
     
-    // Safety check for when voices are not yet loaded
-    if (u.voice || speechSynthesis.getVoices().length > 0) {
-        speechSynthesis.speak(u);
+    if (speechSynthesis.getVoices().length === 0) {
+        setTimeout(() => speechSynthesis.speak(u), 250);
     } else {
-        setTimeout(() => {
-            // Re-attempt to assign a voice if it loaded late
-            if (!u.voice) {
-                 if (mode === 'male') voiceToUse = voiceCache.male;
-                 else if (mode === 'female') voiceToUse = voiceCache.female;
-                 else if (voiceCache.auto && voiceCache.auto.length) voiceToUse = voiceCache.auto[voiceCache.toggle];
-                 u.voice = voiceToUse;
-            }
-            speechSynthesis.speak(u);
-        }, 250);
+        speechSynthesis.speak(u);
     }
 }
 
