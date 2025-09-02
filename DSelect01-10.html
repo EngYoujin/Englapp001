@@ -535,7 +535,7 @@ stepIndicatorsContainer.addEventListener('click', (e) => {
 });
 
 
-// --- Voice Initialization Logic (NEW - based on GPT5 code) ---
+// --- Voice Initialization Logic (NEW - Robust Whitelist/Blacklist Method) ---
 
 // Helper to ensure voices are loaded, wrapping getVoices in a Promise.
 function listVoices() {
@@ -632,11 +632,6 @@ function navigateToSentence(index) {
     currentStep = 1;
     stepUnlocked = 3; // Unlock all steps immediately for free navigation
     renderCurrentStep();
-}
-
-if ('speechSynthesis' in window) {
-    speechSynthesis.onvoiceschanged = pickVoices;
-    pickVoices(); // Initial call
 }
 
 function initAudioControls() {
@@ -740,7 +735,7 @@ function speak(text) {
     const rawRate = rateEl ? parseFloat(rateEl.value) : 1.0;
     const mode = getVoiceMode();
 
-    // Utility to clamp a value between a min and max, as suggested by the new logic.
+    // Utility to clamp a value between a min and max.
     const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
 
     let voiceToUse = null;
@@ -768,9 +763,10 @@ function speak(text) {
         setTimeout(() => {
             // Re-attempt to assign a voice if it loaded late
             if (!u.voice) {
-                 if (mode === 'male') u.voice = voiceCache.male;
-                 else if (mode === 'female') u.voice = voiceCache.female;
-                 else if (voiceCache.auto.length) u.voice = voiceCache.auto[voiceCache.toggle];
+                 if (mode === 'male') voiceToUse = voiceCache.male;
+                 else if (mode === 'female') voiceToUse = voiceCache.female;
+                 else if (voiceCache.auto.length) voiceToUse = voiceCache.auto[voiceCache.toggle];
+                 u.voice = voiceToUse;
             }
             speechSynthesis.speak(u);
         }, 250);
