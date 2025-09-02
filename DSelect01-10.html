@@ -594,6 +594,12 @@ async function getSafeEnglishVoices() {
   return fallback.length ? fallback : en; // Last resort: return any English voice
 }
 
+// --- [HYBRID STRATEGY] Device Detection ---
+function isMobile() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
+}
+
 // Main function to populate our app's voiceCache
 async function pickVoices() {
     try {
@@ -603,31 +609,46 @@ async function pickVoices() {
             return;
         }
 
-        // --- NEW LOGIC ---
-        // 1. The 'auto' pool is now ALL safe voices, ensuring maximum diversity.
-        //    This solves the PC issue where male voices were being excluded.
-        voiceCache.auto = [...safeVoices].sort(() => 0.5 - Math.random());
-
-        // 2. For the dedicated 'male' and 'female' buttons, find the best representatives.
+        const mobile = isMobile();
         const isMaleName = (name = "") => /(Daniel|Mark|David|Alex(?!a)|George|Tom|Microsoft Mark|Microsoft David|Google UK English Male)/i.test(name);
         const isFemaleName = (name = "") => /(Samantha|Allison|Ava|Victoria|Martha|Aria|Zira|Jenny|Microsoft Aria|Microsoft Zira|Google US English|Google UK English Female)/i.test(name);
 
-        let specificMale = safeVoices.find(v => isMaleName(v.name));
-        let specificFemale = safeVoices.find(v => isFemaleName(v.name));
+        if (mobile) {
+            // --- MOBILE-SPECIFIC, SAFETY-FIRST LOGIC ---
+            console.log("Mobile device detected. Applying strict voice filtering.");
+            let bestMale = safeVoices.find(v => isMaleName(v.name));
+            let bestFemale = safeVoices.find(v => isFemaleName(v.name));
 
-        // 3. Provide robust fallbacks for the dedicated modes from the diverse 'auto' pool.
-        if (!specificMale) {
-            // Find a voice that is NOT likely female, if possible.
-            specificMale = voiceCache.auto.find(v => !isFemaleName(v.name)) || voiceCache.auto[0];
+            if (!bestMale) bestMale = safeVoices.find(v => !isFemaleName(v.name));
+            if (!bestFemale) bestFemale = safeVoices.find(v => v !== bestMale);
+            
+            voiceCache.male = bestMale || null;
+            voiceCache.female = bestFemale || null;
+
+            voiceCache.auto = [];
+            if (bestMale) voiceCache.auto.push(bestMale);
+            if (bestFemale && bestFemale !== bestMale) voiceCache.auto.push(bestFemale);
+
+            if (voiceCache.auto.length === 0 && safeVoices.length > 0) {
+                voiceCache.auto.push(safeVoices[0]);
+                voiceCache.male = safeVoices[0];
+                voiceCache.female = safeVoices[0];
+            }
+
+        } else {
+            // --- PC/DESKTOP LOGIC (DIVERSITY-FOCUSED) ---
+            console.log("Desktop device detected. Applying diverse voice selection.");
+            voiceCache.auto = [...safeVoices].sort(() => 0.5 - Math.random());
+
+            let specificMale = safeVoices.find(v => isMaleName(v.name));
+            let specificFemale = safeVoices.find(v => isFemaleName(v.name));
+
+            if (!specificMale) specificMale = voiceCache.auto.find(v => !isFemaleName(v.name)) || voiceCache.auto[0];
+            if (!specificFemale) specificFemale = voiceCache.auto.find(v => v !== specificMale) || voiceCache.auto[1] || voiceCache.auto[0];
+            
+            voiceCache.male = specificMale || null;
+            voiceCache.female = specificFemale || null;
         }
-        if (!specificFemale) {
-            // Find a voice that is different from the chosen male voice.
-            specificFemale = voiceCache.auto.find(v => v !== specificMale) || voiceCache.auto[1] || voiceCache.auto[0];
-        }
-        
-        voiceCache.male = specificMale || null;
-        voiceCache.female = specificFemale || null;
-        // --- END NEW LOGIC ---
 
     } catch (e) { console.error('Error picking voices', e); }
 }
