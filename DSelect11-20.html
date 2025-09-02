@@ -542,34 +542,127 @@ stepIndicatorsContainer.addEventListener('click', (e) => {
 });
 
 
-// --- Voice Initialization Logic ---
-function pickVoices() {
-    try {
-        const vs = speechSynthesis.getVoices();
-        if (!vs.length) return;
-        const en = vs.filter(v => /^en([-_]|$)/i.test(v.lang) || /english/i.test(v.name));
-        
-        // Find specific male and female voices
-        voiceCache.female = en.find(v => /female|jenny|ariel|emma|olivia|zira|samantha|alloy|nova/i.test(v.name)) || null;
-        voiceCache.male = en.find(v => /male|david|guy|ryan|brian|matthew|daniel|andrew|roger/i.test(v.name)) || null;
+// --- Voice Initialization Logic (NEW - Robust Whitelist/Blacklist Method) ---
 
-        // Create a diverse list for "auto" mode
-        const autoVoiceSet = new Set();
-        if (voiceCache.male) autoVoiceSet.add(voiceCache.male);
-        if (voiceCache.female) autoVoiceSet.add(voiceCache.female);
+// Helper to ensure voices are loaded, wrapping getVoices in a Promise.
+function listVoices() {
+    return new Promise(resolve => {
+        let voices = speechSynthesis.getVoices();
+        if (voices.length) {
+            return resolve(voices);
+        }
+        speechSynthesis.onvoiceschanged = () => {
+            voices = speechSynthesis.getVoices();
+            resolve(voices);
+        };
+    });
+}
+
+// Whitelist of known good voice names
+const SAFE_EN_VOICE_NAMES = [
+  // Apple (iOS/macOS)
+  "Samantha", "Allison", "Ava", "Alex", "Daniel", "Martha", "Victoria",
+  // Microsoft (Windows/Edge)
+  "Microsoft Aria", "Microsoft Zira", "Microsoft Mark", "Microsoft David",
+  // Google (Android/Chrome)
+  "Google US English", "Google UK English Female", "Google UK English Male"
+];
+
+// Blacklist of keywords for novelty/bad voices
+const BLOCKLIST_KEYWORDS = [
+  "Novelty", "Whisper", "Bells", "Cellos", "Bad News", "Good News", "Zarvox",
+  "Boing", "Singing", "Cartoon", "Robot", "Buzzer", "Trinoids", "SFX", "Emoji",
+  "Sound", "笑", "ロボ", "Fun", "Comic", "effect", "weird", "strange", "echo",
+  "chorus", "giggle", "radio", "bad", "poor", "voiceover"
+];
+
+function isBlockedVoice(v) {
+  const nameAndUri = ((v?.name || "") + " " + (v?.voiceURI || "")).toLowerCase();
+  return BLOCKLIST_KEYWORDS.some(k => nameAndUri.includes(k.toLowerCase()));
+}
+
+function isSafeEnglishVoice(v) {
+  if (!v || !/^en(-|_)/i.test(v.lang || "")) return false;
+  if (isBlockedVoice(v)) return false;
+  // It's safe if it's a default voice or its name is on the whitelist
+  return v.default || SAFE_EN_VOICE_NAMES.some(n => (v.name || "").includes(n));
+}
+
+async function getSafeEnglishVoices() {
+  const voices = await listVoices();
+  const en = (voices || []).filter(v => /^en(-|_)/i.test(v.lang || ""));
+  if (!en.length) return [];
+
+  const safe = en.filter(isSafeEnglishVoice);
+  if (safe.length > 0) return safe;
+
+  // Fallback: If no "safe" voices, return any non-blocked English voice
+  const fallback = en.filter(v => !isBlockedVoice(v));
+  return fallback.length ? fallback : en; // Last resort: return any English voice
+}
+
+// --- [HYBRID STRATEGY] Device Detection ---
+function isMobile() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
+}
+
+// Main function to populate our app's voiceCache
+async function pickVoices() {
+    try {
+        const allVoices = await listVoices();
         
-        const usUkVoices = en.filter(v => v.lang.startsWith('en-US') || v.lang.startsWith('en-GB'));
-        usUkVoices.forEach(v => autoVoiceSet.add(v));
+        // --- NEW: Browser Compatibility Debugging ---
+        console.log("--- Available Speech Synthesis Voices ---");
+        console.table(allVoices.map(v => ({ name: v.name, lang: v.lang, default: v.default, voiceURI: v.voiceURI })));
         
-        const otherVoices = en.filter(v => !v.lang.startsWith('en-US') && !v.lang.startsWith('en-GB'));
-        // Add all other english voices to the list for more variety
-        otherVoices.forEach(v => autoVoiceSet.add(v));
-        
-        voiceCache.auto = Array.from(autoVoiceSet).sort(() => 0.5 - Math.random());
-        
-        // Fallback for male/female if not found
-        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || en[0] || vs[0];
-        if (!voiceCache.female) voiceCache.female = voiceCache.auto[1] || voiceCache.auto[0] || en[0] || vs[0];
+        const safeVoices = await getSafeEnglishVoices();
+        if (safeVoices.length === 0) {
+            console.warn("No usable English voices found.");
+            return;
+        }
+
+        const mobile = isMobile();
+        // --- NEW: Enhanced Gender-detection Regex for better Chrome/Edge compatibility ---
+        const isMaleName = (name = "", uri = "") => /(Daniel|Mark|David|Alex(?!a)|George|Tom|Microsoft Mark|Microsoft David|Google UK English Male|male)/i.test(name) || /male/i.test(uri);
+        const isFemaleName = (name = "", uri = "") => /(Samantha|Allison|Ava|Victoria|Martha|Aria|Zira|Jenny|Microsoft Aria|Microsoft Zira|Google US English|Google UK English Female|female)/i.test(name) || /female/i.test(uri);
+
+        if (mobile) {
+            // --- MOBILE-SPECIFIC, SAFETY-FIRST LOGIC ---
+            console.log("Mobile device detected. Applying strict voice filtering.");
+            let bestMale = safeVoices.find(v => isMaleName(v.name, v.voiceURI));
+            let bestFemale = safeVoices.find(v => isFemaleName(v.name, v.voiceURI));
+
+            if (!bestMale) bestMale = safeVoices.find(v => !isFemaleName(v.name, v.voiceURI));
+            if (!bestFemale) bestFemale = safeVoices.find(v => v !== bestMale);
+            
+            voiceCache.male = bestMale || null;
+            voiceCache.female = bestFemale || null;
+
+            voiceCache.auto = [];
+            if (bestMale) voiceCache.auto.push(bestMale);
+            if (bestFemale && bestFemale !== bestMale) voiceCache.auto.push(bestFemale);
+
+            if (voiceCache.auto.length === 0 && safeVoices.length > 0) {
+                voiceCache.auto.push(safeVoices[0]);
+                voiceCache.male = safeVoices[0];
+                voiceCache.female = safeVoices[0];
+            }
+
+        } else {
+            // --- PC/DESKTOP LOGIC (DIVERSITY-FOCUSED) ---
+            console.log("Desktop device detected. Applying diverse voice selection.");
+            voiceCache.auto = [...safeVoices].sort(() => 0.5 - Math.random());
+
+            let specificMale = safeVoices.find(v => isMaleName(v.name, v.voiceURI));
+            let specificFemale = safeVoices.find(v => isFemaleName(v.name, v.voiceURI));
+
+            if (!specificMale) specificMale = voiceCache.auto.find(v => !isFemaleName(v.name, v.voiceURI)) || voiceCache.auto[0];
+            if (!specificFemale) specificFemale = voiceCache.auto.find(v => v !== specificMale) || voiceCache.auto[1] || voiceCache.auto[0];
+            
+            voiceCache.male = specificMale || null;
+            voiceCache.female = specificFemale || null;
+        }
 
     } catch (e) { console.error('Error picking voices', e); }
 }
@@ -585,11 +678,6 @@ function navigateToSentence(index) {
     currentStep = 1;
     stepUnlocked = 3; // Unlock all steps immediately for free navigation
     renderCurrentStep();
-}
-
-if ('speechSynthesis' in window) {
-    speechSynthesis.onvoiceschanged = pickVoices;
-    pickVoices(); // Initial call
 }
 
 function initAudioControls() {
