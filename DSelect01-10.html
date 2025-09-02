@@ -537,46 +537,49 @@ function pickVoices() {
         const vs = speechSynthesis.getVoices();
         if (!vs.length) return;
 
-        // 1. Filter for English voices, prioritizing standard dialects
-        let en = vs.filter(v => v.lang.startsWith('en-'));
+        // 1. Define strict blacklisting and whitelisting criteria
+        const BLACKLIST_KEYWORDS = /(novelty|robot|funny|laugh|comic|silly|filter|effect|weird|strange|echo|chorus|whisper|giggle|radio|bad|poor|voiceover)/i;
+        const WHITELIST_VENDORS = /(google|microsoft|apple|amazon|samsung)/i;
+        const PREFERRED_LANGS = ['en-US', 'en-GB', 'en-AU', 'en-CA'];
 
-        // 2. Assign a quality score to each voice
-        const qualityVoices = en.map(v => {
-            let score = 0;
-            if (v.lang === 'en-US' || v.lang === 'en-GB') score += 5; // Strongly prefer standard accents
-            if (!v.localService) score += 3; // Prefer remote (often higher quality) voices
-            if (/google/i.test(v.name)) score += 2;
-            if (/microsoft/i.test(v.name)) score += 2;
-            // Penalize voices that are often low-quality or novelty
-            if (/(novelty|robot|funny|laugh|comic|silly|filter)/i.test(v.name)) score -= 20;
-            // Deprioritize generic names that mobile OSes sometimes use for lower quality voices
-            if (/english/i.test(v.name) && !/google|microsoft/i.test(v.name)) score -= 2;
+        // 2. Filter out clearly bad voices first based on the blacklist
+        const allEnglishVoices = vs.filter(v => v.lang.startsWith('en-') && !BLACKLIST_KEYWORDS.test(v.name));
 
-            return { voice: v, score };
-        }).filter(v => v.score >= 0); // Remove heavily penalized voices
+        // 3. Create a high-quality "safe" list based on vendors and preferred languages
+        let safeVoices = allEnglishVoices.filter(v => 
+            WHITELIST_VENDORS.test(v.name) || 
+            PREFERRED_LANGS.includes(v.lang) ||
+            v.default === true
+        );
 
-        // 3. Sort by quality score
-        qualityVoices.sort((a, b) => b.score - a.score);
-        const sortedVoices = qualityVoices.map(v => v.voice);
-
-        // 4. Populate caches with the best available voices
-        voiceCache.female = sortedVoices.find(v => /female|jenny|ariel|emma|olivia|zira|samantha|alloy|nova/i.test(v.name)) || null;
-        voiceCache.male = sortedVoices.find(v => /male|david|guy|ryan|brian|matthew|daniel|andrew|roger/i.test(v.name)) || null;
-
-        // For "auto" mode, use a pool of the highest-quality voices
-        voiceCache.auto = sortedVoices.slice(0, 15); // Take top 15 high-quality voices
-        
-        // If the auto pool is too small, broaden the criteria slightly
-        if (voiceCache.auto.length < 5) {
-             voiceCache.auto = vs.filter(v => v.lang.startsWith('en-')).slice(0, 10);
+        // 4. If the safe list is too small, use the broader (but still blacklist-filtered) list as a fallback
+        if (safeVoices.length < 3) {
+            safeVoices = allEnglishVoices;
         }
         
-        // Ensure male/female voices have fallbacks from the high-quality pool
-        if (!voiceCache.male) voiceCache.male = voiceCache.auto.find(v => !/female/i.test(v.name)) || voiceCache.auto[0] || sortedVoices[0] || vs[0];
-        if (!voiceCache.female) voiceCache.female = voiceCache.auto.find(v => /female/i.test(v.name)) || voiceCache.auto[1] || voiceCache.auto[0] || sortedVoices[0] || vs[0];
+        // If still no voices, we can't do anything.
+        if (safeVoices.length === 0) {
+            console.warn("No safe English voices found. As a last resort, trying any available English voice.");
+            safeVoices = vs.filter(v => v.lang.startsWith('en-'));
+            if(safeVoices.length === 0) return; // give up
+        }
 
-        // Shuffle the auto pool for variety
-        voiceCache.auto.sort(() => 0.5 - Math.random());
+        // 5. Populate caches from the safe list
+        voiceCache.female = safeVoices.find(v => /female|jenny|ariel|emma|olivia|zira|samantha|alloy|nova/i.test(v.name)) || null;
+        voiceCache.male = safeVoices.find(v => /male|david|guy|ryan|brian|matthew|daniel|andrew|roger/i.test(v.name)) || null;
+
+        // 6. Create the 'auto' pool from the safe list and shuffle it
+        voiceCache.auto = [...safeVoices].sort(() => 0.5 - Math.random());
+        
+        // 7. Ensure male/female have fallbacks from the safe pool
+        if (!voiceCache.male) {
+            // Prefer a non-female voice if possible, otherwise take the first available
+            voiceCache.male = voiceCache.auto.find(v => v !== voiceCache.female) || voiceCache.auto[0];
+        }
+        if (!voiceCache.female) {
+            // Prefer a non-male voice if possible, otherwise take the second or first available
+            voiceCache.female = voiceCache.auto.find(v => v !== voiceCache.male) || voiceCache.auto[1] || voiceCache.auto[0];
+        }
 
     } catch (e) { console.error('Error picking voices', e); }
 }
