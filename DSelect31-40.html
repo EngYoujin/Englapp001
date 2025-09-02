@@ -190,25 +190,6 @@ TEMPLATE INSTRUCTION / テンプレート利用方法
 ================================================================================
 以下の `const quizData = [ ... ];` の `[` と `]` の間に、
 新しい例文データを貼り付けてください。
-
-- 各例文は `{ ... }` の形式で記述します。
-- 例文と例文の間は、必ず `,` (カンマ) で区切ってください。
-- 最後の例文の後ろには `,` (カンマ) を付けないでください。
-
-貼り付け例：
-const quizData = [
-    {
-        "id": 11,
-        "originalSentence": "...",
-        // ... (例文11のデータ)
-    },
-    {
-        "id": 12,
-        "originalSentence": "...",
-        // ... (例文12のデータ)
-    }
-    // ... 最後の例文まで続く
-];
 ================================================================================
 */
 const quizData = [
@@ -442,8 +423,12 @@ function getItemId(sentenceId, type, identifier = '') {
 let currentSentenceIndex = 0;
 let currentStep = 1;
 let isSequentialMode = false; 
+
+// --- [REPLACED] Voice/Audio related state
 let speechSynthesis = window.speechSynthesis;
+// This cache will be populated by the new pickVoices function.
 let voiceCache = { male: null, female: null, auto: [], toggle: 0 };
+
 let quizQueue = [];
 let stepUnlocked = 1;
 let finalCheckCards = [];
@@ -472,7 +457,11 @@ const stepViews = {
 const stepIndicatorsContainer = document.getElementById('step-indicators-container');
 
 // --- INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Asynchronously load and filter voices first
+    if ('speechSynthesis' in window) {
+        await pickVoices();
+    }
     showMainMenu();
     initAudioControls();
 });
@@ -535,37 +524,135 @@ stepIndicatorsContainer.addEventListener('click', (e) => {
 });
 
 
-// --- Voice Initialization Logic ---
-function pickVoices() {
-    try {
-        const vs = speechSynthesis.getVoices();
-        if (!vs.length) return;
-        const en = vs.filter(v => /^en([-_]|$)/i.test(v.lang) || /english/i.test(v.name));
-        
-        // Find specific male and female voices
-        voiceCache.female = en.find(v => /female|jenny|ariel|emma|olivia|zira|samantha|alloy|nova/i.test(v.name)) || null;
-        voiceCache.male = en.find(v => /male|david|guy|ryan|brian|matthew|daniel|andrew|roger/i.test(v.name)) || null;
+// --- [Ultimate Hybrid] Voice Initialization Logic ---
 
-        // Create a diverse list for "auto" mode
-        const autoVoiceSet = new Set();
-        if (voiceCache.male) autoVoiceSet.add(voiceCache.male);
-        if (voiceCache.female) autoVoiceSet.add(voiceCache.female);
-        
-        const usUkVoices = en.filter(v => v.lang.startsWith('en-US') || v.lang.startsWith('en-GB'));
-        usUkVoices.forEach(v => autoVoiceSet.add(v));
-        
-        const otherVoices = en.filter(v => !v.lang.startsWith('en-US') && !v.lang.startsWith('en-GB'));
-        // Add all other english voices to the list for more variety
-        otherVoices.forEach(v => autoVoiceSet.add(v));
-        
-        voiceCache.auto = Array.from(autoVoiceSet).sort(() => 0.5 - Math.random());
-        
-        // Fallback for male/female if not found
-        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || en[0] || vs[0];
-        if (!voiceCache.female) voiceCache.female = voiceCache.auto[1] || voiceCache.auto[0] || en[0] || vs[0];
-
-    } catch (e) { console.error('Error picking voices', e); }
+// --- Common Helpers ---
+function listVoices() {
+    return new Promise(resolve => {
+        let voices = speechSynthesis.getVoices();
+        if (voices.length) {
+            return resolve(voices);
+        }
+        speechSynthesis.onvoiceschanged = () => {
+            voices = speechSynthesis.getVoices();
+            resolve(voices);
+        };
+    });
 }
+
+function isMobile() {
+    const ua = navigator.userAgent;
+    return /android|iphone|ipad|ipod/i.test(ua);
+}
+
+// --- Mobile-Specific Logic (Stability First) ---
+async function pickVoicesForMobile() {
+    console.log("Mobile device detected. Applying strict voice filtering for stability.");
+    const allVoices = await listVoices();
+    const safeVoices = allVoices.filter(v => v.lang.startsWith('en-') && !/hindi|india|googlee|generic|network|xiaomi/i.test(v.name));
+    if (safeVoices.length === 0) {
+        console.warn("Mobile: No safe English voices found.");
+        return;
+    }
+
+    let mobileMale = safeVoices.find(v => v.name === "Daniel") || safeVoices.find(v => /male/i.test(v.name));
+    let mobileFemale = safeVoices.find(v => v.name === "Samantha") || safeVoices.find(v => /female/i.test(v.name));
+
+    // Fallbacks
+    if (!mobileMale) mobileMale = safeVoices.find(v => !/female/i.test(v.name)) || safeVoices[0];
+    if (!mobileFemale) mobileFemale = safeVoices.find(v => v !== mobileMale) || safeVoices[0];
+
+    voiceCache.male = mobileMale || null;
+    voiceCache.female = mobileFemale || null;
+    voiceCache.auto = [mobileMale, mobileFemale].filter(v => v !== null && v !== undefined);
+    if (voiceCache.auto.length === 0 && safeVoices.length > 0) {
+      voiceCache.auto.push(safeVoices[0]);
+    }
+}
+
+// --- PC-Specific Logic (Diversity First) ---
+async function pickVoicesForPC() {
+    console.log("Desktop PC detected. Reversing logic to find a male voice first.");
+    const allVoices = await listVoices();
+    if (!allVoices.length) { console.warn("PC: No voices available."); return; }
+
+    let enVoices = allVoices.filter(v => v.lang.startsWith('en-'));
+    if (enVoices.length === 0) { enVoices = allVoices.filter(v => /english/i.test(v.name)); }
+
+    if (enVoices.length === 0) {
+        console.warn("PC: No English voices found. Using any available voices.");
+        voiceCache.male = allVoices[0] || null;
+        voiceCache.female = allVoices[1] || allVoices[0] || null;
+        voiceCache.auto = allVoices;
+        return;
+    }
+
+    const femaleKeywords = /female|jenny|aria|zira|samantha|tessa|susan|catherine/i;
+    const maleKeywords = /male|david|mark|daniel|paul|alan|guy/i;
+
+    let femaleVoice, maleVoice;
+
+    // --- Reversed Strategy: Prioritize getting a good MALE voice, then find a DIFFERENT female voice. ---
+
+    // 1. Find the best possible male voice (or at least, the most "not-female" voice).
+    maleVoice = enVoices.find(v => maleKeywords.test(v.name)) 
+                || enVoices.find(v => maleKeywords.test(v.voiceURI || ''))
+                || enVoices.find(v => !femaleKeywords.test(v.name) && !femaleKeywords.test(v.voiceURI || '')) // Find a voice that isn't explicitly female
+                || enVoices[0]; // Ultimate fallback to the very first English voice
+
+    // 2. Find a FEMALE voice that is explicitly DIFFERENT from the male voice.
+    femaleVoice = enVoices.find(v => v !== maleVoice && femaleKeywords.test(v.name))
+                  || enVoices.find(v => v !== maleVoice); // Absolute fallback: just get any other voice.
+
+    // If we only found one voice total, femaleVoice might be null. In that case, use the male voice for both.
+    if (!femaleVoice) {
+        femaleVoice = maleVoice;
+    }
+
+    voiceCache.female = femaleVoice;
+    voiceCache.male = maleVoice;
+
+    console.log(`[Reversed Logic] Selected Male: ${voiceCache.male?.name} (${voiceCache.male?.lang})`);
+    console.log(`[Reversed Logic] Selected Female: ${voiceCache.female?.name} (${voiceCache.female?.lang})`);
+
+    // For 'auto' mode, use all available English voices for maximum diversity
+    voiceCache.auto = Array.from(new Set(enVoices)).sort(() => 0.5 - Math.random());
+    if (voiceCache.auto.length === 0 && allVoices.length > 0) {
+        voiceCache.auto = allVoices;
+    }
+}
+
+// --- Main Hybrid Voice Selector ---
+async function pickVoices() {
+    try {
+        if (isMobile()) {
+            await pickVoicesForMobile();
+        } else {
+            await pickVoicesForPC();
+        }
+        
+        // Final sanity checks to prevent empty voice cache
+        if (!voiceCache.auto || voiceCache.auto.length === 0) {
+             const allVoices = await listVoices();
+             const enVoices = allVoices.filter(v => v.lang.startsWith('en-'));
+             voiceCache.auto = enVoices.length > 0 ? [enVoices[0]] : (allVoices.length > 0 ? [allVoices[0]] : []);
+        }
+        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || null;
+        if (!voiceCache.female) voiceCache.female = voiceCache.auto.find(v => v !== voiceCache.male) || voiceCache.auto[0] || null;
+
+    } catch (e) {
+        console.error('Error picking voices', e);
+        // Ultimate fallback
+        const allVoices = speechSynthesis.getVoices();
+        const enVoice = allVoices.find(v => v.lang.startsWith('en-')) || allVoices[0];
+        if (enVoice) {
+            voiceCache.male = enVoice;
+            voiceCache.female = enVoice;
+            voiceCache.auto = [enVoice];
+        }
+    }
+}
+
 
 function navigateToSentence(index) {
     if (index < 0 || index >= quizData.length) return;
@@ -578,11 +665,6 @@ function navigateToSentence(index) {
     currentStep = 1;
     stepUnlocked = 3; // Unlock all steps immediately for free navigation
     renderCurrentStep();
-}
-
-if ('speechSynthesis' in window) {
-    speechSynthesis.onvoiceschanged = pickVoices;
-    pickVoices(); // Initial call
 }
 
 function initAudioControls() {
@@ -666,52 +748,61 @@ function syncAppSettings() {
 function sanitizeForTTS(s) {
     if (!s) return s;
     let t = s.replace(/\([^)]*\)/g, '').replace(/（[^）]*）/g, '');
-    t = t.replace(/<[^>]+>/g, ''); // strip html tags for speech
+    t = t.replace(/<[^>]+>/g, '');
     t = t.replace(/[↔↮→—–…\/｜≠=]/g, ' ');
-    t = t.replace(/[\u3040-\u30FF\u3400-\u9FFF\uF900-\uFAFF]/g, ''); // Remove Japanese chars
+    t = t.replace(/[\u3040-\u30FF\u3400-\u9FFF\uF900-\uFAFF]/g, '');
     t = t.replace(/\s{2,}/g, ' ').trim();
     return t;
 }
 
 function getVoiceMode() { return localStorage.getItem(VOICE_MODE) || 'auto' }
 
+// Main speech function.
 function speak(text) {
     if (!('speechSynthesis' in window) || !text) return;
-    try { speechSynthesis.cancel(); } catch (e) { }
+    try { speechSynthesis.cancel(); } catch (e) {}
     
     const prepared = sanitizeForTTS(text);
     if (!prepared) return;
 
-    const rate = parseFloat(document.getElementById('rate')?.value || '1');
+    const rateEl = document.getElementById('rate');
+    const rawRate = rateEl ? parseFloat(rateEl.value) : 1.0;
     const mode = getVoiceMode();
+
+    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
 
     let voiceToUse = null;
     if (mode === 'male') {
         voiceToUse = voiceCache.male;
     } else if (mode === 'female') {
         voiceToUse = voiceCache.female;
-    } else { // auto
-        if (voiceCache.auto.length > 0) {
+    } else {
+        if (voiceCache.auto && voiceCache.auto.length > 0) {
             voiceCache.toggle = (voiceCache.toggle + 1) % voiceCache.auto.length;
             voiceToUse = voiceCache.auto[voiceCache.toggle];
         }
     }
     
-    // Final fallback
-    if (!voiceToUse) {
-        const allVoices = speechSynthesis.getVoices();
-        voiceToUse = allVoices.find(v => v.lang.startsWith('en')) || allVoices[0];
-    }
-    
     const u = new SpeechSynthesisUtterance(prepared);
     u.lang = 'en-US';
-    u.rate = rate;
+    u.rate = clamp(rawRate, 0.8, 1.2);
+    u.pitch = clamp(1.0, 0.85, 1.15);
     u.voice = voiceToUse;
     
-    if (speechSynthesis.getVoices().length === 0) {
-        setTimeout(() => speechSynthesis.speak(u), 250);
-    } else {
+    // Safety check for when voices are not yet loaded
+    if (u.voice || speechSynthesis.getVoices().length > 0) {
         speechSynthesis.speak(u);
+    } else {
+        setTimeout(() => {
+            // Re-attempt to assign a voice if it loaded late
+            if (!u.voice) {
+                 if (mode === 'male') voiceToUse = voiceCache.male;
+                 else if (mode === 'female') voiceToUse = voiceCache.female;
+                 else if (voiceCache.auto && voiceCache.auto.length) voiceToUse = voiceCache.auto[voiceCache.toggle];
+                 u.voice = voiceToUse;
+            }
+            speechSynthesis.speak(u);
+        }, 250);
     }
 }
 
