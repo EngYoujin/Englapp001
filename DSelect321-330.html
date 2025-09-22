@@ -186,228 +186,232 @@
 // --- 学習アプリのロジック ---
 const quizData = [
     {
-        id: 271,
-        originalSentence: "Quite a few people attended his lecture.",
-        translation: "かなりたくさんの人が彼の講演に出席した。",
+        id: 321,
+        originalSentence: "We have entered an era in which only the fittest can survive.",
+        translation: "我々は、適者だけが生き残れる時代に突入した。",
         quiz: {
-            originalSentence: "The professor will give a ______ on modern history tomorrow.",
-            target: "lecture",
-            choices: ["lecture", "lesson", "speech", "story"],
-            meaning: "講義",
-            quizTranslation: "教授は明日、近代史に関する講義をします。"
+            originalSentence: "In the harsh desert environment, only the strongest plants can ______.",
+            target: "survive",
+            choices: ["survive", "enter", "fit", "grow"],
+            meaning: "生き残る",
+            quizTranslation: "過酷な砂漠の環境では、最も強い植物だけが生き残ることができる。"
         },
         application: {
-            situation: "大学の授業を選ぶ際に、面白そうな講義について話している時。",
-            sentence: "I'm thinking of taking that <span class='tooltip-trigger'>lecture<span class='tooltip-content'>講義</span></span> on psychology. I heard <span class='tooltip-trigger'>quite a few<span class='tooltip-content'>かなり多くの</span></span> students are going to <span class='tooltip-trigger'>attend<span class='tooltip-content'>～に出席する</span></span>.",
-            translation: "あの心理学の講義を取ろうか考えているんだ。かなり多くの学生が出席するって聞いたよ。"
+            situation: "SF映画の未来の世界観について話している時。",
+            sentence: "In this new <span class='tooltip-trigger'>era<span class='tooltip-content'>時代</span></span>, you must be physically <span class='tooltip-trigger'>fit<span class='tooltip-content'>健康で</span></span> to <span class='tooltip-trigger'>survive<span class='tooltip-content'>生き残る</span></span>.",
+            translation: "この新しい時代では、生き残るためには身体的に健康でなければならない。"
         },
         flashcards: [
-            { en: "quite a few", ja: "かなり多くの", kana: "クワイト・ア・**フュー**", phonetic: "/kwaɪt ə fjuː/", hint: "q" },
-            { en: "attend", ja: "～に出席する", kana: "ア**テ**ンド", phonetic: "/əˈtend/", hint: "a" },
-            { en: "lecture", ja: "講義", kana: "**レ**クチャー", phonetic: "/ˈlektʃər/", hint: "l" }
+            { en: "enter", ja: "～に入る", kana: "**エ**ンター", phonetic: "/ˈentər/", hint: "e" },
+            { en: "era", ja: "時代", kana: "**エ**ラ", phonetic: "/ˈerə/", hint: "e" },
+            { en: "fit", ja: "健康な、適した", kana: "フィット", phonetic: "/fɪt/", hint: "f" },
+            { en: "survive", ja: "生き残る", kana: "サ**ヴァ**イヴ", phonetic: "/sərˈvaɪv/", hint: "s" }
         ]
     },
     {
-        id: 272,
-        originalSentence: "He sat at a table by the window and watched people pass by.",
-        translation: "彼は窓際のテーブルに座って、人々が通り過ぎるのを眺めていた。",
+        id: 322,
+        originalSentence: "Lisa was hard at work. Meanwhile, Bob was just hanging around.",
+        translation: "リサは一生懸命働いていた。その間、ボブはぶらぶらしていただけだった。",
         quiz: {
-            originalSentence: "I enjoy sitting in a café and watching the world ______.",
-            target: "pass by",
-            choices: ["pass by", "get by", "stop by", "drop by"],
-            meaning: "通り過ぎる",
-            quizTranslation: "私はカフェに座って、世の中が通り過ぎるのを眺めるのが好きだ。"
+            originalSentence: "She studied for the exam; ______, her brother played video games.",
+            target: "meanwhile",
+            choices: ["meanwhile", "therefore", "however", "although"],
+            meaning: "その間に",
+            quizTranslation: "彼女は試験のために勉強した。その間、彼女の兄はビデオゲームをしていた。"
         },
         application: {
-            situation: "公園のベンチでのんびりしている時の様子を描写する。",
-            sentence: "She sat on a bench, enjoying the sunshine and watching the people <span class='tooltip-trigger'>pass by<span class='tooltip-content'>通り過ぎる</span></span>.",
-            translation: "彼女はベンチに座り、日差しを楽しみながら人々が通り過ぎるのを眺めていた。"
+            situation: "カフェで友達を待っている間の時間つぶし。",
+            sentence: "My friend is running late, so <span class='tooltip-trigger'>meanwhile<span class='tooltip-content'>その間に</span></span>, I'll just <span class='tooltip-trigger'>hang around<span class='tooltip-content'>ぶらぶらする</span></span> here and read a book.",
+            translation: "友達が遅れているので、その間、ここでぶらぶら本でも読んでいよう。"
         },
         flashcards: [
-            { en: "sit at a table", ja: "テーブルに着く", kana: "シット・アット・ア・**テ**ーブル", phonetic: "/sɪt æt ə ˈteɪbl/", hint: "s" },
-            { en: "by the window", ja: "窓のそばに", kana: "バイ・ザ・**ウィ**ンドウ", phonetic: "/baɪ ðə ˈwɪndoʊ/", hint: "b" },
-            { en: "pass by", ja: "～のそばを通り過ぎる", kana: "**パ**ス・**バ**イ", phonetic: "/pæs baɪ/", hint: "p" }
+            { en: "at work", ja: "仕事中で", kana: "アット・**ワー**ク", phonetic: "/æt wɜːrk/", hint: "a" },
+            { en: "meanwhile", ja: "その間に", kana: "**ミー**ンワイル", phonetic: "/ˈmiːnwaɪl/", hint: "m" },
+            { en: "hang around", ja: "ぶらぶらする", kana: "ハング・ア**ラ**ウンド", phonetic: "/hæŋ əˈraʊnd/", hint: "h" }
         ]
     },
     {
-        id: 273,
-        originalSentence: "We felt comfortable in the casual but sophisticated atmosphere.",
-        translation: "私たちはその気取らないけど洗練された雰囲気を心地よく感じた。",
+        id: 323,
+        originalSentence: "His office is located on the third floor of the plain, five-story building.",
+        translation: "彼の事務所はその地味な5階建てのビルの3階にある。",
         quiz: {
-            originalSentence: "The hotel had a very relaxing and ______ atmosphere.",
-            target: "comfortable",
-            choices: ["comfortable", "awkward", "formal", "tense"],
-            meaning: "快適な",
-            quizTranslation: "そのホテルはとてもリラックスできる快適な雰囲気だった。"
+            originalSentence: "The new museum is ______ in the city center.",
+            target: "located",
+            choices: ["located", "placed", "put", "built"],
+            meaning: "位置している",
+            quizTranslation: "新しい博物館は市の中心部に位置している。"
         },
         application: {
-            situation: "新しくオープンしたカフェの居心地の良さについて話す時。",
-            sentence: "The new café has a wonderfully <span class='tooltip-trigger'>comfortable<span class='tooltip-content'>快適な</span></span> and <span class='tooltip-trigger'>casual<span class='tooltip-content'>気取らない</span></span> <span class='tooltip-trigger'>atmosphere<span class='tooltip-content'>雰囲気</span></span>. It's my new favorite spot.",
-            translation: "新しいカフェは素晴らしく快適で気取らない雰囲気だ。私の新しいお気に入りの場所だよ。"
+            situation: "新しくオープンしたレストランの場所を友人に説明する。",
+            sentence: "It's a rather <span class='tooltip-trigger'>plain<span class='tooltip-content'>地味な</span></span> building, but the restaurant is <span class='tooltip-trigger'>located<span class='tooltip-content'>位置している</span></span> on the <span class='tooltip-trigger'>third floor<span class='tooltip-content'>3階</span></span> and has a great view.",
+            translation: "それはかなり地味なビルだけど、レストランは3階にあって、素晴らしい眺めだよ。"
         },
         flashcards: [
-            { en: "comfortable", ja: "快適な", kana: "**カ**ンファタブル", phonetic: "/ˈkʌmfərtəbl/", hint: "c" },
-            { en: "casual", ja: "気取らない", kana: "**キャ**ジュアル", phonetic: "/ˈkæʒuəl/", hint: "c" },
-            { en: "sophisticated", ja: "洗練された", kana: "ソ**フィ**スティケイテッド", phonetic: "/səˈfɪstɪkeɪtɪd/", hint: "s" },
-            { en: "atmosphere", ja: "雰囲気", kana: "**ア**トモスフィア", phonetic: "/ˈætməsfɪr/", hint: "a" }
+            { en: "be located", ja: "位置している", kana: "ビー・**ロ**ウケイテッド", phonetic: "/bi ˈloʊkeɪtɪd/", hint: "b" },
+            { en: "on the third floor", ja: "3階に", kana: "オン・ザ・**サー**ド・フロア", phonetic: "/ɑːn ðə θɜːrd flɔːr/", hint: "o" },
+            { en: "plain", ja: "地味な、明白な", kana: "プレイン", phonetic: "/pleɪn/", hint: "p" },
+            { en: "five-story", ja: "5階建ての", kana: "ファイヴ・ス**トー**リー", phonetic: "/faɪv ˈstɔːri/", hint: "f" }
         ]
     },
     {
-        id: 274,
-        originalSentence: "Bob feels awkward in her company because she reminds him of his ex-girlfriend.",
-        translation: "ボブは彼女が彼の元カノを思い出させるので、彼女と一緒にいると気まずく感じる。",
+        id: 324,
+        originalSentence: "This routine is annoying because it takes up my precious time.",
+        translation: "この決まり切った仕事は、私の貴重な時間を奪うのでいらいらする。",
         quiz: {
-            originalSentence: "That song always ______ me of my high school days.",
-            target: "reminds",
-            choices: ["reminds", "forgets", "informs", "suggests"],
-            meaning: "～に思い出させる",
-            quizTranslation: "その歌はいつも私に高校時代を思い出させる。"
+            originalSentence: "The constant noise from the construction site was very ______.",
+            target: "annoying",
+            choices: ["annoying", "pleasing", "relaxing", "interesting"],
+            meaning: "いらいらさせる",
+            quizTranslation: "工事現場からの絶え間ない騒音は非常にいらいらさせるものだった。"
         },
         application: {
-            situation: "ある人の前で緊張してしまう理由を説明する時。",
-            sentence: "I always feel a bit <span class='tooltip-trigger'>awkward<span class='tooltip-content'>気まずい</span></span> in his <span class='tooltip-trigger'>company<span class='tooltip-content'>一緒にいること</span></span> because he's so famous.",
-            translation: "彼がとても有名なので、一緒にいるといつも少し気まずく感じてしまう。"
+            situation: "趣味の時間がなかなか取れないと不満を言う。",
+            sentence: "My daily <span class='tooltip-trigger'>routine<span class='tooltip-content'>日課</span></span> <span class='tooltip-trigger'>takes up<span class='tooltip-content'>～を占める</span></span> so much of my <span class='tooltip-trigger'>precious<span class='tooltip-content'>貴重な</span></span> time that I have no energy left for my hobbies.",
+            translation: "私の日課は貴重な時間を बहुत占めるので、趣味のためのエネルギーが残っていない。"
         },
         flashcards: [
-            { en: "awkward", ja: "気まずい", kana: "**オー**クワード", phonetic: "/ˈɔːkwərd/", hint: "a" },
-            { en: "in one's company", ja: "～と一緒にいると", kana: "イン・ワンズ・**カ**ンパニー", phonetic: "/ɪn wʌnz ˈkʌmpəni/", hint: "i" },
-            { en: "remind", ja: "～に思い出させる", kana: "リ**マ**インド", phonetic: "/rɪˈmaɪnd/", hint: "r" }
+            { en: "routine", ja: "決まりきった仕事", kana: "ルー**ティ**ーン", phonetic: "/ruːˈtiːn/", hint: "r" },
+            { en: "annoying", ja: "いらいらさせる", kana: "ア**ノ**イイング", phonetic: "/əˈnɔɪɪŋ/", hint: "a" },
+            { en: "take up", ja: "（時間・場所）を占める", kana: "テイク・アップ", phonetic: "/teɪk ʌp/", hint: "t" },
+            { en: "precious", ja: "貴重な", kana: "**プ**レシャス", phonetic: "/ˈpreʃəs/", hint: "p" }
         ]
     },
     {
-        id: 275,
-        originalSentence: "Isolated showers are forecast across Chiba prefecture.",
-        translation: "千葉県では局地的なにわか雨が予報されている。",
+        id: 325,
+        originalSentence: "He is too selfish to share any burden.",
+        translation: "彼はとても身勝手なので、いかなる負担も分かち合おうとしない。",
         quiz: {
-            originalSentence: "The weather ______ for tomorrow is sunny with some clouds.",
-            target: "forecast",
-            choices: ["forecast", "history", "result", "record"],
-            meaning: "予報",
-            quizTranslation: "明日の天気予報は晴れ時々曇りです。"
+            originalSentence: "It was ______ of him not to help his friends.",
+            target: "selfish",
+            choices: ["selfish", "generous", "kind", "helpful"],
+            meaning: "利己的な",
+            quizTranslation: "友人たちを助けなかったとは、彼は利己的だった。"
         },
         application: {
-            situation: "旅行の計画を立てているが、天気予報が良くない。",
-            sentence: "They <span class='tooltip-trigger'>forecast<span class='tooltip-content'>～を予報する</span></span> <span class='tooltip-trigger'>isolated<span class='tooltip-content'>局地的な</span></span> thunderstorms for this weekend, so we might have to cancel our camping trip.",
-            translation: "今週末は局地的な雷雨が予報されているので、キャンプ旅行はキャンセルしないといけないかもしれない。"
+            situation: "グループプロジェクトで協力しないメンバーについて話す。",
+            sentence: "He's too <span class='tooltip-trigger'>selfish<span class='tooltip-content'>利己的な</span></span> to <span class='tooltip-trigger'>share<span class='tooltip-content'>～を分かち合う</span></span> the <span class='tooltip-trigger'>burden<span class='tooltip-content'>負担</span></span> of the work with the rest of the team.",
+            translation: "彼は利己的すぎて、チームの他のメンバーと仕事の負担を分かち合おうとしない。"
         },
         flashcards: [
-            { en: "isolated", ja: "孤立した、局地的な", kana: "**ア**イソレイテッド", phonetic: "/ˈaɪsəleɪtɪd/", hint: "i" },
-            { en: "shower", ja: "にわか雨", kana: "**シャ**ワー", phonetic: "/ˈʃaʊər/", hint: "s" },
-            { en: "forecast", ja: "～を予報する", kana: "**フォー**キャスト", phonetic: "/ˈfɔːrkæst/", hint: "f" },
-            { en: "prefecture", ja: "県", kana: "プ**リ**ーフェクチャー", phonetic: "/ˈpriːfektʃər/", hint: "p" }
+            { en: "too ... to do", ja: "～すぎて…できない", kana: "トゥー・トゥ・ドゥ", phonetic: "/tuː tə du/", hint: "t" },
+            { en: "selfish", ja: "利己的な", kana: "**セ**ルフィッシュ", phonetic: "/ˈselfɪʃ/", hint: "s" },
+            { en: "share", ja: "～を分かち合う", kana: "シェア", phonetic: "/ʃer/", hint: "s" },
+            { en: "burden", ja: "負担", kana: "**バー**デン", phonetic: "/ˈbɜːrdn/", hint: "b" }
         ]
     },
     {
-        id: 276,
-        originalSentence: "Nick's been sick for weeks and looks thin and pale.",
-        translation: "ニックは数週間ずっと体調が悪く、痩せて顔色も悪い。",
+        id: 326,
+        originalSentence: "It is obvious that he is driven by a desire for wealth.",
+        translation: "彼が富への欲望に駆り立てられていることは明白だ。",
         quiz: {
-            originalSentence: "After the long illness, she looked very ______ and weak.",
-            target: "pale",
-            choices: ["pale", "bright", "dark", "colorful"],
-            meaning: "青白い",
-            quizTranslation: "長い病気の後、彼女はとても青白く弱々しく見えた。"
+            originalSentence: "It was ______ from her expression that she was unhappy.",
+            target: "obvious",
+            choices: ["obvious", "hidden", "secret", "unclear"],
+            meaning: "明白な",
+            quizTranslation: "彼女が不幸であることは、その表情から明らかだった。"
         },
         application: {
-            situation: "徹夜で勉強した後の友人の様子を見て心配する時。",
-            sentence: "You look so <span class='tooltip-trigger'>pale<span class='tooltip-content'>顔色が悪い</span></span> and <span class='tooltip-trigger'>thin<span class='tooltip-content'>痩せた</span></span>. Are you feeling <span class='tooltip-trigger'>sick<span class='tooltip-content'>気分が悪い</span></span>?",
-            translation: "とても顔色が悪くて痩せて見えるよ。気分でも悪いの？"
+            situation: "ある起業家の成功の動機について分析する。",
+            sentence: "It's <span class='tooltip-trigger'>obvious<span class='tooltip-content'>明白だ</span></span> that his strong <span class='tooltip-trigger'>desire<span class='tooltip-content'>欲望</span></span> for <span class='tooltip-trigger'>wealth<span class='tooltip-content'>富</span></span> is what <span class='tooltip-trigger'>drives<span class='tooltip-content'>～を駆り立てる</span></span> him to work so hard.",
+            translation: "富への強い欲望が、彼をあれほど熱心に働かせる原動力であることは明白だ。"
         },
         flashcards: [
-            { en: "sick", ja: "病気の", kana: "シック", phonetic: "/sɪk/", hint: "s" },
-            { en: "thin", ja: "痩せた", kana: "スィン", phonetic: "/θɪn/", hint: "t" },
-            { en: "pale", ja: "青白い", kana: "ペイル", phonetic: "/peɪl/", hint: "p" }
+            { en: "obvious", ja: "明白な", kana: "**オ**ブヴィアス", phonetic: "/ˈɑːbviəs/", hint: "o" },
+            { en: "drive", ja: "～を駆り立てる", kana: "ドライブ", phonetic: "/draɪv/", hint: "d" },
+            { en: "desire", ja: "欲望", kana: "ディ**ザ**イア", phonetic: "/dɪˈzaɪər/", hint: "d" },
+            { en: "wealth", ja: "富", kana: "ウェルス", phonetic: "/welθ/", hint: "w" }
         ]
     },
     {
-        id: 277,
-        originalSentence: "My alarm clock didn't go off because its battery had run out.",
-        translation: "電池が切れたので、目覚まし時計が鳴らなかった。",
+        id: 327,
+        originalSentence: "Although discrimination is prohibited, it does exist to some degree.",
+        translation: "差別は禁止されているが、ある程度は現に存在する。",
         quiz: {
-            originalSentence: "We need to buy a new ______ for the remote control.",
-            target: "battery",
-            choices: ["battery", "engine", "motor", "fuel"],
-            meaning: "電池",
-            quizTranslation: "リモコンの新しい電池を買う必要がある。"
+            originalSentence: "The law was created to ______ the sale of illegal goods.",
+            target: "prohibit",
+            choices: ["prohibit", "allow", "encourage", "promote"],
+            meaning: "～を禁止する",
+            quizTranslation: "その法律は、違法商品の販売を禁止するために作られた。"
         },
         application: {
-            situation: "会議中に火災報知器が鳴り響いた。",
-            sentence: "The fire <span class='tooltip-trigger'>alarm<span class='tooltip-content'>警報器</span></span> started to <span class='tooltip-trigger'>go off<span class='tooltip-content'>鳴る</span></span>, and we all had to evacuate the building.",
-            translation: "火災警報器が鳴り始めたので、私たちは全員ビルから避難しなければならなかった。"
+            situation: "社会における平等の問題について議論している時。",
+            sentence: "Laws may <span class='tooltip-trigger'>prohibit<span class='tooltip-content'>～を禁止する</span></span> <span class='tooltip-trigger'>discrimination<span class='tooltip-content'>差別</span></span>, but it still <span class='tooltip-trigger'>exists<span class='tooltip-content'>存在する</span></span> to some <span class='tooltip-trigger'>degree<span class='tooltip-content'>程度</span></span> in our society.",
+            translation: "法律は差別を禁止しているかもしれないが、私たちの社会には依然としてある程度存在している。"
         },
         flashcards: [
-            { en: "alarm", ja: "警報器", kana: "ア**ラー**ム", phonetic: "/əˈlɑːrm/", hint: "a" },
-            { en: "go off", ja: "（警報などが）鳴る", kana: "**ゴ**ウ・**オ**フ", phonetic: "/ɡoʊ ɔːf/", hint: "g" },
-            { en: "battery", ja: "電池", kana: "**バ**ッテリー", phonetic: "/ˈbætəri/", hint: "b" },
-            { en: "run out", ja: "（電池などが）切れる", kana: "**ラ**ン・**ア**ウト", phonetic: "/rʌn aʊt/", hint: "r" }
+            { en: "discrimination", ja: "差別", kana: "ディスクリミ**ネ**イション", phonetic: "/dɪˌskrɪmɪˈneɪʃn/", hint: "d" },
+            { en: "prohibit", ja: "～を禁止する", kana: "プロ**ヒ**ビット", phonetic: "/proʊˈhɪbɪt/", hint: "p" },
+            { en: "do", ja: "（強調して）実際に", kana: "ドゥ", phonetic: "/duː/", hint: "d" },
+            { en: "exist", ja: "存在する", kana: "イグ**ジ**スト", phonetic: "/ɪɡˈzɪst/", hint: "e" },
+            { en: "degree", ja: "程度", kana: "ディグ**リー**", phonetic: "/dɪˈɡriː/", hint: "d" }
         ]
     },
     {
-        id: 278,
-        originalSentence: "By chance, I met one of my acquaintances in a Tokyo suburb.",
-        translation: "偶然、東京の郊外で知人の一人に会った。",
+        id: 328,
+        originalSentence: "Some occupations are still dominated by males.",
+        translation: "いくつかの職業は依然として男性に支配されている。",
         quiz: {
-            originalSentence: "I ran into an old friend ______ at the supermarket.",
-            target: "by chance",
-            choices: ["by chance", "on purpose", "in time", "at once"],
-            meaning: "偶然に",
-            quizTranslation: "私はスーパーで偶然旧友にばったり会った。"
+            originalSentence: "Historically, politics has been a field ______ by men.",
+            target: "dominated",
+            choices: ["dominated", "shared", "ignored", "avoided"],
+            meaning: "支配される",
+            quizTranslation: "歴史的に、政治は男性によって支配される分野であった。"
         },
         application: {
-            situation: "旅行先で思いがけない出会いがあった時。",
-            sentence: "It was a lovely surprise to meet a former colleague <span class='tooltip-trigger'>by chance<span class='tooltip-content'>偶然</span></span> while visiting a quiet <span class='tooltip-trigger'>suburb<span class='tooltip-content'>郊外</span></span> of Kyoto.",
-            translation: "京都の静かな郊外を訪れている時に偶然、前の同僚に会ったのは素敵な驚きだった。"
+            situation: "特定の業界におけるジェンダーバランスについて話している時。",
+            sentence: "Although things are changing, some technical <span class='tooltip-trigger'>occupations<span class='tooltip-content'>職業</span></span> are still largely <span class='tooltip-trigger'>dominated<span class='tooltip-content'>～に支配される</span></span> by <span class='tooltip-trigger'>males<span class='tooltip-content'>男性</span></span>.",
+            translation: "状況は変わりつつあるが、いくつかの技術系の職業は依然として大部分が男性に占められている。"
         },
         flashcards: [
-            { en: "by chance", ja: "偶然に", kana: "バイ・**チャ**ンス", phonetic: "/baɪ tʃæns/", hint: "b" },
-            { en: "acquaintance", ja: "知人", kana: "アク**ウェ**インタンス", phonetic: "/əˈkweɪntəns/", hint: "a" },
-            { en: "suburb", ja: "郊外", kana: "**サ**バーブ", phonetic: "/ˈsʌbɜːrb/", hint: "s" }
+            { en: "occupation", ja: "職業", kana: "オキュ**ペ**イション", phonetic: "/ˌɑːkjuˈpeɪʃn/", hint: "o" },
+            { en: "dominate", ja: "～を支配する", kana: "**ド**ミネイト", phonetic: "/ˈdɑːmɪneɪt/", hint: "d" },
+            { en: "male", ja: "男性", kana: "メイル", phonetic: "/meɪl/", hint: "m" }
         ]
     },
     {
-        id: 279,
-        originalSentence: "How can I gain access to up-to-date information?",
-        translation: "どうすれば最新の情報を入手できますか？",
+        id: 329,
+        originalSentence: "As usual, he fell asleep after the meal break.",
+        translation: "いつものように、彼は食事休憩の後に眠ってしまった。",
         quiz: {
-            originalSentence: "You need a password to ______ access to this website.",
-            target: "gain",
-            choices: ["gain", "lose", "give", "take"],
-            meaning: "～を得る",
-            quizTranslation: "このウェブサイトにアクセスするためにはパスワードが必要です。"
+            originalSentence: "After a long day, she ______ on the sofa.",
+            target: "fell asleep",
+            choices: ["fell asleep", "woke up", "stood up", "looked up"],
+            meaning: "眠りに落ちた",
+            quizTranslation: "長い一日の後、彼女はソファで眠りに落ちた。"
         },
         application: {
-            situation: "研究のために最新の論文を探している時。",
-            sentence: "It's crucial for my research to get <span class='tooltip-trigger'>access<span class='tooltip-content'>アクセス、利用する権利</span></span> to the most <span class='tooltip-trigger'>up-to-date<span class='tooltip-content'>最新の</span></span> <span class='tooltip-trigger'>information<span class='tooltip-content'>情報</span></span>.",
-            translation: "私の研究にとって、最新の情報にアクセスすることは極めて重要だ。"
+            situation: "退屈な会議中の出来事。",
+            sentence: "<span class='tooltip-trigger'>As usual<span class='tooltip-content'>いつものように</span></span>, the meeting was so boring that I almost <span class='tooltip-trigger'>fell asleep<span class='tooltip-content'>眠りに落ちる</span></span>.",
+            translation: "いつものように、会議はとても退屈で、もう少しで眠ってしまうところだった。"
         },
         flashcards: [
-            { en: "gain", ja: "～を得る", kana: "ゲイン", phonetic: "/ɡeɪn/", hint: "g" },
-            { en: "access", ja: "アクセス", kana: "**ア**クセス", phonetic: "/ˈækses/", hint: "a" },
-            { en: "up-to-date", ja: "最新の", kana: "アップ・トゥ・**デ**イト", phonetic: "/ˌʌp tə ˈdeɪt/", hint: "u" },
-            { en: "information", ja: "情報", kana: "インフォ**メ**ーション", phonetic: "/ˌɪnfərˈmeɪʃn/", hint: "i" }
+            { en: "as usual", ja: "いつものように", kana: "アズ・**ユー**ジュアル", phonetic: "/æz ˈjuːʒuəl/", hint: "a" },
+            { en: "fall asleep", ja: "眠りに落ちる", kana: "フォール・アス**リー**プ", phonetic: "/fɔːl əˈsliːp/", hint: "f" },
+            { en: "meal", ja: "食事", kana: "ミール", phonetic: "/miːl/", hint: "m" },
+            { en: "break", ja: "休憩", kana: "ブレイク", phonetic: "/breɪk/", hint: "b" }
         ]
     },
     {
-        id: 280,
-        originalSentence: "Please attach your name tag to each piece of baggage.",
-        translation: "手荷物の一つ一つに名札を付けてください。",
+        id: 330,
+        originalSentence: "I feel nothing but frustration with my lazy colleagues.",
+        translation: "怠惰な同僚たちにはいら立ちしか感じない。",
         quiz: {
-            originalSentence: "Don't forget to ______ the file to your email.",
-            target: "attach",
-            choices: ["attach", "detach", "connect", "link"],
-            meaning: "～を付ける",
-            quizTranslation: "メールにファイルを添付するのを忘れないでください。"
+            originalSentence: "His performance was ______ brilliant.",
+            target: "nothing but",
+            choices: ["nothing but", "something like", "anything but", "everything but"],
+            meaning: "～にすぎない、ただ～だけ",
+            quizTranslation: "彼のパフォーマンスは見事というほか無かった。"
         },
         application: {
-            situation: "空港のカウンターで、荷物を預けるように指示される時。",
-            sentence: "Please make sure to <span class='tooltip-trigger'>attach<span class='tooltip-content'>～を付ける</span></span> a name <span class='tooltip-trigger'>tag<span class='tooltip-content'>札</span></span> to every single <span class='tooltip-trigger'>piece of<span class='tooltip-content'>一つひとつの</span></span> your <span class='tooltip-trigger'>baggage<span class='tooltip-content'>手荷物</span></span>.",
-            translation: "あなたの手荷物の一つひとつに、必ず名札を付けてください。"
+            situation: "プロジェクトが進まない原因について不満を言う時。",
+            sentence: "Dealing with these <span class='tooltip-trigger'>lazy<span class='tooltip-content'>怠惰な</span></span> <span class='tooltip-trigger'>colleagues<span class='tooltip-content'>同僚</span></span> brings me <span class='tooltip-trigger'>nothing but<span class='tooltip-content'>～しか感じない</span></span> <span class='tooltip-trigger'>frustration<span class='tooltip-content'>いら立ち</span></span>.",
+            translation: "この怠惰な同僚たちと仕事をするのは、いら立ちしかもたらさない。"
         },
         flashcards: [
-            { en: "attach", ja: "～を付ける", kana: "ア**タ**ッチ", phonetic: "/əˈtætʃ/", hint: "a" },
-            { en: "tag", ja: "札", kana: "タグ", phonetic: "/tæɡ/", hint: "t" },
-            { en: "a piece of", ja: "一つの～", kana: "ア・**ピー**ス・オブ", phonetic: "/ə piːs əv/", hint: "a" },
-            { en: "baggage", ja: "手荷物", kana: "**バ**ゲッジ", phonetic: "/ˈbæɡɪdʒ/", hint: "b" }
+            { en: "nothing but", ja: "ただ～だけ", kana: "**ナ**ッシング・バット", phonetic: "/ˈnʌθɪŋ bʌt/", hint: "n" },
+            { en: "frustration", ja: "いら立ち、欲求不満", kana: "フラス**トゥ**レイション", phonetic: "/frʌˈstreɪʃn/", hint: "f" },
+            { en: "lazy", ja: "怠惰な", kana: "**レ**イジー", phonetic: "/ˈleɪzi/", hint: "l" },
+            { en: "colleague", ja: "同僚", kana: "**コ**リーグ", phonetic: "/ˈkɑːliːɡ/", hint: "c" }
         ]
     }
 ];
@@ -1376,3 +1380,4 @@ function renderReview() {
 </script>
 </body>
 </html>
+
