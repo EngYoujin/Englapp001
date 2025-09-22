@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>単語帳学習アプリ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', 'Inter', sans-serif; }
+        .quiz-container { max-width: 800px; width: 95%; }
+        .step-indicator.active { background-color: #3b82f6; color: white; font-weight: bold; }
+        .btn-option:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .flashcard { perspective: 1000px; cursor: pointer; }
+        .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem; border-radius: 0.75rem; border: 1px solid #d1d5db; }
+        .flashcard-front { background-color: white; }
+        .flashcard-back { background-color: #f0f9ff; transform: rotateY(180deg); }
+        .speaker-btn { position: absolute; top: 10px; right: 10px; color: #6b7280; }
+        .speaker-btn:hover { color: #3b82f6; }
+        .tooltip-trigger { border-bottom: 2px dotted #3b82f6; cursor: pointer; position: relative; }
+        .tooltip-content { visibility: hidden; width: max-content; max-width: 250px; background-color: #1f2937; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .tooltip-trigger:hover .tooltip-content { visibility: visible; opacity: 1; }
+        .review-mark {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+            background-color: #ef4444;
+            border-radius: 9999px;
+            width: 1.1rem;
+            height: 1.1rem;
+            line-height: 1.1rem;
+            text-align: center;
+            margin-left: 0.25rem;
+        }
+        .toc-item-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .segment { display: inline-flex; border: 1px solid #d1d5db; border-radius: 9999px; overflow: hidden; }
+        .segment button { border: 0; background-color: white; padding: 0.5rem 0.75rem; font-size: 0.875rem; cursor: pointer; min-height: 36px; transition: background-color 0.2s, color 0.2s; }
+        .segment button.on { background-color: #1f2937; color: white; }
+    </style>
+</head>
+<body class="bg-gray-100 pt-20 pb-8 min-h-screen">
+
+    <header class="bg-white border-b fixed top-0 left-0 right-0 z-50 shadow-sm">
+        <div class="quiz-container mx-auto p-3 flex justify-between items-center">
+            <h1 class="text-lg font-bold text-gray-800">Deselect 高機能版</h1>
+            <div class="flex items-center gap-4 text-sm">
+                <a href="#" id="header-toc-link" class="text-gray-600 hover:text-blue-500">目次</a>
+                <a href="#" id="header-review-link" class="text-gray-600 hover:text-blue-500 relative">
+                    今日の復習
+                    <span id="header-review-badge" class="absolute -top-2 -right-3 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden"></span>
+                </a>
+                <button id="reset-data-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-1 px-3 border border-gray-300 rounded-full">
+                    リセット
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div id="app-container" class="quiz-container mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+        
+        <!-- 目次画面 (メインメニュー) -->
+        <div id="toc-screen">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-4">DUOセレクト学習</h1>
+            <p class="text-gray-600 text-center mb-8">学習したい例文を選ぶか、最初から全ての問題に挑戦しましょう。</p>
+            
+            <div id="review-banner-container" class="mb-8"></div>
+
+            <div class="flex justify-center items-center gap-x-6 gap-y-4 flex-wrap mb-8 text-sm text-gray-600 border bg-gray-50 p-4 rounded-lg">
+                <span class="flex items-center">
+                    <i class="fas fa-sliders-h mr-2 text-gray-500"></i><strong>音声・表示設定</strong>
+                </span>
+                <span>速度: <input id="rate" type="range" min="0.6" max="1.4" step="0.1" value="1" class="align-middle w-24"></span>
+                <span class="flex items-center">声:
+                    <span class="segment ml-2" id="voiceSeg">
+                        <button data-v="auto" class="on">自動</button>
+                        <button data-v="male">男</button>
+                        <button data-v="female">女</button>
+                    </span>
+                </span>
+                <span class="flex items-center">単語カード:
+                    <span class="segment ml-2" id="cardModeSeg">
+                        <button data-v="en-ja" class="on">認識 (英→日)</button>
+                        <button data-v="ja-en">想起 (日→英)</button>
+                    </span>
+                </span>
+                <span class="flex items-center">想起ヒント:
+                    <span class="segment ml-2" id="hintModeSeg">
+                        <button data-v="on" class="on">ON</button>
+                        <button data-v="off">OFF</button>
+                    </span>
+                </span>
+            </div>
+
+            <div class="border-b pb-8 mb-8">
+                <h2 class="text-lg font-bold text-gray-700 text-center mb-4">メイン学習</h2>
+                <button id="start-sequential-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105">
+                    最初から順番に全ての問題をやる
+                </button>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-bold text-gray-700 text-center mb-4">個別学習・復習</h2>
+                <div id="toc-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+            </div>
+            
+            <div class="border-t pt-8 mt-8">
+                 <h2 class="text-lg font-bold text-gray-700 text-center mb-4">腕試し</h2>
+                 <button id="final-check-btn" class="w-full bg-white hover:bg-gray-100 text-gray-700 font-semibold py-2 px-6 border border-gray-300 rounded-full">
+                    まとめて最終チェック
+                </button>
+            </div>
+        </div>
+
+        <!-- 復習エリア -->
+        <div id="review-area" class="hidden">
+             <!-- renderReview() によって内容が生成されます -->
+        </div>
+
+        <!-- メインクイズエリア -->
+        <div id="main-quiz-area" class="hidden">
+            <!-- 進捗とタイトル -->
+            <div class="flex justify-between items-center mb-2">
+                 <button id="back-to-toc-btn" class="text-blue-500 hover:text-blue-700 font-semibold"><i class="fas fa-arrow-left mr-2"></i>目次に戻る</button>
+                <p id="question-counter" class="text-gray-500 font-medium"></p>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                <div id="progress-bar" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%; transition: width 0.3s ease-in-out;"></div>
+            </div>
+            <!-- ステップインジケーター -->
+            <div class="flex justify-center space-x-1 md:space-x-2 mb-6 text-xs md:text-sm" id="step-indicators-container">
+                <button data-step="1" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">1:クイズ</button>
+                <button data-step="2" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">2:応用</button>
+                <button data-step="3" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">3:単語カード</button>
+            </div>
+
+            <!-- ステップビュー -->
+            <div id="step-views">
+                <div id="step1-quiz" class="step-view"></div>
+                <div id="step2-application" class="step-view hidden"></div>
+                <div id="step3-flashcards" class="step-view hidden"></div>
+            </div>
+            
+            <!-- ナビゲーション -->
+            <div class="text-center mt-6">
+                <button id="next-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-full transition-colors hidden">次へ</button>
+            </div>
+
+            <!-- 例文ナビゲーション -->
+            <div id="sentence-nav" class="flex justify-between mt-4 pt-4 border-t">
+                <button id="prev-sentence-btn" class="text-blue-500 hover:text-blue-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>前の例文</button>
+                <button id="next-sentence-btn" class="text-blue-500 hover:text-blue-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed">次の例文<i class="fas fa-chevron-right ml-2"></i></button>
+            </div>
+        </div>
+        
+        <!-- 最終チェックエリア -->
+        <div id="final-check-area" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                 <button id="back-to-toc-from-final-btn" class="text-blue-500 hover:text-blue-700 font-semibold"><i class="fas fa-arrow-left mr-2"></i>目次に戻る</button>
+                 <button id="shuffle-final-check-btn" class="text-blue-500 hover:text-blue-700 font-semibold"><i class="fas fa-random mr-2"></i>順番をシャッフル</button>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-4">まとめて最終チェック</h2>
+            <p id="final-check-description" class="text-sm text-gray-500 text-center mb-6">日本語を見て、対応する英単語を思い出してみましょう。カードをタップすると答えが表示されます。</p>
+            <div id="final-check-flashcards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="result-screen" class="hidden text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">全問終了！お疲れ様でした！</h2>
+            <p class="text-lg text-gray-700 mb-6">学習結果を確認しましょう。</p>
+            <div id="self-assessment-summary"></div>
+            <div class="mt-8">
+                <button id="review-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105 mr-4">目次で復習する</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// --- 学習アプリのロジック ---
+const quizData = [
+    {
+        id: 351,
+        originalSentence: "The empire expanded its territory by conquering one tribe after another.",
+        translation: "その帝国は部族を次々に征服して自国の領土を拡張した。",
+        quiz: {
+            originalSentence: "The company plans to ______ its business into Asia next year.",
+            target: "expand",
+            choices: ["expand", "reduce", "stop", "sell"],
+            meaning: "～を拡大する",
+            quizTranslation: "その会社は来年、事業をアジアに拡大する計画だ。"
+        },
+        application: {
+            situation: "歴史の授業で、古代ローマの領土拡大について学ぶ。",
+            sentence: "The Roman <span class='tooltip-trigger'>Empire<span class='tooltip-content'>帝国</span></span> was able to <span class='tooltip-trigger'>expand<span class='tooltip-content'>～を拡大する</span></span> its <span class='tooltip-trigger'>territory<span class='tooltip-content'>領土</span></span> by <span class='tooltip-trigger'>conquering<span class='tooltip-content'>～を征服する</span></span> neighboring <span class='tooltip-trigger'>tribes<span class='tooltip-content'>部族</span></span>.",
+            translation: "ローマ帝国は、近隣の部族を征服することによってその領土を拡大することができた。"
+        },
+        flashcards: [
+            { en: "empire", ja: "帝国", kana: "**エ**ンパイア", phonetic: "/ˈempaɪər/", hint: "e" },
+            { en: "expand", ja: "～を拡大する", kana: "エクス**パ**ンド", phonetic: "/ɪkˈspænd/", hint: "e" },
+            { en: "territory", ja: "領土", kana: "**テ**リトリー", phonetic: "/ˈterətɔːri/", hint: "t" },
+            { en: "conquer", ja: "～を征服する", kana: "**コ**ンカー", phonetic: "/ˈkɑːŋkər/", hint: "c" },
+            { en: "tribe", ja: "部族", kana: "トライブ", phonetic: "/traɪb/", hint: "t" },
+            { en: "one after another", ja: "次々に", kana: "ワン・**ア**フター・アナザー", phonetic: "/wʌn ˈæftər əˈnʌðər/", hint: "o" }
+        ]
+    },
+    {
+        id: 352,
+        originalSentence: "After a series of attacks, they defeated the enemy.",
+        translation: "一連の攻撃の末に、彼らは敵を打ち負かした。",
+        quiz: {
+            originalSentence: "Our team suffered a tough ______ in the final match.",
+            target: "defeat",
+            choices: ["defeat", "victory", "success", "tie"],
+            meaning: "敗北",
+            quizTranslation: "私たちのチームは決勝戦で厳しい敗北を喫した。"
+        },
+        application: {
+            situation: "歴史的な戦いについて語る時。",
+            sentence: "Through a clever <span class='tooltip-trigger'>series of<span class='tooltip-content'>一連の</span></span> surprise <span class='tooltip-trigger'>attacks<span class='tooltip-content'>攻撃</span></span>, the small army was able to <span class='tooltip-trigger'>defeat<span class='tooltip-content'>～を打ち負かす</span></span> a much larger <span class='tooltip-trigger'>enemy<span class='tooltip-content'>敵</span></span>.",
+            translation: "一連の巧妙な奇襲攻撃を通じて、その小規模な軍隊ははるかに大きな敵を打ち負かすことができた。"
+        },
+        flashcards: [
+            { en: "a series of", ja: "一連の", kana: "ア・**シ**リーズ・オブ", phonetic: "/ə ˈsɪriːz əv/", hint: "a" },
+            { en: "attack", ja: "攻撃", kana: "ア**タ**ック", phonetic: "/əˈtæk/", hint: "a" },
+            { en: "defeat", ja: "～を打ち負かす", kana: "ディ**フィ**ート", phonetic: "/dɪˈfiːt/", hint: "d" },
+            { en: "enemy", ja: "敵", kana: "**エ**ネミー", phonetic: "/ˈenəmi/", hint: "e" }
+        ]
+    },
+    {
+        id: 353,
+        originalSentence: "After decades of struggle, the colony declared independence.",
+        translation: "数十年の戦いの末、その植民地は独立を宣言した。",
+        quiz: {
+            originalSentence: "The country celebrated its ______ from foreign rule.",
+            target: "independence",
+            choices: ["independence", "dependence", "control", "colony"],
+            meaning: "独立",
+            quizTranslation: "その国は外国の支配からの独立を祝った。"
+        },
+        application: {
+            situation: "ある国の建国の歴史について話している時。",
+            sentence: "It took <span class='tooltip-trigger'>decades<span class='tooltip-content'>数十年</span></span> of <span class='tooltip-trigger'>struggle<span class='tooltip-content'>闘争</span></span> for the former <span class='tooltip-trigger'>colony<span class='tooltip-content'>植民地</span></span> to finally <span class='tooltip-trigger'>declare<span class='tooltip-content'>～を宣言する</span></span> its <span class='tooltip-trigger'>independence<span class='tooltip-content'>独立</span></span>.",
+            translation: "その旧植民地が最終的に独立を宣言するまでには、数十年にわたる闘争が必要だった。"
+        },
+        flashcards: [
+            { en: "decade", ja: "10年間", kana: "**デ**ケイド", phonetic: "/ˈdekeɪd/", hint: "d" },
+            { en: "struggle", ja: "闘争", kana: "ス**トゥ**ラグル", phonetic: "/ˈstrʌɡl/", hint: "s" },
+            { en: "colony", ja: "植民地", kana: "**コ**ロニー", phonetic: "/ˈkɑːləni/", hint: "c" },
+            { en: "declare", ja: "～を宣言する", kana: "ディク**レ**ア", phonetic: "/dɪˈkler/", hint: "d" },
+            { en: "independence", ja: "独立", kana: "インディ**ペ**ンデンス", phonetic: "/ˌɪndɪˈpendəns/", hint: "i" }
+        ]
+    },
+    {
+        id: 354,
+        originalSentence: "The country adopted a new democratic constitution.",
+        translation: "その国は新しい民主的な憲法を採用した。",
+        quiz: {
+            originalSentence: "The company will ______ a new policy next month.",
+            target: "adopt",
+            choices: ["adopt", "adapt", "abolish", "avoid"],
+            meaning: "～を採用する",
+            quizTranslation: "その会社は来月、新しい方針を採用する予定だ。"
+        },
+        application: {
+            situation: "歴史の授業で、ある国の政治体制の変遷について学ぶ。",
+            sentence: "After the revolution, the nation chose to <span class='tooltip-trigger'>adopt<span class='tooltip-content'>～を採用する</span></span> a <span class='tooltip-trigger'>democratic<span class='tooltip-content'>民主的な</span></span> <span class='tooltip-trigger'>constitution<span class='tooltip-content'>憲法</span></span> to protect the rights of its citizens.",
+            translation: "革命の後、その国は市民の権利を守るために民主的な憲法を採用することを選んだ。"
+        },
+        flashcards: [
+            { en: "adopt", ja: "～を採用する", kana: "ア**ド**プト", phonetic: "/əˈdɑːpt/", hint: "a" },
+            { en: "democratic", ja: "民主的な", kana: "デモク**ラ**ティック", phonetic: "/ˌdeməˈkrætɪk/", hint: "d" },
+            { en: "constitution", ja: "憲法", kana: "コンスティ**テュー**ション", phonetic: "/ˌkɑːnstəˈtuːʃn/", hint: "c" }
+        ]
+    },
+    {
+        id: 355,
+        originalSentence: "A riot broke out in the capital and rapidly spread to rural areas.",
+        translation: "暴動が首都で発生し、急速に地方へと広がった。",
+        quiz: {
+            originalSentence: "A fire ______ in the warehouse last night.",
+            target: "broke out",
+            choices: ["broke out", "put out", "ran out", "died out"],
+            meaning: "発生した",
+            quizTranslation: "昨夜、倉庫で火災が発生した。"
+        },
+        application: {
+            situation: "歴史的な事件についてのニュース解説。",
+            sentence: "The unrest started as a small protest but quickly became a full-scale <span class='tooltip-trigger'>riot<span class='tooltip-content'>暴動</span></span> that <span class='tooltip-trigger'>spread<span class='tooltip-content'>広まった</span></span> from the <span class='tooltip-trigger'>capital<span class='tooltip-content'>首都</span></span> to <span class='tooltip-trigger'>rural<span class='tooltip-content'>地方の</span></span> <span class='tooltip-trigger'>areas<span class='tooltip-content'>地域</span></span>.",
+            translation: "その騒乱は小さな抗議として始まったが、すぐに本格的な暴動となり、首都から地方へと広がった。"
+        },
+        flashcards: [
+            { en: "riot", ja: "暴動", kana: "**ラ**イオット", phonetic: "/ˈraɪət/", hint: "r" },
+            { en: "break out", ja: "（悪いことが）発生する", kana: "ブレイク・**ア**ウト", phonetic: "/breɪk aʊt/", hint: "b" },
+            { en: "capital", ja: "首都", kana: "**キャ**ピタル", phonetic: "/ˈkæpɪtl/", hint: "c" },
+            { en: "rapidly", ja: "急速に", kana: "**ラ**ピッドリー", phonetic: "/ˈræpɪdli/", hint: "r" },
+            { en: "spread", ja: "広がる", kana: "スプレッド", phonetic: "/spred/", hint: "s" },
+            { en: "rural", ja: "地方の", kana: "**ルー**ラル", phonetic: "/ˈrʊrəl/", hint: "r" },
+            { en: "area", ja: "地域", kana: "**エ**リア", phonetic: "/ˈeriə/", hint: "a" }
+        ]
+    },
+    {
+        id: 356,
+        originalSentence: "We have no choice but to give in to their demands.",
+        translation: "彼らの要求に屈するしかない。",
+        quiz: {
+            originalSentence: "I had ______ but to accept the offer.",
+            target: "no choice",
+            choices: ["no choice", "no idea", "no time", "no problem"],
+            meaning: "選択の余地がない",
+            quizTranslation: "私にはその申し出を受け入れる以外に選択肢はなかった。"
+        },
+        application: {
+            situation: "交渉が行き詰まり、相手の要求を飲むしかなくなった時。",
+            sentence: "They refused to compromise, so we had <span class='tooltip-trigger'>no choice but to<span class='tooltip-content'>～するしかなかった</span></span> <span class='tooltip-trigger'>give in<span class='tooltip-content'>屈する</span></span> to their final <span class='tooltip-trigger'>demand<span class='tooltip-content'>要求</span></span>.",
+            translation: "彼らが妥協を拒んだため、我々は彼らの最終要求に屈するしかなかった。"
+        },
+        flashcards: [
+            { en: "have no choice but to do", ja: "～するしかない", kana: "ハヴ・ノー・チョイス・バット・トゥ・ドゥ", phonetic: "/hæv noʊ tʃɔɪs bʌt tə du/", hint: "h" },
+            { en: "give in", ja: "屈する", kana: "ギヴ・イン", phonetic: "/ɡɪv ɪn/", hint: "g" },
+            { en: "demand", ja: "要求", kana: "ディ**マ**ンド", phonetic: "/dɪˈmænd/", hint: "d" }
+        ]
+    },
+    {
+        id: 357,
+        originalSentence: "Discipline is of great importance in restoring social order.",
+        translation: "社会秩序を回復するには、規律が非常に重要である。",
+        quiz: {
+            originalSentence: "Maintaining ______ is essential for a peaceful society.",
+            target: "social order",
+            choices: ["social order", "personal freedom", "economic growth", "cultural exchange"],
+            meaning: "社会秩序",
+            quizTranslation: "平和な社会のためには、社会秩序を維持することが不可欠だ。"
+        },
+        application: {
+            situation: "学校の校長先生が、生徒たちに規律の重要性を説いている。",
+            sentence: "Good <span class='tooltip-trigger'>discipline<span class='tooltip-content'>規律</span></span> among students is vital for <span class='tooltip-trigger'>restoring<span class='tooltip-content'>～を回復する</span></span> a positive learning environment.",
+            translation: "生徒たちの間の良い規律は、前向きな学習環境を回復するために不可欠です。"
+        },
+        flashcards: [
+            { en: "discipline", ja: "規律", kana: "**ディ**シプリン", phonetic: "/ˈdɪsəplɪn/", hint: "d" },
+            { en: "of great importance", ja: "非常に重要な", kana: "オブ・グレイト・イン**ポー**タンス", phonetic: "/əv ɡreɪt ɪmˈpɔːrtns/", hint: "o" },
+            { en: "restore", ja: "～を回復する", kana: "リス**ト**ア", phonetic: "/rɪˈstɔːr/", hint: "r" },
+            { en: "social order", ja: "社会秩序", kana: "**ソ**ーシャル・**オー**ダー", phonetic: "/ˈsoʊʃl ˈɔːrdər/", hint: "s" }
+        ]
+    },
+    {
+        id: 358,
+        originalSentence: "Your moral values are reflected in your attitude.",
+        translation: "あなたの道徳的な価値観は、あなたの態度に反映される。",
+        quiz: {
+            originalSentence: "His kindness and honesty ______ his strong ______.",
+            target: "reflect, moral values",
+            choices: ["reflect, moral values", "hide, true feelings", "change, opinions", "question, abilities"],
+            meaning: "～を反映する, 道徳的価値観",
+            quizTranslation: "彼の優しさと正直さは、彼の強固な道徳的価値観を反映している。"
+        },
+        application: {
+            situation: "人の性格や考え方が、普段の行動にどう表れるかについて話す時。",
+            sentence: "The way you treat others clearly <span class='tooltip-trigger'>reflects<span class='tooltip-content'>～を反映する</span></span> your underlying <span class='tooltip-trigger'>moral values<span class='tooltip-content'>道徳的価値観</span></span> and general <span class='tooltip-trigger'>attitude<span class='tooltip-content'>態度</span></span> towards life.",
+            translation: "他人への接し方は、その人の根底にある道徳的価値観や人生に対する全般的な態度を明確に反映します。"
+        },
+        flashcards: [
+            { en: "moral", ja: "道徳的な", kana: "**モ**ーラル", phonetic: "/ˈmɔːrəl/", hint: "m" },
+            { en: "value", ja: "価値観", kana: "**ヴァ**リュー", phonetic: "/ˈvæljuː/", hint: "v" },
+            { en: "reflect", ja: "～を反映する", kana: "リフ**レ**クト", phonetic: "/rɪˈflekt/", hint: "r" },
+            { en: "attitude", ja: "態度", kana: "**ア**ティテュード", phonetic: "/ˈætɪtuːd/", hint: "a" }
+        ]
+    },
+    {
+        id: 359,
+        originalSentence: "Statistics is a branch of mathematics.",
+        translation: "統計学は数学の一分野である。",
+        quiz: {
+            originalSentence: "Physics is a ______ of science that studies matter and energy.",
+            target: "branch",
+            choices: ["branch", "root", "leaf", "flower"],
+            meaning: "分野、枝",
+            quizTranslation: "物理学は、物質とエネルギーを研究する科学の一分野だ。"
+        },
+        application: {
+            situation: "大学で専攻を選ぶ際に、様々な学問分野について調べている。",
+            sentence: "I'm interested in data science, which uses both <span class='tooltip-trigger'>statistics<span class='tooltip-content'>統計学</span></span> and computer science, a key <span class='tooltip-trigger'>branch<span class='tooltip-content'>分野</span></span> of modern <span class='tooltip-trigger'>mathematics<span class='tooltip-content'>数学</span></span>.",
+            translation: "私はデータサイエンスに興味があります。それは現代数学の主要な一分野である統計学とコンピュータ科学の両方を使います。"
+        },
+        flashcards: [
+            { en: "statistics", ja: "統計学", kana: "スタ**ティ**スティクス", phonetic: "/stəˈtɪstɪks/", hint: "s" },
+            { en: "branch", ja: "分野、枝", kana: "ブランチ", phonetic: "/bræntʃ/", hint: "b" },
+            { en: "mathematics", ja: "数学", kana: "マセ**マ**ティクス", phonetic: "/ˌmæθəˈmætɪks/", hint: "m" }
+        ]
+    },
+    {
+        id: 360,
+        originalSentence: "Above all, this analysis must be thorough and objective.",
+        translation: "とりわけ、この分析は徹底的かつ客観的でなければならない。",
+        quiz: {
+            originalSentence: "A judge must always remain ______ when making a decision.",
+            target: "objective",
+            choices: ["objective", "subjective", "emotional", "biased"],
+            meaning: "客観的な",
+            quizTranslation: "裁判官は、決定を下す際に常に客観的でなければならない。"
+        },
+        application: {
+            situation: "科学的な研究レポートの書き方について指導する時。",
+            sentence: "<span class='tooltip-trigger'>Above all<span class='tooltip-content'>とりわけ</span></span>, your <span class='tooltip-trigger'>analysis<span class='tooltip-content'>分析</span></span> needs to be completely <span class='tooltip-trigger'>objective<span class='tooltip-content'>客観的な</span></span> and supported by <span class='tooltip-trigger'>thorough<span class='tooltip-content'>徹底的な</span></span> research.",
+            translation: "とりわけ、あなたの分析は完全に客観的で、かつ徹底的な調査によって裏付けられている必要があります。"
+        },
+        flashcards: [
+            { en: "above all", ja: "とりわけ", kana: "ア**バ**ヴ・**オー**ル", phonetic: "/əˈbʌv ɔːl/", hint: "a" },
+            { en: "analysis", ja: "分析", kana: "ア**ナ**リシス", phonetic: "/əˈnæləsɪs/", hint: "a" },
+            { en: "thorough", ja: "徹底的な", kana: "**サ**ロー", phonetic: "/ˈθɜːroʊ/", hint: "t" },
+            { en: "objective", ja: "客観的な", kana: "オブ**ジェ**クティヴ", phonetic: "/əbˈdʒektɪv/", hint: "o" }
+        ]
+    }
+];
+
+// --- 永続化キー ---
+const KEY_PREFIX = 'duoSelect_';
+const KEY = `${KEY_PREFIX}progress_v1`;
+const VOICE_MODE = `${KEY_PREFIX}voice_mode_v1`;
+const CARD_MODE = `${KEY_PREFIX}card_mode_v1`;
+const HINT_MODE = `${KEY_PREFIX}hint_mode_v1`;
+
+// --- 永続化とSRSロジック ---
+function loadProgress() {
+    try {
+        return JSON.parse(localStorage.getItem(KEY)) || { cards: {} };
+    } catch (e) {
+        console.error("Failed to load progress:", e);
+        return { cards: {} };
+    }
+}
+
+function saveProgress(p) {
+    try {
+        localStorage.setItem(KEY, JSON.stringify(p));
+    } catch (e) {
+        console.error("Failed to save progress:", e);
+    }
+}
+
+function isDue(card) {
+    return !card || !card.next_due || Date.now() >= card.next_due;
+}
+
+function tomorrowPlusDays(n = 0) {
+    const d = new Date();
+    const t = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+    return t.getTime() + n * 86400000;
+}
+
+function markWrong(id) {
+    const p = loadProgress();
+    const c = p.cards[id] || {};
+    c.last_result = 'wrong';
+    c.interval = 0;
+    c.next_due = Date.now() - 1; // 即座に復習対象にする
+    p.cards[id] = c;
+    saveProgress(p);
+    console.log(`Marked wrong: ${id}`, c);
+}
+
+function markCorrect(id) {
+    const p = loadProgress();
+    const c = p.cards[id] || {};
+    c.last_result = 'correct';
+    const currentInterval = c.interval || 0;
+    const nextInterval = currentInterval === 0 ? 1 : currentInterval === 1 ? 3 : Math.min(currentInterval * 2, 30);
+    c.interval = nextInterval;
+    c.next_due = tomorrowPlusDays(nextInterval);
+    c.done = true;
+    p.cards[id] = c;
+    saveProgress(p);
+    console.log(`Marked correct: ${id}`, c);
+}
+
+// --- ID生成 ---
+function getItemId(sentenceId, type, identifier = '') {
+    let safeIdentifier = identifier.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 20);
+    return `s${sentenceId}-${type}${identifier ? `-${safeIdentifier}` : ''}`;
+}
+
+
+// --- 状態管理 ---
+let currentSentenceIndex = 0;
+let currentStep = 1;
+let isSequentialMode = false; 
+let speechSynthesis = window.speechSynthesis;
+let voiceCache = { male: null, female: null, auto: [], toggle: 0 };
+let quizQueue = [];
+let stepUnlocked = 1;
+let finalCheckCards = [];
+
+// --- DOM要素 ---
+const tocScreen = document.getElementById('toc-screen');
+const reviewArea = document.getElementById('review-area');
+const mainQuizArea = document.getElementById('main-quiz-area');
+const finalCheckArea = document.getElementById('final-check-area');
+const resultScreen = document.getElementById('result-screen');
+const startSequentialBtn = document.getElementById('start-sequential-btn');
+const finalCheckBtn = document.getElementById('final-check-btn');
+const nextBtn = document.getElementById('next-btn');
+const reviewBtn = document.getElementById('review-btn');
+const backToTocBtn = document.getElementById('back-to-toc-btn');
+const backToTocFromFinalBtn = document.getElementById('back-to-toc-from-final-btn');
+const prevSentenceBtn = document.getElementById('prev-sentence-btn');
+const nextSentenceBtn = document.getElementById('next-sentence-btn');
+const shuffleFinalCheckBtn = document.getElementById('shuffle-final-check-btn');
+
+const stepViews = {
+    1: document.getElementById('step1-quiz'),
+    2: document.getElementById('step2-application'),
+    3: document.getElementById('step3-flashcards'),
+};
+const stepIndicatorsContainer = document.getElementById('step-indicators-container');
+
+// --- 初期化 ---
+document.addEventListener('DOMContentLoaded', async () => {
+    if ('speechSynthesis' in window) {
+        await pickVoices();
+    }
+    showMainMenu();
+    initAudioControls();
+});
+
+// --- イベントリスナー ---
+startSequentialBtn.addEventListener('click', () => {
+    isSequentialMode = true;
+    quizQueue = Array.from(Array(quizData.length).keys());
+    startQuizSession(quizQueue);
+});
+
+finalCheckBtn.addEventListener('click', () => {
+    isSequentialMode = false;
+    finalCheckCards = quizData.flatMap(d => 
+        d.flashcards.map(fc => ({ ...fc, sentenceId: d.id }))
+    );
+    finalCheckCards.sort(() => Math.random() - 0.5);
+    renderFinalCheck();
+});
+
+nextBtn.addEventListener('click', handleNext);
+reviewBtn.addEventListener('click', showMainMenu);
+backToTocBtn.addEventListener('click', showMainMenu);
+backToTocFromFinalBtn.addEventListener('click', showMainMenu);
+shuffleFinalCheckBtn.addEventListener('click', () => {
+    finalCheckCards.sort(() => Math.random() - 0.5);
+    renderFinalCheck();
+});
+
+prevSentenceBtn.addEventListener('click', () => {
+    if (currentSentenceIndex > 0) {
+        navigateToSentence(currentSentenceIndex - 1);
+    }
+});
+nextSentenceBtn.addEventListener('click', () => {
+    if (currentSentenceIndex < quizData.length - 1) {
+        navigateToSentence(currentSentenceIndex + 1);
+    }
+});
+
+document.getElementById('header-toc-link').addEventListener('click', (e) => { e.preventDefault(); showMainMenu(); });
+document.getElementById('header-review-link').addEventListener('click', (e) => { e.preventDefault(); renderReview(); });
+document.getElementById('reset-data-btn').addEventListener('click', () => {
+    if (confirm('本当に学習データをすべてリセットしますか？')) {
+        localStorage.removeItem(KEY);
+        alert('学習データをリセットしました。');
+        showMainMenu();
+    }
+});
+
+stepIndicatorsContainer.addEventListener('click', (e) => {
+    if (e.target.matches('.step-indicator')) {
+        const targetStep = parseInt(e.target.dataset.step, 10);
+        if (targetStep <= stepUnlocked) {
+            currentStep = targetStep;
+            renderCurrentStep();
+        }
+    }
+});
+
+
+// --- 音声初期化ロジック ---
+function listVoices() {
+    return new Promise(resolve => {
+        let voices = speechSynthesis.getVoices();
+        if (voices.length) {
+            return resolve(voices);
+        }
+        speechSynthesis.onvoiceschanged = () => {
+            voices = speechSynthesis.getVoices();
+            resolve(voices);
+        };
+    });
+}
+
+function isMobile() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
+}
+
+const SAFE_EN_VOICE_NAMES_PC = [
+  "Samantha", "Allison", "Ava", "Alex", "Daniel", "Martha", "Victoria",
+  "Microsoft Aria", "Microsoft Zira", "Microsoft Mark", "Microsoft David",
+  "Google US English", "Google UK English Female", "Google UK English Male"
+];
+const BLOCKLIST_KEYWORDS_PC = [
+  "Novelty", "Whisper", "Bells", "Cellos", "Bad News", "Good News", "Zarvox",
+  "Boing", "Singing", "Cartoon", "Robot", "Buzzer", "Trinoids", "SFX", "Emoji",
+  "Sound", "笑", "ロボ", "Fun", "Comic", "effect", "weird", "strange", "echo",
+  "chorus", "giggle", "radio", "bad", "poor", "voiceover"
+];
+function isBlockedVoicePC(v) {
+  const nameAndUri = ((v?.name || "") + " " + (v?.voiceURI || "")).toLowerCase();
+  return BLOCKLIST_KEYWORDS_PC.some(k => nameAndUri.includes(k.toLowerCase()));
+}
+function isSafeEnglishVoicePC(v) {
+  if (!v || !/^en(-|_)/i.test(v.lang || "")) return false;
+  if (isBlockedVoicePC(v)) return false;
+  return v.default || SAFE_EN_VOICE_NAMES_PC.some(n => (v.name || "").includes(n));
+}
+async function getSafeEnglishVoicesPC() {
+  const voices = await listVoices();
+  const en = (voices || []).filter(v => /^en(-|_)/i.test(v.lang || ""));
+  if (!en.length) return [];
+  const safe = en.filter(isSafeEnglishVoicePC);
+  if (safe.length > 0) return safe;
+  const fallback = en.filter(v => !isBlockedVoicePC(v));
+  return fallback.length ? fallback : en;
+}
+async function pickVoicesForPC() {
+    const isMaleName = (name = "", uri = "") => /(Daniel|Mark|David|Alex(?!a)|George|Tom|Microsoft Mark|Microsoft David|Google UK English Male|male)/i.test(name) || /male/i.test(uri || "");
+    const isFemaleName = (name = "", uri = "") => /(Samantha|Allison|Ava|Victoria|Martha|Aria|Zira|Jenny|Microsoft Aria|Microsoft Zira|Google US English|Google UK English Female|female)/i.test(name) || /female/i.test(uri || "");
+    
+    const safeVoices = await getSafeEnglishVoicesPC();
+    if (safeVoices.length === 0) {
+        console.warn("PC: No usable English voices found.");
+        return;
+    }
+    
+    voiceCache.auto = [...safeVoices].sort(() => 0.5 - Math.random());
+    let specificMale = safeVoices.find(v => isMaleName(v.name, v.voiceURI));
+    let specificFemale = safeVoices.find(v => isFemaleName(v.name, v.voiceURI));
+
+    if (!specificMale) specificMale = voiceCache.auto.find(v => !isFemaleName(v.name, v.voiceURI)) || voiceCache.auto[0];
+    if (!specificFemale) specificFemale = voiceCache.auto.find(v => v !== specificMale) || voiceCache.auto[1] || voiceCache.auto[0];
+    
+    voiceCache.male = specificMale || null;
+    voiceCache.female = specificFemale || null;
+}
+
+async function pickVoicesForMobile() {
+    const allVoices = await listVoices();
+    const enVoices = allVoices.filter(v => v.lang.startsWith('en-'));
+    if (enVoices.length === 0) {
+        console.warn("Mobile: No English voices found.");
+        return;
+    }
+    
+    let maleVoice = enVoices.find(v => v.name === "Daniel") || enVoices.find(v => v.name.toLowerCase().includes('male'));
+    let femaleVoice = enVoices.find(v => v.name === "Samantha") || enVoices.find(v => v.name.toLowerCase().includes('female'));
+
+    if (!maleVoice) maleVoice = enVoices.find(v => !v.name.toLowerCase().includes('female')) || enVoices[0];
+    if (!femaleVoice) femaleVoice = enVoices.find(v => v !== maleVoice) || enVoices.find(v => !v.name.toLowerCase().includes('male')) || enVoices[0];
+    
+    voiceCache.male = maleVoice || null;
+    voiceCache.female = femaleVoice || null;
+    
+    const autoVoices = [];
+    if (maleVoice) autoVoices.push(maleVoice);
+    if (femaleVoice && femaleVoice !== maleVoice) autoVoices.push(femaleVoice);
+    
+    voiceCache.auto = autoVoices.length > 0 ? autoVoices : [enVoices[0]].filter(Boolean);
+}
+
+async function pickVoices() {
+    try {
+        if (isMobile()) {
+            await pickVoicesForMobile();
+        } else {
+            await pickVoicesForPC();
+        }
+        if (!voiceCache.auto || voiceCache.auto.length === 0) {
+             const allVoices = await listVoices();
+             const enVoices = allVoices.filter(v => v.lang.startsWith('en-'));
+             if(enVoices.length > 0) {
+                voiceCache.auto = [enVoices[0]];
+             } else {
+                voiceCache.auto = allVoices.length > 0 ? [allVoices[0]] : [];
+             }
+        }
+        if (!voiceCache.male) voiceCache.male = voiceCache.auto[0] || null;
+        if (!voiceCache.female) voiceCache.female = voiceCache.auto.find(v => v !== voiceCache.male) || voiceCache.auto[0] || null;
+    } catch (e) {
+        console.error('Error picking voices', e);
+        const allVoices = speechSynthesis.getVoices();
+        const enVoice = allVoices.find(v => v.lang.startsWith('en-')) || allVoices[0];
+        if (enVoice) {
+            voiceCache.male = enVoice;
+            voiceCache.female = enVoice;
+            voiceCache.auto = [enVoice];
+        }
+    }
+}
+
+function navigateToSentence(index) {
+    if (index < 0 || index >= quizData.length) return;
+
+    isSequentialMode = false;
+    quizQueue = [];
+
+    currentSentenceIndex = index;
+    currentStep = 1;
+    stepUnlocked = 3;
+    renderCurrentStep();
+}
+
+function initAudioControls() {
+    const voiceSeg = document.getElementById('voiceSeg');
+    if (voiceSeg) {
+        voiceSeg.addEventListener('click', (e) => {
+            const v = e.target?.dataset?.v;
+            if (!v) return;
+            localStorage.setItem(VOICE_MODE, v);
+            syncAppSettings();
+        });
+    }
+
+    const cardModeSeg = document.getElementById('cardModeSeg');
+    if (cardModeSeg) {
+        cardModeSeg.addEventListener('click', (e) => {
+            const v = e.target?.dataset?.v;
+            if (!v) return;
+            localStorage.setItem(CARD_MODE, v);
+            syncAppSettings();
+        });
+    }
+
+    const hintModeSeg = document.getElementById('hintModeSeg');
+    if (hintModeSeg) {
+        hintModeSeg.addEventListener('click', (e) => {
+            const v = e.target?.dataset?.v;
+            if (!v) return;
+            localStorage.setItem(HINT_MODE, v);
+            syncAppSettings();
+        });
+    }
+
+    syncAppSettings();
+}
+
+function syncAppSettings() {
+    const voiceSeg = document.getElementById('voiceSeg');
+    if (voiceSeg) {
+        const currentVoiceMode = localStorage.getItem(VOICE_MODE) || 'auto';
+        [...voiceSeg.querySelectorAll('button')].forEach(b => b.classList.toggle('on', b.dataset.v === currentVoiceMode));
+    }
+    
+    const cardModeSeg = document.getElementById('cardModeSeg');
+    const currentCardMode = localStorage.getItem(CARD_MODE) || 'en-ja';
+    if (cardModeSeg) {
+        [...cardModeSeg.querySelectorAll('button')].forEach(b => b.classList.toggle('on', b.dataset.v === currentCardMode));
+    }
+
+    const finalCheckDescription = document.getElementById('final-check-description');
+    if (finalCheckDescription) {
+        if (currentCardMode === 'ja-en') {
+            finalCheckDescription.textContent = '日本語を見て、対応する英単語を思い出してみましょう。カードをタップすると答えが表示されます。';
+        } else {
+            finalCheckDescription.textContent = '英語を見て、対応する日本語を思い出してみましょう。カードをタップすると答えが表示されます。';
+        }
+    }
+
+    const hintModeSeg = document.getElementById('hintModeSeg');
+    if (hintModeSeg) {
+        const currentHintMode = localStorage.getItem(HINT_MODE) || 'on';
+        const isHintingDisabled = currentCardMode === 'en-ja';
+        
+        hintModeSeg.style.opacity = isHintingDisabled ? '0.5' : '1';
+        [...hintModeSeg.querySelectorAll('button')].forEach(b => {
+            b.classList.toggle('on', b.dataset.v === currentHintMode);
+            b.disabled = isHintingDisabled;
+        });
+    }
+}
+
+// --- 関数 ---
+
+function sanitizeForTTS(s) {
+    if (!s) return s;
+    let t = s.replace(/\([^)]*\)/g, '').replace(/（[^）]*）/g, '');
+    t = t.replace(/<[^>]+>/g, '');
+    t = t.replace(/[↔↮→—–…\/｜≠=]/g, ' ');
+    t = t.replace(/[\u3040-\u30FF\u3400-\u9FFF\uF900-\uFAFF]/g, '');
+    t = t.replace(/\s{2,}/g, ' ').trim();
+    return t;
+}
+
+function getVoiceMode() { return localStorage.getItem(VOICE_MODE) || 'auto' }
+
+function speak(text) {
+    if (!('speechSynthesis' in window) || !text) return;
+    try { speechSynthesis.cancel(); } catch (e) { }
+    
+    const prepared = sanitizeForTTS(text);
+    if (!prepared) return;
+
+    const rateEl = document.getElementById('rate');
+    const rawRate = rateEl ? parseFloat(rateEl.value) : 1.0;
+    const mode = getVoiceMode();
+
+    const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+
+    let voiceToUse = null;
+    if (mode === 'male') {
+        voiceToUse = voiceCache.male;
+    } else if (mode === 'female') {
+        voiceToUse = voiceCache.female;
+    } else {
+        if (voiceCache.auto.length > 0) {
+            voiceCache.toggle = (voiceCache.toggle + 1) % voiceCache.auto.length;
+            voiceToUse = voiceCache.auto[voiceCache.toggle];
+        }
+    }
+    
+    const u = new SpeechSynthesisUtterance(prepared);
+    u.lang = 'en-US';
+    u.rate = clamp(rawRate, 0.8, 1.2); 
+    u.pitch = clamp(1.0, 0.85, 1.15); 
+    u.voice = voiceToUse;
+    
+    if (u.voice || speechSynthesis.getVoices().length > 0) {
+        speechSynthesis.speak(u);
+    } else {
+        setTimeout(() => {
+            if (!u.voice) {
+                 if (mode === 'male') voiceToUse = voiceCache.male;
+                 else if (mode === 'female') voiceToUse = voiceCache.female;
+                 else if (voiceCache.auto.length) voiceToUse = voiceCache.auto[voiceCache.toggle];
+                 u.voice = voiceToUse;
+            }
+            speechSynthesis.speak(u);
+        }, 250);
+    }
+}
+
+function showMainMenu() {
+    resultScreen.classList.add('hidden');
+    mainQuizArea.classList.add('hidden');
+    finalCheckArea.classList.add('hidden');
+    reviewArea.classList.add('hidden');
+    tocScreen.classList.remove('hidden');
+    
+    const tocList = document.getElementById('toc-list');
+    tocList.innerHTML = '';
+    const progress = loadProgress();
+
+    const allDue = Object.keys(progress.cards).filter(id => isDue(progress.cards[id]));
+    const urgent = allDue.filter(id => progress.cards[id].last_result === 'wrong');
+    const scheduled = allDue.filter(id => progress.cards[id].last_result !== 'wrong');
+    
+    const reviewBannerContainer = document.getElementById('review-banner-container');
+    const headerReviewBadge = document.getElementById('header-review-badge');
+
+    if (allDue.length > 0) {
+        reviewBannerContainer.innerHTML = `
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-lg cursor-pointer hover:bg-yellow-200" id="start-review-btn">
+                <p class="font-bold">今日の復習があります！</p>
+                <p>期限が来たカードが <span class="font-bold">${allDue.length}</span> 件あります。（要復習: ${urgent.length}件 / 再確認: ${scheduled.length}件）</p>
+            </div>
+        `;
+        document.getElementById('start-review-btn').addEventListener('click', renderReview);
+        headerReviewBadge.textContent = allDue.length;
+        headerReviewBadge.classList.remove('hidden');
+    } else {
+        reviewBannerContainer.innerHTML = '';
+        headerReviewBadge.classList.add('hidden');
+    }
+
+
+    quizData.forEach((data, index) => {
+        const quizId = getItemId(data.id, 'quiz');
+        const cardIds = data.flashcards.map(fc => getItemId(data.id, 'card', fc.en));
+        
+        const isQuizDue = progress.cards[quizId] && isDue(progress.cards[quizId]);
+        const isVocabDue = cardIds.some(cardId => progress.cards[cardId] && isDue(progress.cards[cardId]));
+        const hasDueItems = isQuizDue || isVocabDue;
+
+        const item = document.createElement('button');
+        item.className = 'toc-item p-3 border rounded-lg text-center hover:bg-gray-100 transition-colors flex flex-col justify-center items-center h-full';
+        if (hasDueItems) item.classList.add('needs-review', 'border-red-400', 'bg-red-50');
+        
+        let reviewMarksHTML = '<div class="flex items-center space-x-1 mt-1">';
+        if (isQuizDue) reviewMarksHTML += '<span class="review-mark" title="クイズ要復習">Q</span>';
+        if (isVocabDue) reviewMarksHTML += '<span class="review-mark bg-sky-500" title="単語要復習">V</span>';
+        reviewMarksHTML += '</div>';
+
+        item.innerHTML = `
+            <div class="toc-item-content">
+                <span class="font-semibold">例文 ${data.id}</span>
+                ${hasDueItems ? reviewMarksHTML : ''}
+            </div>
+        `;
+        item.onclick = () => {
+            isSequentialMode = false;
+            startQuizSession([index]);
+        };
+        tocList.appendChild(item);
+    });
+}
+
+
+function startQuizSession(indices) {
+    if (indices.length === 0) {
+        showMainMenu();
+        return;
+    }
+    
+    currentSentenceIndex = indices.shift();
+    quizQueue = indices;
+    
+    currentStep = 1;
+    if (isSequentialMode) {
+        stepUnlocked = 1;
+    } else {
+        stepUnlocked = 3;
+    }
+    
+    tocScreen.classList.add('hidden');
+    resultScreen.classList.add('hidden');
+    mainQuizArea.classList.remove('hidden');
+    nextBtn.classList.add('hidden');
+    renderCurrentStep();
+}
+
+function handleNext() {
+    currentStep++;
+    stepUnlocked = Math.max(stepUnlocked, currentStep);
+
+    if (currentStep > 3) {
+        if (quizQueue.length > 0) {
+            currentSentenceIndex = quizQueue.shift();
+            currentStep = 1;
+            renderCurrentStep();
+        } else {
+            if (isSequentialMode) {
+                 showResult();
+            } else {
+                showMainMenu();
+            }
+        }
+    } else {
+        renderCurrentStep();
+    }
+}
+
+
+function updateProgress() {
+    const currentData = quizData[currentSentenceIndex];
+    if (!currentData) return; 
+
+    document.getElementById('question-counter').textContent = `例文 ${currentData.id}`;
+    
+    if (isSequentialMode) {
+        const totalQuestions = quizData.length;
+        const completedQuestions = totalQuestions - quizQueue.length - 1;
+        const progress = (completedQuestions / totalQuestions) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+        document.getElementById('progress-bar').classList.remove('hidden');
+
+    } else {
+        document.getElementById('progress-bar').classList.add('hidden');
+    }
+
+    [...stepIndicatorsContainer.children].forEach(el => {
+        const step = parseInt(el.dataset.step, 10);
+        el.classList.remove('active', 'cursor-pointer', 'hover:bg-gray-200');
+        el.disabled = step > stepUnlocked;
+
+        if (step === currentStep) {
+            el.classList.add('active');
+        } else if (step < stepUnlocked) {
+            el.classList.add('cursor-pointer', 'hover:bg-gray-200');
+        }
+    });
+}
+
+function updateSentenceNav() {
+    const sentenceNav = document.getElementById('sentence-nav');
+    if (isSequentialMode) {
+        sentenceNav.classList.add('hidden');
+    } else {
+        sentenceNav.classList.remove('hidden');
+        prevSentenceBtn.disabled = currentSentenceIndex === 0;
+        nextSentenceBtn.disabled = currentSentenceIndex === quizData.length - 1;
+    }
+}
+
+function renderCurrentStep() {
+    updateProgress();
+    Object.values(stepViews).forEach(view => view.classList.add('hidden'));
+    if (stepViews[currentStep]) {
+        stepViews[currentStep].classList.remove('hidden');
+    }
+    nextBtn.classList.add('hidden');
+    updateSentenceNav();
+
+    const data = quizData[currentSentenceIndex];
+    if (!data) return; 
+
+    switch (currentStep) {
+        case 1: renderStep1(data); break;
+        case 2: renderStep2(data); break;
+        case 3: renderStep3(data); break;
+    }
+}
+
+function renderStep1(data) {
+    const { quiz } = data;
+    const questionText = quiz.originalSentence.replace(new RegExp(quiz.target.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'i'), '______');
+    const shuffledChoices = [...quiz.choices].sort(() => Math.random() - 0.5);
+    
+    let optionsHTML = shuffledChoices.map(choice => 
+        `<button class="btn-option w-full p-4 bg-white border border-gray-300 rounded-lg text-left text-gray-700 font-medium transition-all duration-200 flex items-center min-h-[4rem]">${choice}</button>`
+    ).join('');
+
+    stepViews[1].innerHTML = `
+        <p class="text-sm text-gray-500 text-center mb-4">あてはまる選択肢を選びましょう。</p>
+        <div class="mb-6 relative">
+            <p class="text-xl md:text-2xl text-gray-800 text-center p-4 bg-gray-50 rounded-lg">${questionText}</p>
+            <button class="speaker-btn text-xl" onclick="speak('${quiz.originalSentence.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button>
+        </div>
+        <div id="step1-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">${optionsHTML}</div>
+        <div id="step1-feedback" class="p-4 rounded-lg text-center font-medium hidden my-4"></div>
+    `;
+
+    document.getElementById('step1-options').addEventListener('click', e => {
+        const button = e.target.closest('.btn-option');
+        if (button) {
+            handleQuizAnswer(button, quiz);
+        }
+    });
+}
+
+function handleQuizAnswer(selectedButton, quizInfo) {
+    const isCorrect = selectedButton.innerText.toLowerCase() === quizInfo.target.toLowerCase();
+    const itemId = getItemId(quizData[currentSentenceIndex].id, 'quiz');
+    
+    if (isCorrect) {
+        markCorrect(itemId);
+    } else {
+        markWrong(itemId);
+    }
+    
+    const feedbackEl = document.getElementById('step1-feedback');
+    
+    if (isCorrect) {
+        feedbackEl.innerHTML = `正解！ <span class="font-bold">${quizInfo.target}</span> は「${quizInfo.meaning}」という意味です。`;
+        feedbackEl.className = 'p-4 rounded-lg text-center font-medium my-4 bg-green-100 border border-green-300 text-green-800';
+    } else {
+        feedbackEl.innerHTML = `不正解。正解は <span class="font-bold">${quizInfo.target}</span> です。<br>「${quizInfo.meaning}」という意味になります。`;
+        feedbackEl.className = 'p-4 rounded-lg text-center font-medium my-4 bg-red-100 border border-red-300 text-red-800';
+    }
+    feedbackEl.classList.remove('hidden');
+    
+    if (quizInfo.quizTranslation) {
+        const quizTranslationEl = document.createElement('p');
+        quizTranslationEl.className = 'text-center text-gray-600 mt-2';
+        quizTranslationEl.textContent = `クイズ文の訳：${quizInfo.quizTranslation}`;
+        feedbackEl.appendChild(quizTranslationEl);
+    }
+
+    Array.from(document.getElementById('step1-options').children).forEach(button => {
+        button.disabled = true;
+        if (button.innerText.toLowerCase() === quizInfo.target.toLowerCase()) button.classList.add('bg-green-200', 'border-green-500');
+        else if (button === selectedButton) button.classList.add('bg-red-200', 'border-red-500');
+    });
+
+    nextBtn.textContent = '応用例文へ →';
+    nextBtn.classList.remove('hidden');
+}
+
+function renderStep2(data) {
+    const { application } = data;
+    stepViews[2].innerHTML = `
+        <p class="text-sm text-gray-500 text-center mb-4">応用例文で使い方を確認しましょう。</p>
+        <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-lg mb-4">
+            <p class="font-semibold text-sky-800 mb-2">💡 こんな場面で使える！</p>
+            <p class="text-gray-700">${application.situation}</p>
+        </div>
+        <div class="mb-4 relative p-4 bg-gray-50 rounded-lg">
+            <p class="text-lg md:text-xl text-gray-800">${application.sentence}</p>
+            <button class="speaker-btn text-xl" onclick="speak(this.previousElementSibling.innerText.replace(/'/g, &quot;\\'&quot;))"><i class="fas fa-volume-up"></i></button>
+        </div>
+        <div class="text-center mb-6">
+            <button id="show-translation-btn" class="text-blue-600 hover:underline">日本語訳を見る</button>
+        </div>
+        <p id="translation-text" class="text-center text-gray-600 hidden mb-6">${application.translation}</p>
+    `;
+
+    stepViews[2].querySelector('#show-translation-btn').addEventListener('click', e => {
+        document.getElementById('translation-text').classList.toggle('hidden');
+        e.target.textContent = document.getElementById('translation-text').classList.contains('hidden') ? '日本語訳を見る' : '日本語訳を隠す';
+    });
+
+    nextBtn.textContent = '単語カードへ →';
+    nextBtn.classList.remove('hidden');
+    stepUnlocked = Math.max(stepUnlocked, 3);
+    updateProgress();
+}
+
+function renderFlashcards(container, cards, isFinalCheck = false) {
+    container.innerHTML = '';
+    const progress = loadProgress();
+
+    const savedCardMode = localStorage.getItem(CARD_MODE) || 'en-ja';
+    const savedHintMode = localStorage.getItem(HINT_MODE) || 'on';
+    const isHintVisible = (savedCardMode === 'ja-en' && savedHintMode === 'on');
+
+    cards.forEach(card => {
+        const sentenceId = isFinalCheck ? card.sentenceId : quizData[currentSentenceIndex].id;
+        const cardId = getItemId(sentenceId, 'card', card.en);
+        const cardProgress = progress.cards[cardId];
+        
+        const cardEl = document.createElement('div');
+        cardEl.className = 'flex flex-col gap-2';
+        
+        const flashcardDiv = document.createElement('div');
+        flashcardDiv.className = 'flashcard h-48 relative';
+
+        let statusBadgeHTML = '';
+        if (cardProgress && isDue(cardProgress) && cardProgress.last_result === 'wrong') {
+            statusBadgeHTML = '<span class="absolute top-2 left-2 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full z-10">要復習</span>';
+        } else if (cardProgress && isDue(cardProgress)) {
+            statusBadgeHTML = '<span class="absolute top-2 left-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full z-10">再確認</span>';
+        } else if (cardProgress && cardProgress.done) {
+            statusBadgeHTML = '<span class="absolute top-2 left-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full z-10">できた</span>';
+        }
+
+        const frontContent = (savedCardMode === 'en-ja') 
+            ? `<h3 class="text-2xl font-bold">${card.en}</h3>`
+            : `<h3 class="text-xl font-bold">${card.ja}</h3>${isHintVisible ? `<p class="text-gray-500 mt-2">ヒント: ${card.hint}</p>` : ''}`;
+        
+        const backContent = (savedCardMode === 'en-ja')
+            ? `<h3 class="text-xl font-bold">${card.ja}</h3>`
+            : `<h3 class="text-2xl font-bold">${card.en}</h3>`;
+
+        flashcardDiv.innerHTML = `
+            ${statusBadgeHTML}
+            <div class="flashcard-inner">
+                <div class="flashcard-front">${frontContent}<button class="speaker-btn"><i class="fas fa-volume-up"></i></button></div>
+                <div class="flashcard-back">
+                    ${backContent}
+                    <div class="text-center mt-2">
+                        <p class="text-gray-500">${card.kana.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')}</p>
+                        <p class="text-gray-400 text-sm">${card.phonetic}</p>
+                    </div>
+                    <button class="speaker-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+            </div>
+        `;
+        flashcardDiv.addEventListener('click', () => flashcardDiv.classList.toggle('flipped'));
+        flashcardDiv.querySelectorAll('.speaker-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                speak(card.en);
+            });
+        });
+        
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'grid grid-cols-2 gap-2';
+        
+        const correctBtn = document.createElement('button');
+        correctBtn.textContent = 'できた';
+        correctBtn.className = 'w-full py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors';
+        correctBtn.onclick = (e) => {
+            e.stopPropagation();
+            markCorrect(cardId);
+            if (isFinalCheck) {
+                renderFinalCheck();
+            } else {
+                renderCurrentStep();
+            }
+        };
+
+        const wrongBtn = document.createElement('button');
+        wrongBtn.textContent = 'あとで復習';
+        wrongBtn.className = 'w-full py-2 px-4 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors';
+        wrongBtn.onclick = (e) => {
+            e.stopPropagation();
+            markWrong(cardId);
+            if (isFinalCheck) {
+                renderFinalCheck();
+            } else {
+                renderCurrentStep();
+            }
+        };
+
+        buttonContainer.append(wrongBtn, correctBtn);
+        cardEl.append(flashcardDiv, buttonContainer);
+        container.appendChild(cardEl);
+    });
+}
+
+function renderStep3(data) {
+    const { flashcards } = data;
+    
+    stepViews[3].innerHTML = `
+        <p class="text-sm text-gray-500 text-center mb-4">カードをタップして関連単語も覚えましょう。</p>
+        <div id="flashcard-container-step3" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    `;
+
+    const container = document.getElementById('flashcard-container-step3');
+    renderFlashcards(container, flashcards);
+
+    const nextText = quizQueue.length === 0 ? 
+        (isSequentialMode ? '結果を見る' : '目次に戻る') : 
+        '次の問題へ →';
+    nextBtn.textContent = nextText;
+    nextBtn.classList.remove('hidden');
+}
+
+function renderFinalCheck() {
+    tocScreen.classList.add('hidden');
+    mainQuizArea.classList.add('hidden');
+    resultScreen.classList.add('hidden');
+    finalCheckArea.classList.remove('hidden');
+    syncAppSettings();
+
+    const container = document.getElementById('final-check-flashcards');
+    renderFlashcards(container, finalCheckCards, true);
+}
+
+function showResult() {
+    mainQuizArea.classList.add('hidden');
+    resultScreen.classList.remove('hidden');
+    
+    const summaryEl = document.getElementById('self-assessment-summary');
+    summaryEl.innerHTML = `
+        <p class="text-xl">お疲れ様でした！</p>
+        <p class="text-gray-600 mt-2">間違えた問題や「あとで復習」を選んだ問題は、目次画面から再度挑戦できます。</p>
+    `;
+}
+
+function renderReview() {
+    tocScreen.classList.add('hidden');
+    mainQuizArea.classList.add('hidden');
+    finalCheckArea.classList.add('hidden');
+    reviewArea.classList.remove('hidden');
+
+    const progress = loadProgress();
+    const allDue = Object.keys(progress.cards).filter(id => isDue(progress.cards[id]));
+    const urgent = allDue.filter(id => progress.cards[id].last_result === 'wrong').sort((a,b) => (progress.cards[a].next_due || 0) - (progress.cards[b].next_due || 0));
+    const scheduled = allDue.filter(id => progress.cards[id].last_result !== 'wrong').sort((a,b) => (progress.cards[a].next_due || 0) - (progress.cards[b].next_due || 0));
+    
+    const reviewQueue = [...urgent, ...scheduled];
+    let currentIndex = 0;
+
+    function findDataById(itemId) {
+        const parts = itemId.split('-');
+        const sentenceId = parseInt(parts[0].substring(1), 10);
+        const type = parts[1];
+        const sentenceData = quizData.find(d => d.id === sentenceId);
+        if (!sentenceData) return null;
+
+        if (type === 'quiz') {
+            return { type, sentence: sentenceData, quiz: sentenceData.quiz };
+        }
+        if (type === 'card') {
+            const identifier = parts.slice(2).join('-');
+            const cardData = sentenceData.flashcards.find(fc => fc.en.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 20) === identifier);
+            return { type, sentence: sentenceData, card: cardData };
+        }
+        return null;
+    }
+
+    function renderNextItem() {
+        if (currentIndex >= reviewQueue.length) {
+            reviewArea.innerHTML = `
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">復習完了！</h2>
+                    <p class="text-gray-600 mb-6">お疲れ様でした。すべての復習項目が終わりました。</p>
+                    <button id="review-back-to-toc" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full">目次に戻る</button>
+                </div>
+            `;
+            document.getElementById('review-back-to-toc').addEventListener('click', showMainMenu);
+            return;
+        }
+
+        const itemId = reviewQueue[currentIndex];
+        const itemData = findDataById(itemId);
+
+        if (!itemData || (itemData.type === 'card' && !itemData.card)) {
+            console.warn(`Could not find data for review item: ${itemId}. Skipping.`);
+            currentIndex++;
+            renderNextItem();
+            return;
+        }
+
+        reviewArea.innerHTML = `
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                <div class="bg-blue-500 h-2.5 rounded-full" style="width: ${((currentIndex) / reviewQueue.length) * 100}%; transition: width 0.3s;"></div>
+            </div>
+            <div id="review-item-content"></div>
+        `;
+        const contentEl = document.getElementById('review-item-content');
+
+        const advance = () => {
+            currentIndex++;
+            setTimeout(renderNextItem, 600);
+        };
+
+        if (itemData.type === 'quiz') {
+            const { sentence, quiz } = itemData;
+            const questionText = quiz.originalSentence.replace(new RegExp(quiz.target.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'i'), '______');
+            const shuffledChoices = [...quiz.choices].sort(() => Math.random() - 0.5);
+            let optionsHTML = shuffledChoices.map(choice => 
+                `<button class="btn-option w-full p-3 bg-white border border-gray-300 rounded-lg text-left text-gray-700 font-medium flex items-center min-h-[3.5rem]">${choice}</button>`
+            ).join('');
+
+            contentEl.innerHTML = `
+                <p class="text-sm text-gray-500 mb-2">例文 ${sentence.id} - 空所補充</p>
+                <div class="mb-4 relative">
+                    <p class="text-lg text-gray-800 text-center p-4 bg-gray-50 rounded-lg">${questionText}</p>
+                    <button id="review-quiz-tts-btn" class="speaker-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="review-options">
+                    ${optionsHTML}
+                </div>
+            `;
+            contentEl.querySelector('#review-quiz-tts-btn').addEventListener('click', () => speak(quiz.originalSentence));
+
+            contentEl.querySelector('#review-options').addEventListener('click', (e) => {
+                const button = e.target.closest('.btn-option');
+                if (button) {
+                    const isCorrect = button.innerText.toLowerCase() === quiz.target.toLowerCase();
+                    if (isCorrect) markCorrect(itemId); else markWrong(itemId);
+                    
+                    Array.from(contentEl.querySelector('#review-options').children).forEach(btn => {
+                        btn.disabled = true;
+                        if (btn.innerText.toLowerCase() === quiz.target.toLowerCase()) btn.classList.add('!bg-green-200', '!border-green-500');
+                        else if (btn === button) btn.classList.add('!bg-red-200', '!border-red-500');
+                    });
+                    advance();
+                }
+            });
+        } else if (itemData.type === 'card') {
+            const { card } = itemData;
+            const cardContainer = document.createElement('div');
+            const originalIndex = currentSentenceIndex;
+            currentSentenceIndex = quizData.findIndex(d => d.id === itemData.sentence.id);
+            renderFlashcards(cardContainer, [card]); 
+            currentSentenceIndex = originalIndex;
+
+            contentEl.innerHTML = `<p class="text-sm text-gray-500 mb-2">例文 ${itemData.sentence.id} - 単語カード</p>`;
+            contentEl.appendChild(cardContainer);
+
+            const correctBtn = cardContainer.querySelector('.bg-green-500');
+            const wrongBtn = cardContainer.querySelector('.border-gray-300');
+            if (correctBtn) correctBtn.onclick = (e) => { e.stopPropagation(); markCorrect(itemId); correctBtn.style.opacity = '1'; wrongBtn.style.opacity = '0.5'; advance(); };
+            if (wrongBtn) wrongBtn.onclick = (e) => { e.stopPropagation(); markWrong(itemId); wrongBtn.style.opacity = '1'; correctBtn.style.opacity = '0.5'; advance(); };
+        }
+    }
+
+    if (reviewQueue.length > 0) {
+        renderNextItem();
+    } else {
+        reviewArea.innerHTML = `
+             <div class="text-center">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">今日の復習はありません</h2>
+                <p class="text-gray-600 mb-6">素晴らしいです！復習が必要な項目は今のところありません。</p>
+                <button id="review-back-to-toc" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full">目次に戻る</button>
+            </div>
+        `;
+        document.getElementById('review-back-to-toc').addEventListener('click', showMainMenu);
+    }
+}
+</script>
+</body>
+</html>
+
