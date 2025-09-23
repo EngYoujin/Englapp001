@@ -213,10 +213,10 @@ const quizData = [
         originalSentence: "We can better serve our customers by improving quality.",
         translation: "品質を向上させることで、我々は顧客により良いサービスを提供できる。",
         quiz: {
-            originalSentence: "To ______ the company's performance, we must focus on product ______.",
-            target: "improve, quality",
-            choices: ["improve, quality", "reduce, price", "change, design", "ignore, service"],
-            meaning: "～を改善する, 品質",
+            originalSentence: "To improve the company's performance, we must focus on product quality.",
+            target: "improve",
+            choices: ["improve", "reduce", "change", "ignore"],
+            meaning: "～を改善する",
             quizTranslation: "会社の業績を改善するためには、製品の品質に集中しなければならない。"
         },
         application: {
@@ -236,10 +236,10 @@ const quizData = [
         originalSentence: "This machine has various functions, and you can also use it overseas as well as in Japan.",
         translation: "この機械には様々な機能があり、日本だけでなく海外でも使用できます。",
         quiz: {
-            originalSentence: "This new smartphone has ______ useful ______.",
-            target: "various, functions",
-            choices: ["various, functions", "few, problems", "many, colors", "some, limits"],
-            meaning: "様々な, 機能",
+            originalSentence: "This new smartphone has various useful functions.",
+            target: "various",
+            choices: ["various", "few", "many", "some"],
+            meaning: "様々な",
             quizTranslation: "この新しいスマートフォンには様々な便利な機能がある。"
         },
         application: {
@@ -259,10 +259,10 @@ const quizData = [
         originalSentence: "This is by far the most efficient way of transferring data.",
         translation: "これが断然最も効率的なデータ転送方法です。",
         quiz: {
-            originalSentence: "Email is a very ______ method for ______ information.",
-            target: "efficient, transferring",
-            choices: ["efficient, transferring", "slow, sending", "costly, receiving", "complex, hiding"],
-            meaning: "効率的な, ～を転送する",
+            originalSentence: "Email is a very efficient method for transferring information.",
+            target: "efficient",
+            choices: ["efficient", "slow", "costly", "complex"],
+            meaning: "効率的な",
             quizTranslation: "Eメールは情報を転送するための非常に効率的な方法だ。"
         },
         application: {
@@ -350,10 +350,10 @@ const quizData = [
         originalSentence: "These products are manufactured on a large scale.",
         translation: "これらの製品は大規模に製造されている。",
         quiz: {
-            originalSentence: "The company plans to ______ its new car ______ next year.",
-            target: "manufacture, on a large scale",
-            choices: ["manufacture, on a large scale", "design, on a small scale", "sell, in a local market", "test, with a few people"],
-            meaning: "～を製造する, 大規模に",
+            originalSentence: "The company plans to manufacture its new car on a large scale next year.",
+            target: "manufacture",
+            choices: ["manufacture", "design", "sell", "test"],
+            meaning: "～を製造する",
             quizTranslation: "その会社は来年、新型車を大規模に製造する計画だ。"
         },
         application: {
@@ -1019,7 +1019,6 @@ function renderStep1(data) {
     const { quiz } = data;
     const questionText = quiz.originalSentence.replace(new RegExp(quiz.target.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'i'), '______');
     const shuffledChoices = [...quiz.choices].sort(() => Math.random() - 0.5);
-    const correctSentenceForTTS = quiz.originalSentence.replace(/_{2,}/, quiz.target);
     
     let optionsHTML = shuffledChoices.map(choice => 
         `<button class="btn-option w-full p-4 bg-white border border-gray-300 rounded-lg text-left text-gray-700 font-medium transition-all duration-200 flex items-center min-h-[4rem]">${choice}</button>`
@@ -1029,9 +1028,7 @@ function renderStep1(data) {
         <p class="text-sm text-gray-500 text-center mb-4">あてはまる選択肢を選びましょう。</p>
         <div class="mb-6 relative">
             <p class="text-xl md:text-2xl text-gray-800 text-center p-4 bg-gray-50 rounded-lg">${questionText}</p>
-            <button onclick="speak('${correctSentenceForTTS.replace(/'/g, "\\'")}')" class="absolute top-1/2 right-4 -translate-y-1/2 text-gray-500 hover:text-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.858 12H4a1 1 0 00-1 1v2a1 1 0 001 1h1.858l4.242 4.243A1 1 0 0012 20.485V3.515a1 1 0 00-1.9-1.414L5.858 12z" /></svg>
-            </button>
+            <button class="speaker-btn text-xl" onclick="speak('${quiz.originalSentence.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button>
         </div>
         <div id="step1-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">${optionsHTML}</div>
         <div id="step1-feedback" class="p-4 rounded-lg text-center font-medium hidden my-4"></div>
