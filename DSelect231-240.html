@@ -193,7 +193,8 @@ const quizData = [
             originalSentence: "The team needs to come up with a new marketing strategy.",
             target: "come up with", 
             choices: ["come up with", "get along with", "put up with", "catch up with"], 
-            meaning: "～を考え出す" 
+            meaning: "～を考え出す",
+            quizTranslation: "そのチームは新しいマーケティング戦略を考え出す必要がある。"
         },
         application: {
             situation: "ブレインストーミングの会議で、良いアイデアが出た瞬間に。",
@@ -215,7 +216,8 @@ const quizData = [
             originalSentence: "If you miss a week of class, it's hard to catch up with everyone.",
             target: "catch up with", 
             choices: ["catch up with", "keep up with", "come up with", "put up with"], 
-            meaning: "～に追い付く" 
+            meaning: "～に追い付く",
+            quizTranslation: "一週間授業を休むと、みんなに追いつくのは大変だ。"
         },
         application: {
             situation: "マラソン大会で、前のランナーに追いつこうとペースを上げている時。",
@@ -237,7 +239,8 @@ const quizData = [
             originalSentence: "After reading the books, please put them away on the shelf.",
             target: "put them away", 
             choices: ["put them away", "put them off", "put them up", "put them down"], 
-            meaning: "～を片付ける" 
+            meaning: "～を片付ける",
+            quizTranslation: "本を読み終えたら、棚に片付けてください。"
         },
         application: {
             situation: "子供がおもちゃで遊んだ後、片付けなさいと伝える時。",
@@ -260,7 +263,8 @@ const quizData = [
             originalSentence: "This old jacket is too small for me, so I'll give it away.",
             target: "give it away", 
             choices: ["give it away", "throw it away", "put it away", "get it away"], 
-            meaning: "それを無料でやる" 
+            meaning: "それを無料でやる",
+            quizTranslation: "この古いジャケットは私には小さすぎるので、誰かにあげます。"
         },
         application: {
             situation: "もう着なくなった古い服をどうするか決める時。",
@@ -281,7 +285,8 @@ const quizData = [
             originalSentence: "He started to put on weight after he quit his job and stopped exercising.",
             target: "put on weight", 
             choices: ["put on weight", "put up resistance", "put off a decision", "put out a fire"], 
-            meaning: "太る" 
+            meaning: "太る",
+            quizTranslation: "彼は仕事を辞めて運動をやめてから太り始めた。"
         },
         application: {
             situation: "久しぶりに会った友人の見た目が変わっていた時。",
@@ -302,7 +307,8 @@ const quizData = [
             originalSentence: "Please take off your shoes before you enter the room.",
             target: "take off", 
             choices: ["take off", "putting on", "getting off", "turning off"], 
-            meaning: "～を脱ぐ" 
+            meaning: "～を脱ぐ",
+            quizTranslation: "部屋に入る前に靴を脱いでください。"
         },
         application: {
             situation: "長い一日の仕事を終えて家に帰ってきた時。",
@@ -324,7 +330,8 @@ const quizData = [
             originalSentence: "His excuse for being late was far from convincing.",
             target: "far from", 
             choices: ["far from", "apart from", "aside from", "instead of"], 
-            meaning: "～とはほど遠い" 
+            meaning: "～とはほど遠い",
+            quizTranslation: "彼の遅刻の言い訳は、説得力があるとは到底思えなかった。"
         },
         application: {
             situation: "期待していたほど面白くなかった映画について話す時。",
@@ -346,7 +353,8 @@ const quizData = [
             originalSentence: "He was not aware of the danger he was in.",
             target: "aware of", 
             choices: ["aware of", "afraid of", "tired of", "proud of"], 
-            meaning: "～に気付いている" 
+            meaning: "～に気付いている",
+            quizTranslation: "彼は自分が陥っている危険に気づいていなかった。"
         },
         application: {
             situation: "友達へのサプライズパーティーについて話し合っている時。",
@@ -367,7 +375,8 @@ const quizData = [
             originalSentence: "She felt embarrassed when she realized her mistake.",
             target: "embarrassed", 
             choices: ["embarrassed", "excited", "amazed", "annoyed"], 
-            meaning: "恥ずかしい" 
+            meaning: "恥ずかしい",
+            quizTranslation: "彼女は自分の間違いに気づいて恥ずかしくなった。"
         },
         application: {
             situation: "大勢の人の前でつまずいて転んでしまった時。",
@@ -389,7 +398,8 @@ const quizData = [
             originalSentence: "The child's curiosity about the world seemed to have no limits.",
             target: "curiosity", 
             choices: ["curiosity", "anxiety", "quality", "ability"], 
-            meaning: "好奇心" 
+            meaning: "好奇心",
+            quizTranslation: "その子の世界に対する好奇心には際限がないようだった。"
         },
         application: {
             situation: "子供が「なぜ？」という質問をたくさんしてくる時。",
@@ -1027,12 +1037,12 @@ function renderStep1(data) {
     document.getElementById('step1-options').addEventListener('click', e => {
         const button = e.target.closest('.btn-option');
         if (button) {
-            handleQuizAnswer(button, quiz, data.translation);
+            handleQuizAnswer(button, quiz);
         }
     });
 }
 
-function handleQuizAnswer(selectedButton, quizInfo, translation) {
+function handleQuizAnswer(selectedButton, quizInfo) {
     const isCorrect = selectedButton.innerText.toLowerCase() === quizInfo.target.toLowerCase();
     const itemId = getItemId(quizData[currentSentenceIndex].id, 'quiz');
     
@@ -1052,11 +1062,13 @@ function handleQuizAnswer(selectedButton, quizInfo, translation) {
         feedbackEl.className = 'p-4 rounded-lg text-center font-medium my-4 bg-red-100 border border-red-300 text-red-800';
     }
     feedbackEl.classList.remove('hidden');
-    
-    const translationEl = document.createElement('p');
-    translationEl.className = 'text-center text-gray-600 mt-2';
-    translationEl.textContent = `元の例文の訳：${translation}`;
-    feedbackEl.appendChild(translationEl);
+
+    if (quizInfo.quizTranslation) {
+        const translationEl = document.createElement('p');
+        translationEl.className = 'text-center text-gray-600 mt-2';
+        translationEl.textContent = `クイズ文の訳：${quizInfo.quizTranslation}`;
+        feedbackEl.appendChild(translationEl);
+    }
 
     Array.from(document.getElementById('step1-options').children).forEach(button => {
         button.disabled = true;

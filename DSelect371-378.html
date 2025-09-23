@@ -44,11 +44,6 @@
         .segment { display: inline-flex; border: 1px solid #d1d5db; border-radius: 9999px; overflow: hidden; }
         .segment button { border: 0; background-color: white; padding: 0.5rem 0.75rem; font-size: 0.875rem; cursor: pointer; min-height: 36px; transition: background-color 0.2s, color 0.2s; }
         .segment button.on { background-color: #1f2937; color: white; }
-        .btn-option {
-            align-items: flex-start !important;
-            padding-top: 1rem !important;
-            padding-bottom: 1rem !important;
-        }
     </style>
 </head>
 <body class="bg-gray-100 pt-20 pb-8 min-h-screen">
@@ -71,7 +66,7 @@
 
     <div id="app-container" class="quiz-container mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
         
-        <!-- Table of Contents Screen (Main Menu) -->
+        <!-- 目次画面 (メインメニュー) -->
         <div id="toc-screen">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-4">DUOセレクト学習</h1>
             <p class="text-gray-600 text-center mb-8">学習したい例文を選ぶか、最初から全ての問題に挑戦しましょう。</p>
@@ -124,14 +119,14 @@
             </div>
         </div>
 
-        <!-- Review Area -->
+        <!-- 復習エリア -->
         <div id="review-area" class="hidden">
-             <!-- This will be populated by renderReview() -->
+             <!-- renderReview() によって内容が生成されます -->
         </div>
 
-        <!-- Main Quiz Area -->
+        <!-- メインクイズエリア -->
         <div id="main-quiz-area" class="hidden">
-            <!-- Progress and Title -->
+            <!-- 進捗とタイトル -->
             <div class="flex justify-between items-center mb-2">
                  <button id="back-to-toc-btn" class="text-blue-500 hover:text-blue-700 font-semibold"><i class="fas fa-arrow-left mr-2"></i>目次に戻る</button>
                 <p id="question-counter" class="text-gray-500 font-medium"></p>
@@ -139,33 +134,33 @@
             <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
                 <div id="progress-bar" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%; transition: width 0.3s ease-in-out;"></div>
             </div>
-            <!-- Step Indicators -->
+            <!-- ステップインジケーター -->
             <div class="flex justify-center space-x-1 md:space-x-2 mb-6 text-xs md:text-sm" id="step-indicators-container">
                 <button data-step="1" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">1:クイズ</button>
                 <button data-step="2" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">2:応用</button>
                 <button data-step="3" class="step-indicator border border-gray-300 rounded-full px-3 py-1 text-gray-600 transition-all duration-300">3:単語カード</button>
             </div>
 
-            <!-- Step Views -->
+            <!-- ステップビュー -->
             <div id="step-views">
                 <div id="step1-quiz" class="step-view"></div>
                 <div id="step2-application" class="step-view hidden"></div>
                 <div id="step3-flashcards" class="step-view hidden"></div>
             </div>
             
-            <!-- Navigation -->
+            <!-- ナビゲーション -->
             <div class="text-center mt-6">
                 <button id="next-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-full transition-colors hidden">次へ</button>
             </div>
 
-            <!-- Sentence Navigation -->
+            <!-- 例文ナビゲーション -->
             <div id="sentence-nav" class="flex justify-between mt-4 pt-4 border-t">
                 <button id="prev-sentence-btn" class="text-blue-500 hover:text-blue-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>前の例文</button>
                 <button id="next-sentence-btn" class="text-blue-500 hover:text-blue-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed">次の例文<i class="fas fa-chevron-right ml-2"></i></button>
             </div>
         </div>
         
-        <!-- Final Check Area -->
+        <!-- 最終チェックエリア -->
         <div id="final-check-area" class="hidden">
             <div class="flex justify-between items-center mb-4">
                  <button id="back-to-toc-from-final-btn" class="text-blue-500 hover:text-blue-700 font-semibold"><i class="fas fa-arrow-left mr-2"></i>目次に戻る</button>
@@ -176,7 +171,7 @@
             <div id="final-check-flashcards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
-        <!-- Result Screen -->
+        <!-- 結果画面 -->
         <div id="result-screen" class="hidden text-center">
             <h2 class="text-3xl font-bold text-gray-800 mb-4">全問終了！お疲れ様でした！</h2>
             <p class="text-lg text-gray-700 mb-6">学習結果を確認しましょう。</p>
@@ -192,17 +187,23 @@
 const quizData = [
     {
         id: 371,
-        originalSentence: "With this warranty, your product's safety is guaranteed.",
-        translation: "自由と平等は性別に関係なくすべての人に約束されている。",
-        quiz: { target: "guaranteed", choices: ["guaranteed", "gathered", "generated", "governed"], meaning: "～を保証する" },
+        originalSentence: "Freedom and equality are guaranteed to everyone regardless of sex.",
+        translation: "自由と平等は性別に関係なくすべての人に保証されている。",
+        quiz: {
+            originalSentence: "The new law ______ equal rights for all citizens.",
+            target: "guarantees",
+            choices: ["guarantees", "denies", "questions", "limits"],
+            meaning: "～を保証する",
+            quizTranslation: "新しい法律は、すべての市民に平等の権利を保証する。"
+        },
         application: {
-            situation: "オンラインショッピングで高価な商品を買うか迷っている友人に。",
-            sentence: "Don't worry, the website says that a full refund is <span class='tooltip-trigger'>guaranteed<span class='tooltip-content'>保証されている</span></span> if you're not satisfied.",
-            translation: "心配しないで。満足いかなかった場合は全額返金が保証されているってサイトに書いてあるよ。"
+            situation: "人権に関するスピーチで、基本的な理念を述べる時。",
+            sentence: "We believe in <span class='tooltip-trigger'>freedom<span class='tooltip-content'>自由</span></span> and <span class='tooltip-trigger'>equality<span class='tooltip-content'>平等</span></span> for all people, <span class='tooltip-trigger'>regardless of<span class='tooltip-content'>～に関係なく</span></span> their background.",
+            translation: "私たちは、経歴に関係なく、すべての人々の自由と平等を信じています。"
         },
         flashcards: [
-            { en: "freedom", ja: "自由", kana: "フ**リー**ダム", phonetic: "/ˈfriːdəm/", hint: "f" },
-            { en: "equality", ja: "平等", kana: "イ**クォ**リティ", phonetic: "/ɪˈkwɑːləti/", hint: "e" },
+            { en: "freedom", ja: "自由", kana: "**フ**リーダム", phonetic: "/ˈfriːdəm/", hint: "f" },
+            { en: "equality", ja: "平等", kana: "イ**ク**オリティ", phonetic: "/iˈkwɑːləti/", hint: "e" },
             { en: "guarantee", ja: "～を保証する", kana: "ギャラン**ティー**", phonetic: "/ˌɡærənˈtiː/", hint: "g" },
             { en: "regardless of", ja: "～に関係なく", kana: "リ**ガー**ドレス・オブ", phonetic: "/rɪˈɡɑːrdləs əv/", hint: "r" },
             { en: "sex", ja: "性別", kana: "**セ**ックス", phonetic: "/seks/", hint: "s" }
@@ -210,83 +211,113 @@ const quizData = [
     },
     {
         id: 372,
-        originalSentence: "He made a silly mistake, but it seems easy to fix.",
-        translation: "どんなにくだらないことと思われようと、私は最善を尽くします。",
-        quiz: { target: "silly", choices: ["silly", "similar", "single", "simple"], meaning: "ばかな、くだらない" },
+        originalSentence: "No matter how silly it seems to you, I'll do my best.",
+        translation: "どんなにくだらなく思われようと、私は最善を尽くします。",
+        quiz: {
+            originalSentence: "______ tired you are, you must finish the report.",
+            target: "No matter how",
+            choices: ["No matter how", "Even if", "Although", "Because"],
+            meaning: "たとえどんなに～でも",
+            quizTranslation: "たとえどんなに疲れていても、君はそのレポートを終えなければならない。"
+        },
         application: {
-            situation: "子供が作った、少し変な形の工作を褒める時。",
-            sentence: "It might look a little <span class='tooltip-trigger'>silly<span class='tooltip-content'>ばかげて見える</span></span>, but I love this gift you made for me. It's special.",
-            translation: "ちょっと面白い形に見えるかもしれないけど、君が作ってくれたこのプレゼント、大好きだよ。特別だね。"
+            situation: "新しい挑戦を始める友人への励ましの言葉。",
+            sentence: "<span class='tooltip-trigger'>No matter how<span class='tooltip-content'>どんなに～でも</span></span> difficult it may <span class='tooltip-trigger'>seem<span class='tooltip-content'>～のように思える</span></span>, just <span class='tooltip-trigger'>do your best<span class='tooltip-content'>最善を尽くす</span></span>. That's all that matters.",
+            translation: "どんなに難しく思えても、ただ最善を尽くしなよ。それが全てだよ。"
         },
         flashcards: [
             { en: "no matter how", ja: "たとえどんなに～でも", kana: "ノー・**マ**ター・ハウ", phonetic: "/noʊ ˈmætər haʊ/", hint: "n" },
-            { en: "silly", ja: "ばかな、くだらない", kana: "**スィ**リィ", phonetic: "/ˈsɪli/", hint: "s" },
-            { en: "seem", ja: "～のように思える", kana: "スィーム", phonetic: "/siːm/", hint: "s" },
-            { en: "do one's best", ja: "最善を尽くす", kana: "ドゥ・ワンズ・**ベ**スト", phonetic: "/duː wʌnz best/", hint: "d" }
+            { en: "silly", ja: "ばかな", kana: "**シ**リー", phonetic: "/ˈsɪli/", hint: "s" },
+            { en: "seem", ja: "～のように思える", kana: "シーム", phonetic: "/siːm/", hint: "s" },
+            { en: "do one's best", ja: "最善を尽くす", kana: "ドゥ・ワンズ・ベスト", phonetic: "/du wʌnz best/", hint: "d" }
         ]
     },
     {
         id: 373,
-        originalSentence: "The team is exploring new ways to succeed in the market.",
+        originalSentence: "He succeeded in exploring the Antarctic for the first time.",
         translation: "彼は初めて南極探検に成功した。",
-        quiz: { target: "exploring", choices: ["exploring", "exporting", "exploding", "exposing"], meaning: "～を探検する" },
+        quiz: {
+            originalSentence: "She ______ in winning the competition.",
+            target: "succeeded",
+            choices: ["succeeded", "failed", "tried", "started"],
+            meaning: "成功した",
+            quizTranslation: "彼女はそのコンペティションで優勝することに成功した。"
+        },
         application: {
-            situation: "新しい街に引っ越してきた友人に、週末の過ごし方を提案する時。",
-            sentence: "Let's spend Saturday just <span class='tooltip-trigger'>exploring<span class='tooltip-content'>探検する</span></span> the downtown area. There are many interesting shops and cafes.",
-            translation: "土曜日はダウンタウン地区を探検して過ごそうよ。面白いお店やカフェがたくさんあるよ。"
+            situation: "歴史上の偉大な探検家の功績について話している時。",
+            sentence: "It was a great achievement to <span class='tooltip-trigger'>explore<span class='tooltip-content'>～を探検する</span></span> the vast <span class='tooltip-trigger'>Antarctic<span class='tooltip-content'>南極</span></span> <span class='tooltip-trigger'>for the first time<span class='tooltip-content'>初めて</span></span>.",
+            translation: "広大な南極を初めて探検したのは、偉大な功績だった。"
         },
         flashcards: [
-            { en: "succeed in", ja: "～に成功する", kana: "サク**スィー**ド・イン", phonetic: "/səkˈsiːd ɪn/", hint: "s" },
-            { en: "explore", ja: "～を探検する", kana: "イクスプ**ロー**", phonetic: "/ɪkˈsplɔːr/", hint: "e" },
-            { en: "the Antarctic", ja: "南極（地方）", kana: "ジ・アン**ター**クティック", phonetic: "/ði ænˈtɑːrktɪk/", hint: "t" },
-            { en: "for the first time", ja: "初めて", kana: "フォー・ザ・**ファー**スト・タイム", phonetic: "/fɔːr ðə fɜːrst taɪm/", hint: "f" }
+            { en: "succeed in", ja: "～に成功する", kana: "サク**シ**ード・イン", phonetic: "/səkˈsiːd ɪn/", hint: "s" },
+            { en: "explore", ja: "～を探検する", kana: "エクスプ**ロー**", phonetic: "/ɪkˈsplɔːr/", hint: "e" },
+            { en: "the Antarctic", ja: "南極", kana: "ジ・アン**ター**クティック", phonetic: "/ði ænˈtɑːrktɪk/", hint: "t" },
+            { en: "for the first time", ja: "初めて", kana: "フォー・ザ・ファースト・**タ**イム", phonetic: "/fər ðə fɜːrst taɪm/", hint: "f" }
         ]
     },
     {
         id: 374,
-        originalSentence: "I truly admire her courage to speak up.",
+        originalSentence: "I admire your courage and enthusiasm.",
         translation: "あなたの勇気と熱意には感心します。",
-        quiz: { target: "admire", choices: ["admire", "admit", "advise", "adapt"], meaning: "～に感心する" },
+        quiz: {
+            originalSentence: "I truly ______ artists who create beautiful paintings.",
+            target: "admire",
+            choices: ["admire", "criticize", "ignore", "forget"],
+            meaning: "～に感心する",
+            quizTranslation: "私は美しい絵画を創造する芸術家を心から尊敬する。"
+        },
         application: {
-            situation: "困難なプロジェクトを成功させた同僚を称賛する時。",
-            sentence: "I really <span class='tooltip-trigger'>admire<span class='tooltip-content'>～に感心する</span></span> how you handled that difficult situation. You did a great job.",
-            translation: "君がその困難な状況をどう扱ったか、本当に感心するよ。素晴らしい仕事だった。"
+            situation: "困難な状況でも諦めない友人を見て。",
+            sentence: "I really <span class='tooltip-trigger'>admire<span class='tooltip-content'>～に感心する</span></span> your <span class='tooltip-trigger'>courage<span class='tooltip-content'>勇気</span></span> and endless <span class='tooltip-trigger'>enthusiasm<span class='tooltip-content'>熱意</span></span> to keep trying.",
+            translation: "挑戦し続ける君の勇気と尽きることのない熱意には、本当に感心するよ。"
         },
         flashcards: [
             { en: "admire", ja: "～に感心する", kana: "アド**マ**イア", phonetic: "/ədˈmaɪər/", hint: "a" },
-            { en: "courage", ja: "勇気", kana: "**カ**ーリッジ", phonetic: "/ˈkɜːrɪdʒ/", hint: "c" },
-            { en: "enthusiasm", ja: "熱意、熱心", kana: "エン**スー**ズィアズム", phonetic: "/ɪnˈθuːziæzəm/", hint: "e" }
+            { en: "courage", ja: "勇気", kana: "**カ**レッジ", phonetic: "/ˈkɜːrɪdʒ/", hint: "c" },
+            { en: "enthusiasm", ja: "熱意", kana: "エン**スー**ズィアズム", phonetic: "/ɪnˈθuːziæzəm/", hint: "e" }
         ]
     },
     {
         id: 375,
-        originalSentence: "It was a difficult task, but we finally accomplished it.",
-        translation: "先見の明や戦略がなければ、何事も成し遂げることはできない。",
-        quiz: { target: "accomplished", choices: ["accomplished", "accompanied", "accumulated", "accounted"], meaning: "～を成し遂げる" },
+        originalSentence: "Without a vision or a strategy, nothing can be accomplished.",
+        translation: "ビジョンや戦略がなければ、何も達成することはできない。",
+        quiz: {
+            originalSentence: "______ a clear plan, it's hard to ______ your goals.",
+            target: "Without, accomplish",
+            choices: ["Without, accomplish", "With, fail", "Through, ignore", "Despite, forget"],
+            meaning: "～なしでは, ～を成し遂げる",
+            quizTranslation: "明確な計画なしでは、目標を達成するのは難しい。"
+        },
         application: {
-            situation: "大きな目標を立てたが、何から手をつけていいか分からない友人へのアドバイス。",
-            sentence: "A goal without a plan is just a wish. If you want to <span class='tooltip-trigger'>accomplish<span class='tooltip-content'>～を成し遂げる</span></span> it, you need a clear <span class='tooltip-trigger'>strategy<span class='tooltip-content'>戦略</span></span>.",
-            translation: "計画のない目標はただの願い事だよ。それを成し遂げたいなら、明確な戦略が必要だ。"
+            situation: "新しいビジネスを始める友人へのアドバイス。",
+            sentence: "Just having a good idea is not enough. You need a solid business <span class='tooltip-trigger'>strategy<span class='tooltip-content'>戦略</span></span> to <span class='tooltip-trigger'>accomplish<span class='tooltip-content'>～を成し遂げる</span></span> your long-term <span class='tooltip-trigger'>vision<span class='tooltip-content'>ビジョン</span></span>.",
+            translation: "良いアイデアがあるだけでは不十分だ。長期的なビジョンを達成するためには、しっかりとしたビジネス戦略が必要だよ。"
         },
         flashcards: [
-            { en: "without", ja: "～がなければ", kana: "ウィ**ザ**ウト", phonetic: "/wɪˈðaʊt/", hint: "w" },
-            { en: "vision", ja: "先見の明、構想", kana: "**ヴィ**ジョン", phonetic: "/ˈvɪʒn/", hint: "v" },
-            { en: "strategy", ja: "戦略", kana: "ス**トラ**テジー", phonetic: "/ˈstrætədʒi/", hint: "s" },
+            { en: "without", ja: "～なしでは", kana: "ウィズ**ア**ウト", phonetic: "/wɪˈðaʊt/", hint: "w" },
+            { en: "vision", ja: "ビジョン、未来像", kana: "**ヴィ**ジョン", phonetic: "/ˈvɪʒn/", hint: "v" },
+            { en: "strategy", ja: "戦略", kana: "ス**トゥ**ラテジー", phonetic: "/ˈstrætədʒi/", hint: "s" },
             { en: "accomplish", ja: "～を成し遂げる", kana: "ア**コ**ンブリッシュ", phonetic: "/əˈkɑːmplɪʃ/", hint: "a" }
         ]
     },
     {
         id: 376,
-        originalSentence: "Let's gather tonight to celebrate your graduation.",
-        translation: "彼の勝利を祝うためにたくさんの人が集まった。",
-        quiz: { target: "celebrate", choices: ["celebrate", "separate", "hesitate", "estimate"], meaning: "～を祝う" },
+        originalSentence: "Dozens of people gathered to celebrate his victory.",
+        translation: "何十人もの人々が彼の勝利を祝うために集まった。",
+        quiz: {
+            originalSentence: "______ of fans waited to ______ the team's championship.",
+            target: "Dozens, celebrate",
+            choices: ["Dozens, celebrate", "A few, mourn", "Some, ignore", "Many, protest"],
+            meaning: "何十もの, ～を祝う",
+            quizTranslation: "何十人ものファンがチームの優勝を祝うために待っていた。"
+        },
         application: {
-            situation: "友人の誕生日が近い時。",
-            sentence: "How should we <span class='tooltip-trigger'>celebrate<span class='tooltip-content'>～を祝う</span></span> your birthday this year? Let's do something special.",
-            translation: "今年は君の誕生日をどうやってお祝いしようか？何か特別なことをしようよ。"
+            situation: "地域のマラソン大会で優勝した選手を町中が祝福している様子。",
+            sentence: "When she won the marathon, <span class='tooltip-trigger'>dozens of<span class='tooltip-content'>何十人もの</span></span> townspeople <span class='tooltip-trigger'>gathered<span class='tooltip-content'>集まった</span></span> at the finish line to <span class='tooltip-trigger'>celebrate<span class='tooltip-content'>祝う</span></span> her amazing <span class='tooltip-trigger'>victory<span class='tooltip-content'>勝利</span></span>.",
+            translation: "彼女がマラソンで優勝したとき、何十人もの町民がフィニッシュラインに集まり、彼女の素晴らしい勝利を祝った。"
         },
         flashcards: [
-            { en: "dozens of", ja: "たくさんの", kana: "**ダ**ズンズ・オブ", phonetic: "/ˈdʌzənz əv/", hint: "d" },
+            { en: "dozens of", ja: "何十もの", kana: "**ダ**ズンズ・オブ", phonetic: "/ˈdʌzənz əv/", hint: "d" },
             { en: "gather", ja: "集まる", kana: "**ギャ**ザー", phonetic: "/ˈɡæðər/", hint: "g" },
             { en: "celebrate", ja: "～を祝う", kana: "**セ**レブレイト", phonetic: "/ˈseləbreɪt/", hint: "c" },
             { en: "victory", ja: "勝利", kana: "**ヴィ**クトリー", phonetic: "/ˈvɪktəri/", hint: "v" }
@@ -294,47 +325,58 @@ const quizData = [
     },
     {
         id: 377,
-        originalSentence: "I owe my success to my family's support.",
-        translation: "「うまくいったよ。」「おめでとう。」「ありがとう。本当に君のおかげだよ。」",
-        quiz: { target: "owe", choices: ["owe", "own", "add", "ask"], meaning: "～に借りがある" },
+        originalSentence: "'I made it!' 'Congratulations!' 'Thanks. I owe you a lot.'",
+        translation: "「やった！」「おめでとう！」「ありがとう。君には本当に感謝しているよ」",
+        quiz: {
+            originalSentence: "After passing the difficult exam, she proudly said, 'I ______!'",
+            target: "made it",
+            choices: ["made it", "failed it", "forgot it", "lost it"],
+            meaning: "成功した、やり遂げた",
+            quizTranslation: "その難しい試験に合格した後、彼女は誇らしげに「やった！」と言った。"
+        },
         application: {
-            situation: "友人に試験勉強をたくさん手伝ってもらって、無事合格した時。",
-            sentence: "I passed the exam! I really <span class='tooltip-trigger'>owe<span class='tooltip-content'>～のおかげだ</span></span> it to you for all your help.",
-            translation: "試験に合格したよ！君が助けてくれたおかげだよ。"
+            situation: "友人の助けを借りて、困難な目標を達成したときのお礼。",
+            sentence: "I couldn't have finished this marathon without your support. I really <span class='tooltip-trigger'>owe you a lot<span class='tooltip-content'>君には恩がある</span></span> for helping me train. <span class='tooltip-trigger'>Congratulations<span class='tooltip-content'>おめでとう</span></span> to us for this achievement!",
+            translation: "君のサポートがなかったら、このマラソンを完走できなかったよ。トレーニングを手伝ってくれて本当に恩に着るよ。この達成、僕らにおめでとう！"
         },
         flashcards: [
-            { en: "make it", ja: "成功する、うまくいく", kana: "**メ**イク・イット", phonetic: "/meɪk ɪt/", hint: "m" },
-            { en: "congratulations", ja: "おめでとう", kana: "コングラチュ**レ**イションズ", phonetic: "/kənˌɡrætʃəˈleɪʃənz/", hint: "c" },
-            { en: "owe A B", ja: "AにBの借りがある", kana: "オウ・エイ・ビー", phonetic: "/oʊ eɪ bi/", hint: "o" },
-            { en: "owe ... a lot", ja: "～にとても感謝している", kana: "オウ・ア・**ロ**ット", phonetic: "/oʊ ə lɑːt/", hint: "o" }
+            { en: "make it", ja: "成功する、やり遂げる", kana: "メイク・イット", phonetic: "/meɪk ɪt/", hint: "m" },
+            { en: "Congratulations!", ja: "おめでとう！", kana: "コングラチュ**レ**イションズ", phonetic: "/kənˌɡrætʃəˈleɪʃənz/", hint: "C" },
+            { en: "owe", ja: "～に恩恵を受けている", kana: "オウ", phonetic: "/oʊ/", hint: "o" }
         ]
     },
     {
         id: 378,
-        originalSentence: "It's getting late, let's call it a day.",
+        originalSentence: "'Let's call it a day, Bob. I'm starved.' 'Yep. I'll buy you dinner.'",
         translation: "「ボブ、今日はこの辺までにしましょう。お腹がぺこぺこ。」「ああ。晩飯は僕がおごるよ。」",
-        quiz: { target: "call it a day", choices: ["call it a day", "call it a night", "call in a day", "call on a day"], meaning: "今日はこの辺までにする" },
+        quiz: {
+            originalSentence: "We've been working for 8 hours. ______.",
+            target: "Let's call it a day",
+            choices: ["Let's call it a day", "Let's start over", "Let's keep going", "Let's take a break"],
+            meaning: "今日はこの辺でおしまいにしよう",
+            quizTranslation: "8時間も働いたね。今日はこの辺でおしまいにしよう。"
+        },
         application: {
-            situation: "夜遅くまで残業している同僚に声をかける時。",
-            sentence: "We've been working for 10 hours. Let's <span class='tooltip-trigger'>call it a day<span class='tooltip-content'>今日は終わりにしよう</span></span> and continue tomorrow.",
-            translation: "もう10時間も働いているよ。今日はこの辺で終わりにして、続きは明日にしよう。"
+            situation: "長い会議の終わりを告げる時。",
+            sentence: "Okay team, we've made a lot of progress. <span class='tooltip-trigger'>Let's call it a day<span class='tooltip-content'>今日はここまでだ</span></span>. I'm <span class='tooltip-trigger'>starved<span class='tooltip-content'>お腹ペコペコだ</span></span>, so I'll <span class='tooltip-trigger'>buy you<span class='tooltip-content'>君におごるよ</span></span> pizza!",
+            translation: "よし、チームのみんな、だいぶ進んだね。今日はここまでだ。お腹がペコペコだから、ピザをおごるよ！"
         },
         flashcards: [
-            { en: "call it a day", ja: "今日はこの辺までにする", kana: "**コー**ル・イット・ア・**デ**イ", phonetic: "/kɔːl ɪt ə deɪ/", hint: "c" },
-            { en: "be starved", ja: "お腹がぺこぺこだ", kana: "ビー・ス**ター**ヴド", phonetic: "/bi stɑːrvd/", hint: "b" },
-            { en: "buy you ...", ja: "～をおごるよ", kana: "**バ**イ・ユー", phonetic: "/baɪ juː/", hint: "b" }
+            { en: "Let's call it a day.", ja: "今日はこの辺でおしまいにしよう。", kana: "レッツ・コール・イット・ア・**デ**イ", phonetic: "/lets kɔːl ɪt ə deɪ/", hint: "L" },
+            { en: "be starved", ja: "とてもお腹が空いている", kana: "ビー・ス**ター**ヴド", phonetic: "/bi stɑːrvd/", hint: "b" },
+            { en: "I'll buy you", ja: "君におごるよ", kana: "アイル・バイ・ユー", phonetic: "/aɪl baɪ ju/", hint: "I" }
         ]
     }
 ];
 
-// --- PERSISTENCE KEYS ---
+// --- 永続化キー ---
 const KEY_PREFIX = 'duoSelect_';
 const KEY = `${KEY_PREFIX}progress_v1`;
 const VOICE_MODE = `${KEY_PREFIX}voice_mode_v1`;
 const CARD_MODE = `${KEY_PREFIX}card_mode_v1`;
 const HINT_MODE = `${KEY_PREFIX}hint_mode_v1`;
 
-// --- [FROM D3.0] PERSISTENCE & SRS ---
+// --- 永続化とSRSロジック ---
 function loadProgress() {
     try {
         return JSON.parse(localStorage.getItem(KEY)) || { cards: {} };
@@ -367,7 +409,7 @@ function markWrong(id) {
     const c = p.cards[id] || {};
     c.last_result = 'wrong';
     c.interval = 0;
-    c.next_due = Date.now() - 1; // Mark as due immediately
+    c.next_due = Date.now() - 1; // 即座に復習対象にする
     p.cards[id] = c;
     saveProgress(p);
     console.log(`Marked wrong: ${id}`, c);
@@ -387,14 +429,14 @@ function markCorrect(id) {
     console.log(`Marked correct: ${id}`, c);
 }
 
-// --- ID GENERATION ---
+// --- ID生成 ---
 function getItemId(sentenceId, type, identifier = '') {
     let safeIdentifier = identifier.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 20);
     return `s${sentenceId}-${type}${identifier ? `-${safeIdentifier}` : ''}`;
 }
 
 
-// --- STATE ---
+// --- 状態管理 ---
 let currentSentenceIndex = 0;
 let currentStep = 1;
 let isSequentialMode = false; 
@@ -404,7 +446,7 @@ let quizQueue = [];
 let stepUnlocked = 1;
 let finalCheckCards = [];
 
-// --- DOM ELEMENTS ---
+// --- DOM要素 ---
 const tocScreen = document.getElementById('toc-screen');
 const reviewArea = document.getElementById('review-area');
 const mainQuizArea = document.getElementById('main-quiz-area');
@@ -427,7 +469,7 @@ const stepViews = {
 };
 const stepIndicatorsContainer = document.getElementById('step-indicators-container');
 
-// --- INITIALIZATION ---
+// --- 初期化 ---
 document.addEventListener('DOMContentLoaded', async () => {
     if ('speechSynthesis' in window) {
         await pickVoices();
@@ -436,7 +478,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initAudioControls();
 });
 
-// --- EVENT LISTENERS ---
+// --- イベントリスナー ---
 startSequentialBtn.addEventListener('click', () => {
     isSequentialMode = true;
     quizQueue = Array.from(Array(quizData.length).keys());
@@ -975,40 +1017,34 @@ function renderCurrentStep() {
 // --- RENDER FUNCTIONS FOR EACH STEP ---
 
 function renderStep1(data) {
-    const { quiz, originalSentence } = data;
-    const questionText = originalSentence.replace(new RegExp(quiz.target.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'i'), '______');
-    const shuffledChoices = [...quiz.choices].sort(() => Math.random() - 0.5);
-    const correctSentenceForTTS = originalSentence.replace(/_{2,}/, quiz.target);
+    const { quiz } = data;
+    const { originalSentence, target, choices, meaning, quizTranslation } = quiz;
+    const questionText = originalSentence.replace(new RegExp(target.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'i'), '______');
+    const shuffledChoices = [...choices].sort(() => Math.random() - 0.5);
     
     let optionsHTML = shuffledChoices.map(choice => 
-        `<button class="btn-option w-full p-4 bg-white border border-gray-300 rounded-lg text-left text-gray-700 font-medium transition-all duration-200 min-h-[4rem]">${choice}</button>`
+        `<button class="btn-option w-full p-4 bg-white border border-gray-300 rounded-lg text-left text-gray-700 font-medium transition-all duration-200 flex items-center min-h-[4rem]">${choice}</button>`
     ).join('');
 
     stepViews[1].innerHTML = `
         <p class="text-sm text-gray-500 text-center mb-4">あてはまる選択肢を選びましょう。</p>
         <div class="mb-6 relative">
             <p class="text-xl md:text-2xl text-gray-800 text-center p-4 bg-gray-50 rounded-lg">${questionText}</p>
-            <button onclick="speak('${correctSentenceForTTS.replace(/'/g, "\\'")}')" class="absolute top-1/2 right-4 -translate-y-1/2 text-gray-500 hover:text-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.858 12H4a1 1 0 00-1 1v2a1 1 0 001 1h1.858l4.242 4.243A1 1 0 0012 20.485V3.515a1 1 0 00-1.9-1.414L5.858 12z" /></svg>
-            </button>
+            <button class="speaker-btn text-xl" onclick="speak('${originalSentence.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button>
         </div>
         <div id="step1-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">${optionsHTML}</div>
         <div id="step1-feedback" class="p-4 rounded-lg text-center font-medium hidden my-4"></div>
     `;
 
     document.getElementById('step1-options').addEventListener('click', e => {
-        if (e.target.tagName === 'BUTTON') {
-            handleQuizAnswer(e.target, quiz, data.translation);
+        const button = e.target.closest('.btn-option');
+        if (button) {
+            handleQuizAnswer(button, quiz);
         }
-    });
-
-    // Force alignment style via JavaScript
-    document.querySelectorAll('#step1-options .btn-option').forEach(btn => {
-        btn.style.display = 'block';
     });
 }
 
-function handleQuizAnswer(selectedButton, quizInfo, translation) {
+function handleQuizAnswer(selectedButton, quizInfo) {
     const isCorrect = selectedButton.innerText.toLowerCase() === quizInfo.target.toLowerCase();
     const itemId = getItemId(quizData[currentSentenceIndex].id, 'quiz');
     
@@ -1029,10 +1065,10 @@ function handleQuizAnswer(selectedButton, quizInfo, translation) {
     }
     feedbackEl.classList.remove('hidden');
     
-    const translationEl = document.createElement('p');
-    translationEl.className = 'text-center text-gray-600 mt-2';
-    translationEl.textContent = `文全体の訳：${translation}`;
-    feedbackEl.appendChild(translationEl);
+    const quizTranslationEl = document.createElement('p');
+    quizTranslationEl.className = 'text-center text-gray-600 mt-2';
+    quizTranslationEl.textContent = `クイズ文の訳：${quizInfo.quizTranslation}`;
+    feedbackEl.appendChild(quizTranslationEl);
 
     Array.from(document.getElementById('step1-options').children).forEach(button => {
         button.disabled = true;
@@ -1229,7 +1265,7 @@ function renderReview() {
         if (!sentenceData) return null;
 
         if (type === 'quiz') {
-            return { type, sentence: sentenceData };
+            return { type, sentence: sentenceData, quiz: sentenceData.quiz };
         }
         if (type === 'card') {
             const identifier = parts.slice(2).join('-');
@@ -1276,12 +1312,11 @@ function renderReview() {
         };
 
         if (itemData.type === 'quiz') {
-            const { sentence } = itemData;
-            const { quiz } = sentence;
-            const questionText = sentence.originalSentence.replace(new RegExp(quiz.target.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'i'), '______');
+            const { sentence, quiz } = itemData;
+            const questionText = quiz.originalSentence.replace(new RegExp(quiz.target.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'i'), '______');
             const shuffledChoices = [...quiz.choices].sort(() => Math.random() - 0.5);
             let optionsHTML = shuffledChoices.map(choice => 
-                `<button class="btn-option w-full p-3 bg-white border border-gray-300 rounded-lg text-left text-gray-700 font-medium min-h-[3.5rem]">${choice}</button>`
+                `<button class="btn-option w-full p-3 bg-white border border-gray-300 rounded-lg text-left text-gray-700 font-medium flex items-center min-h-[3.5rem]">${choice}</button>`
             ).join('');
 
             contentEl.innerHTML = `
@@ -1294,25 +1329,21 @@ function renderReview() {
                     ${optionsHTML}
                 </div>
             `;
-            contentEl.querySelector('#review-quiz-tts-btn').addEventListener('click', () => speak(sentence.originalSentence));
+            contentEl.querySelector('#review-quiz-tts-btn').addEventListener('click', () => speak(quiz.originalSentence));
 
             contentEl.querySelector('#review-options').addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON') {
-                    const isCorrect = e.target.innerText.toLowerCase() === quiz.target.toLowerCase();
+                const button = e.target.closest('.btn-option');
+                if (button) {
+                    const isCorrect = button.innerText.toLowerCase() === quiz.target.toLowerCase();
                     if (isCorrect) markCorrect(itemId); else markWrong(itemId);
                     
-                    Array.from(contentEl.querySelector('#review-options').children).forEach(button => {
-                        button.disabled = true;
-                        if (button.innerText.toLowerCase() === quiz.target.toLowerCase()) button.classList.add('!bg-green-200', '!border-green-500');
-                        else if (button === e.target) button.classList.add('!bg-red-200', '!border-red-500');
+                    Array.from(contentEl.querySelector('#review-options').children).forEach(btn => {
+                        btn.disabled = true;
+                        if (btn.innerText.toLowerCase() === quiz.target.toLowerCase()) btn.classList.add('!bg-green-200', '!border-green-500');
+                        else if (btn === button) btn.classList.add('!bg-red-200', '!border-red-500');
                     });
                     advance();
                 }
-            });
-
-            // Force alignment style via JavaScript for review quiz
-            contentEl.querySelectorAll('#review-options .btn-option').forEach(btn => {
-                btn.style.display = 'block';
             });
         } else if (itemData.type === 'card') {
             const { card } = itemData;
@@ -1348,3 +1379,4 @@ function renderReview() {
 </script>
 </body>
 </html>
+}
