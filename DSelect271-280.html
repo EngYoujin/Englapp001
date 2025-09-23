@@ -1014,9 +1014,10 @@ function renderCurrentStep() {
 }
 
 function renderStep1(data) {
-    const { quiz } = data;
+    const { quiz, originalSentence } = data;
     const questionText = quiz.originalSentence.replace(new RegExp(quiz.target.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'i'), '______');
     const shuffledChoices = [...quiz.choices].sort(() => Math.random() - 0.5);
+    const correctSentenceForTTS = quiz.originalSentence.replace(/_{2,}/, quiz.target);
     
     let optionsHTML = shuffledChoices.map(choice => 
         `<button class="btn-option w-full p-4 bg-white border border-gray-300 rounded-lg text-left text-gray-700 font-medium transition-all duration-200 flex items-center min-h-[4rem]">${choice}</button>`
@@ -1026,7 +1027,7 @@ function renderStep1(data) {
         <p class="text-sm text-gray-500 text-center mb-4">あてはまる選択肢を選びましょう。</p>
         <div class="mb-6 relative">
             <p class="text-xl md:text-2xl text-gray-800 text-center p-4 bg-gray-50 rounded-lg">${questionText}</p>
-            <button class="speaker-btn text-xl" onclick="speak('${quiz.originalSentence.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button>
+            <button class="speaker-btn text-xl" onclick="speak('${correctSentenceForTTS.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button>
         </div>
         <div id="step1-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">${optionsHTML}</div>
         <div id="step1-feedback" class="p-4 rounded-lg text-center font-medium hidden my-4"></div>
